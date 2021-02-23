@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width,height=device-height,inital-scale=1.0,maximum-scale=1.0,user-scalable=no;">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no">
+    <title>字符画</title>
+    <style>
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            /* overflow-y: hidden; */
+        }
+
+
+        .exa {
+        {#width: 100%;#} height: 400px;
+            object-fit: cover;
+        }
+
+        .but {
+            display: inline-block;
+            width: 160px;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            background: #BE1A21;
+            font-size: 18px;
+            color: #fff;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        /*隐藏默认样式*/
+        input[id=file] {
+            margin-left: -2000px;
+            height: 0;
+        }
+
+        .button {
+            width: 140px;
+            line-height: 38px;
+            text-align: center;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 1px 1px 1px #333;
+            border-radius: 5px;
+            margin: 0 20px 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .button.red {
+            border: 1px solid #b42323;
+            box-shadow: 0 1px 2px #e99494 inset, 0 -1px 0 #954b4b inset, 0 -2px 3px #e99494 inset;
+            background: -webkit-linear-gradient(top, #d53939, #b92929);
+            background: -moz-linear-gradient(top, #d53939, #b92929);
+            background: linear-gradient(top, #d53939, #b92929);
+        }
+
+        .mytxt {
+            color: #333;
+            line-height: normal;
+            font-family: "Microsoft YaHei", Tahoma, Verdana, SimSun;
+            font-style: normal;
+            font-variant: normal;
+            font-size-adjust: none;
+            font-stretch: normal;
+            font-weight: normal;
+            margin-top: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+            padding-top: 4px;
+            padding-right: 4px;
+            padding-bottom: 4px;
+            padding-left: 4px;
+            font-size: 15px;
+            outline-width: medium;
+            outline-style: none;
+            outline-color: invert;
+            border-top-left-radius: 3px;
+            border-top-right-radius: 3px;
+            border-bottom-left-radius: 3px;
+            border-bottom-right-radius: 3px;
+            text-shadow: 0px 1px 2px #fff;
+            background-attachment: scroll;
+            background-repeat: repeat-x;
+            background-position-x: left;
+            background-position-y: top;
+            background-size: auto;
+            background-origin: padding-box;
+            background-clip: border-box;
+            background-color: rgb(255, 255, 255);
+            margin-right: 8px;
+            border-top-color: #ccc;
+            border-right-color: #ccc;
+            border-bottom-color: #ccc;
+            border-left-color: #ccc;
+            border-top-width: 1px;
+            border-right-width: 1px;
+            border-bottom-width: 1px;
+            border-left-width: 1px;
+            border-top-style: solid;
+            border-right-style: solid;
+            border-bottom-style: solid;
+            border-left-style: solid;
+
+        }
+    </style>
+    <script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+</head>
+<body>
+<div>
+    <h1>简易字符画</h1>
+    <div style="float:left;">
+
+        <label>
+            样例图<br/><img src="../static/example.png">
+        </label>
+    </div>
+    <div style="float:left;margin-left:10px;">
+        <form action="" enctype='multipart/form-data' method='POST'>
+            <label>
+                请输入填充的字符<input type="text" name="txt" class="mytxt">
+            </label><br/>
+            <label for="file" class="but">上传图片</label><br/>
+            <input type="file" id="file" name="file"><br/>
+            <input type="submit" value="转换" class="button red"><br/>
+            {#    请上传要转换的图片#}
+            {#    <input type="file" name="file" ><br/>#}
+            {#    <input type="submit" value="转换">#}
+            <div>
+                <p id="fileName"></p>
+                <img src="" id="fileImg" class=" exa">
+            </div>
+
+            <script>
+                $("#file").on("change", function () {
+                    //截取路径，获取上传文件名
+                    let urlArr = this.value.split("\\");
+                    if (this && this.files && this.files[0]) {
+                        document.getElementById("fileName").innerHTML = urlArr[urlArr.length - 1];
+                        document.getElementById("fileImg").src = URL.createObjectURL(this.files[0]);
+                    } else {
+                        //兼容IE9以下
+                        document.getElementById("fileName").innerHTML = urlArr[urlArr.length - 1];
+                        document.getElementById("fileImg").style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale)";
+                        document.getElementById("fileImg").filters.item("DXImageTransform.Microsoft.AlphaImageLoader").src = this.value;
+                    }
+                });
+            </script>
+
+        </form>
+    </div>
+</div>
+</body>
+</html>

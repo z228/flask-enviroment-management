@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" href="../static/css/jump.css">
+    <meta charset="UTF-8">
+    <title>去水印</title>
+</head>
+<script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+<body>
+<div style="margin-left:10px;">
+    <form action="" enctype='multipart/form-data' method='POST'>
+        <label for="file" class="but">上传图片</label><br/>
+        <input type="file" id="file" name="file"><br/>
+        <input type="submit" value="去水印" class="button red"><br/>
+        {#    请上传要转换的图片#}
+        {#    <input type="file" name="file" ><br/>#}
+        {#    <input type="submit" value="转换">#}
+        <div>
+            <p id="fileName"></p>
+            <img src="" id="fileImg" class=" exa">
+        </div>
+        <script>
+            $("#file").on("change", function () {
+                //截取路径，获取上传文件名
+                let urlArr = this.value.split("\\");
+                if (this && this.files && this.files[0]) {
+                    document.getElementById("fileName").innerHTML = urlArr[urlArr.length - 1];
+                    document.getElementById("fileImg").src = URL.createObjectURL(this.files[0]);
+                } else {
+                    //兼容IE9以下
+                    document.getElementById("fileName").innerHTML = urlArr[urlArr.length - 1];
+                    document.getElementById("fileImg").style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale)";
+                    document.getElementById("fileImg").filters.item("DXImageTransform.Microsoft.AlphaImageLoader").src = this.value;
+                }
+            });
+        </script>
+
+    </form>
+</div>
+</body>
+</html>
