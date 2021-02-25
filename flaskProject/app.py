@@ -1,18 +1,27 @@
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory
-import os
 from werkzeug.utils import secure_filename
-from venu import watermark, OCR, hua, copy, restart
+from Image_feature import *
+from product import *
 from datetime import timedelta
 from config import APSchedulerJobConfig
 from flask_apscheduler import APScheduler
+from flask_bootstrap import Bootstrap
 
 # clean.static_clean() #清理资源文件夹
 app = Flask(__name__)
+bootstrap = Bootstrap(app)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = timedelta(seconds=1)
 app.config.from_object(APSchedulerJobConfig())
 scheduler = APScheduler()  # 实例化APScheduler
 scheduler.init_app(app)  # 把任务列表载入实例flask
 scheduler.start()  # 启动任务计划
+
+
+# 传递图标
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                               'static/favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 
 # 主页面
@@ -29,10 +38,10 @@ def watermark_upload():
     if request.method == 'POST':
         f = request.files['file']
         base_path = os.path.dirname(__file__)  # 当前文件所在路径
-        upload_path = os.path.join(base_path, 'static/uploads',
-                                   secure_filename(f.filename))  # 注意：没有的文件夹一定要先创建，不然会提示没有该路径
+        upload_path = base_path + './static/uploads/' + f.filename
+        # 注意：没有的文件夹一定要先创建，不然会提示没有该路径
         f.save(upload_path)
-        res = watermark.mark(f.filename)
+        res = mark(f.filename)
         return redirect(url_for('watermark_after_upload', name=res))
     return render_template('watermark_upload.html')
 
@@ -66,11 +75,9 @@ def upload():
             </SCRIPT>
             '''
         base_path = os.path.dirname(__file__)  # 当前文件所在路径
-        upload_path = os.path.join(base_path, 'static/uploads',
-                                   secure_filename(f.filename))  # 注意：没有的文件夹一定要先创建，不然会提示没有该路径
-
+        upload_path = base_path + './static/uploads/' + f.filename
         # f.save(upload_path)
-        f1 = hua.change(txt, f)
+        f1 = change(txt, f)
         return redirect(url_for('after_upload', name=f1))
     return render_template('upload.html')
 
@@ -86,13 +93,13 @@ def after_upload(name=None):
 def watermark_after_upload(name=None):
     if request.method == 'POST':
         if request.form.get('water'):
-            res = watermark.mark(name)
+            res = mark(name)
             return redirect(url_for('watermark_after_upload', name=res))
         elif request.form.get('sharpen'):
             #  res = sharpen.sharpen(name)
             return redirect(url_for('watermark_upload'))
         elif request.form.get('OCR'):
-            txt = OCR.ocr(name)
+            txt = ocr(name)
             return txt
         else:
             return send_from_directory('./static/result', name, as_attachment=True)
@@ -116,16 +123,8 @@ def exchange():
     if request.method == 'POST':
         aim = request.form['exchange']
         print(request.form['exchange'])
-        log = copy.new_copy(aim)
-        return log + '''<script type="text/javascript">setTimeout("history.go(-1)", 10000);  </script>
-                    <SCRIPT language=javascript>
-                    function go()
-                    {
-                     window.history.go(-1);
-                    }
-                    setTimeout("go()",3000);
-                    </SCRIPT>
-                    '''
+        log = new_copy(aim)
+        return log
         # request.form.
     return render_template('exchange.html')
 
@@ -136,7 +135,7 @@ def reload():
     if request.method == 'POST':
         aim = request.form['reload']
         print(request.form['reload'])
-        log = restart.restart_tomcat(aim)
+        log = restart_tomcat(aim)
         return log + '''<script type="text/javascript">setTimeout("history.go(-1)", 10000);  </script>
                             <SCRIPT language=javascript>
                             function go()
