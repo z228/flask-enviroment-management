@@ -38,7 +38,7 @@ def sharpen(img):
 
 # 读取图片
 def get_file_content(filePath):
-    with open(filePath, 'rb') as fp:
+    with open(_result_path + filePath, 'rb') as fp:
         return fp.read()
 
 
