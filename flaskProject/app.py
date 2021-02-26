@@ -124,7 +124,8 @@ def exchange():
         aim = request.form['exchange']
         print(request.form['exchange'])
         log = new_copy(aim)
-        return log
+        return '''<link rel="shortcut icon" href="{{ url_for('static', 
+        filename='favicon.ico') }}">''' + log
         # request.form.
     return render_template('exchange.html')
 
