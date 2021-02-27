@@ -64,7 +64,7 @@ def clean_jar(path):
 
 def new_copy(v):
     log = '<p>'
-    v = 'Z:/' + v + '/'
+    v = 'X:/' + v + '/'
     path = 'Yonghong Z-Suite/Yonghong'
     tomcat_path = 'Yonghong Z-Suite/tomcat/bin/'
     log += time.strftime("%H:%M:%S", time.localtime()) + '</p><p>'

@@ -1,7 +1,9 @@
+html,
 body {
     width: 100%;
     height: 100%;
     margin: 0;
+    /*background: #2d303a;*/
     /* overflow-y: hidden; */
 }
 
@@ -54,21 +56,10 @@ input[id=file] {
     font-size-adjust: none;
     font-stretch: normal;
     font-weight: normal;
-    margin-top: 0px;
-    margin-bottom: 0px;
-    margin-left: 0px;
-    padding-top: 4px;
-    padding-right: 4px;
-    padding-bottom: 4px;
-    padding-left: 4px;
+    padding: 4px;
     font-size: 15px;
-    outline-width: medium;
-    outline-style: none;
-    outline-color: invert;
-    border-top-left-radius: 3px;
-    border-top-right-radius: 3px;
-    border-bottom-left-radius: 3px;
-    border-bottom-right-radius: 3px;
+    outline: invert none medium;
+    border-radius: 3px;
     text-shadow: 0px 1px 2px #fff;
     background-attachment: scroll;
     background-repeat: repeat-x;
@@ -78,7 +69,7 @@ input[id=file] {
     background-origin: padding-box;
     background-clip: border-box;
     background-color: rgb(255, 255, 255);
-    margin-right: 8px;
+    margin: 0px 8px 0px 0px;
     border-top-color: #ccc;
     border-right-color: #ccc;
     border-bottom-color: #ccc;
@@ -91,6 +82,39 @@ input[id=file] {
     border-right-style: solid;
     border-bottom-style: solid;
     border-left-style: solid;
+}
+
+.button.blue {
+    border: 1px solid #1e7db9;
+    box-shadow: 0 1px 2px #8fcaee inset, 0 -1px 0 #497897 inset, 0 -2px 3px #8fcaee inset;
+    background: -webkit-linear-gradient(top, #42a4e0, #2e88c0);
+    background: -moz-linear-gradient(top, #42a4e0, #2e88c0);
+    background: linear-gradient(top, #42a4e0, #2e88c0);
+}
+
+.side:after {
+    position: absolute;
+    display: inline-block;
+    content: "\00bb";
+    top: 3px;
+    right: -4px;
+    width: 38px;
+    height: 30px;
+    font-weight: normal;
+    line-height: 26px;
+    border-radius: 0 0 5px 5px;
+    text-shadow: -2px 0 1px #333;
+    -webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+}
+
+.blue.side:after {
+    border-top: 1px solid #1971a8;
+    box-shadow: -2px 0 1px #559dca inset;
+    background: -webkit-linear-gradient(right, #2482bd, #3fa2e0 60%);
+    background: -moz-linear-gradient(right, #2482bd, #3fa2e0 60%);
+    background: linear-gradient(right, #2482bd, #3fa2e0 60%);
 }
 
 .bounce {
@@ -107,6 +131,63 @@ input[id=file] {
 
 .exa {
     /*{#width: 100%;#} */
-    height: 400px;
+    height: 600px;
     object-fit: cover;
+}
+
+.new {
+    background: #2d303a;
+    border: none;
+    color: #fff;
+}
+
+.bounce {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    color: white;
+    height: 100%;
+    font: normal bold 6rem "Product Sans", sans-serif;
+    white-space: nowrap;
+    /* 文本不换行 */
+}
+
+.letter {
+    animation: bounce 0.75s cubic-bezier(0.05, 0, 0.2, 1) infinite alternate;
+    display: inline-block;
+    transform: translate3d(0, 0, 0);
+    margin-top: 0.5em;
+    text-shadow: rgba(255, 255, 255, 0.4) 0 0 0.05em;
+    font: normal 500 6rem 'Varela Round', sans-serif;
+}
+
+.letter:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.letter:nth-child(2) {
+    animation-delay: 0.0833333333s;
+}
+
+.letter:nth-child(3) {
+    animation-delay: 0.1666666667s;
+}
+
+.letter:nth-child(4) {
+    animation-delay: 0.25s;
+}
+
+@keyframes bounce {
+    0% {
+        transform: translate3d(0, 0, 0);
+        text-shadow: rgba(255, 255, 255, 0.4) 0 0 0.05em;
+    }
+    100% {
+        transform: translate3d(0, -1em, 0);
+        text-shadow: rgba(255, 255, 255, 0.9) 0 1em 0.35em;
+    }
+}
+a {
+    text-decoration: none
 }

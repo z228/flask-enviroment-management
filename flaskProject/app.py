@@ -1,7 +1,6 @@
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory
-from werkzeug.utils import secure_filename
-from Image_feature import *
-from product import *
+from image_operate import *
+from productJar_operate import *
+from flask import Flask, send_from_directory
 from datetime import timedelta
 from config import APSchedulerJobConfig
 from flask_apscheduler import APScheduler
@@ -9,9 +8,13 @@ from flask_bootstrap import Bootstrap
 
 # clean.static_clean() #清理资源文件夹
 app = Flask(__name__)
+app.register_blueprint(image_operate, url_prefix='/image')
+app.register_blueprint(productJar_operate, url_prefix='/productJar')
+app.debug = True
 bootstrap = Bootstrap(app)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = timedelta(seconds=1)
 app.config.from_object(APSchedulerJobConfig())
+
 scheduler = APScheduler()  # 实例化APScheduler
 scheduler.init_app(app)  # 把任务列表载入实例flask
 scheduler.start()  # 启动任务计划
@@ -27,126 +30,7 @@ def favicon():
 # 主页面
 @app.route('/', methods=['POST', 'GET'])
 def hello_world():
-    if request.method == 'POST':
-        return redirect(url_for('choose'))
     return render_template('index.html')
-
-
-# 去水印图片上传页面
-@app.route('/watermark_upload', methods=['POST', 'GET'])
-def watermark_upload():
-    if request.method == 'POST':
-        f = request.files['file']
-        base_path = os.path.dirname(__file__)  # 当前文件所在路径
-        upload_path = base_path + './static/uploads/' + f.filename
-        # 注意：没有的文件夹一定要先创建，不然会提示没有该路径
-        f.save(upload_path)
-        res = mark(f.filename)
-        return redirect(url_for('watermark_after_upload', name=res))
-    return render_template('watermark_upload.html')
-
-
-# 选择功能页面
-@app.route('/choose', methods=['POST', 'GET'])
-def choose():
-    if request.method == 'POST':
-        if request.form.get('string'):
-            return redirect(url_for('upload'))
-        elif request.form.get('water'):
-            return redirect(url_for('watermark_upload'))
-    return render_template('choose.html')
-
-
-# 图片上传
-@app.route('/upload', methods=['POST', 'GET'])
-def upload():
-    if request.method == 'POST':
-        f = request.files['file']
-        txt = request.form.get('txt')
-        if txt == '':
-            return '''<h1 >请输入填充字符!</h1> 
-            <script type="text/javascript">setTimeout("history.go(-1)", 3000);  </script>
-            <SCRIPT language=javascript>
-            function go()
-            {
-             window.history.go(-1);
-            }
-            setTimeout("go()",3000);
-            </SCRIPT>
-            '''
-        base_path = os.path.dirname(__file__)  # 当前文件所在路径
-        upload_path = base_path + './static/uploads/' + f.filename
-        # f.save(upload_path)
-        f1 = change(txt, f)
-        return redirect(url_for('after_upload', name=f1))
-    return render_template('upload.html')
-
-
-@app.route('/after_upload/<name>', methods=['POST', 'GET'])
-def after_upload(name=None):
-    if request.method == 'POST':
-        return send_from_directory('./static/result', name, as_attachment=True)
-    return render_template('after_upload.html', name=name)
-
-
-@app.route('/watermark_after_upload/<name>', methods=['POST', 'GET'])
-def watermark_after_upload(name=None):
-    if request.method == 'POST':
-        if request.form.get('water'):
-            res = mark(name)
-            return redirect(url_for('watermark_after_upload', name=res))
-        elif request.form.get('sharpen'):
-            #  res = sharpen.sharpen(name)
-            return redirect(url_for('watermark_upload'))
-        elif request.form.get('OCR'):
-            txt = ocr(name)
-            return txt
-        else:
-            return send_from_directory('./static/result', name, as_attachment=True)
-    return render_template('watermark_after_upload.html', name=name)
-
-
-# 产品jar功能页面
-@app.route('/product', methods=['POST', 'GET'])
-def product():
-    if request.method == 'POST':
-        if request.form.get('exchange'):
-            return redirect(url_for('exchange'))
-        elif request.form.get('reload'):
-            return redirect(url_for('reload'))
-    return render_template('product.html')
-
-
-# 更换jar功能页面
-@app.route('/exchange', methods=['POST', 'GET'])
-def exchange():
-    if request.method == 'POST':
-        aim = request.form['exchange']
-        print(request.form['exchange'])
-        log = new_copy(aim)
-        return '''<link rel="shortcut icon" href="{{ url_for('static', 
-        filename='favicon.ico') }}">''' + log
-        # request.form.
-    return render_template('exchange.html')
-
-
-# 重启服务功能页面
-@app.route('/reload', methods=['POST', 'GET'])
-def reload():
-    if request.method == 'POST':
-        aim = request.form['reload']
-        print(request.form['reload'])
-        log = restart_tomcat(aim)
-        return log + '''<script type="text/javascript">setTimeout("history.go(-1)", 10000);  </script>
-                            <SCRIPT language=javascript>
-                            function go()
-                            {
-                             window.history.go(-1);
-                            }
-                            setTimeout("go()",3000);
-                            </SCRIPT>
-                            '''
-    return render_template('reload.html')
 
 
 if __name__ == '__main__':

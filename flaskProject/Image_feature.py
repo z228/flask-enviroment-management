@@ -7,7 +7,7 @@ import os
 from aip import AipOcr
 
 _uploads_path = './static/uploads/'
-_result_path = './static/result/'
+_result_path = 'static/results/'
 
 
 def mark(image):
@@ -20,7 +20,7 @@ def mark(image):
     elif os.path.exists(_r):
         img = cv2.imread(_r)
     new = np.clip(2.0 * img - 160, 0, 255).astype(np.uint8)
-    save_name = strftime('water%Y-%m-%d %H%M%S', localtime(time())) + '.png'
+    save_name = strftime('water%Y-%m-%d_%H%M%S', localtime(time())) + '.png'
     cv2.imwrite(_result_path + save_name, new)
     return save_name
 
@@ -31,15 +31,21 @@ def sharpen(img):
     # 使用 sharp filter
     sharpened1 = image_object.filter(ImageFilter.SHARPEN)
 
-    save_name = strftime('sharpen%Y-%m-%d %H%M%S', localtime(time())) + '.png'
+    save_name = strftime('sharpen%Y-%m-%d_%H%M%S', localtime(time())) + '.png'
     sharpened1.save(_result_path + save_name, 'PNG')
     return save_name
 
 
 # 读取图片
-def get_file_content(filePath):
-    with open(_result_path + filePath, 'rb') as fp:
-        return fp.read()
+def get_file_content(filename):
+    _u = _uploads_path + filename
+    _r = _result_path + filename
+    if os.path.exists(_u):
+        with open(_u, 'rb') as fp:
+            return fp.read()
+    elif os.path.exists(_r):
+        with open(_r, 'rb') as fp:
+            return fp.read()
 
 
 # 调用通用文字识别接口
@@ -78,6 +84,6 @@ def change(txt, from_file):
             draw.text((j, i), str(txt[x % len(txt)]), fill=(a, b, c), font=font)
             x += 1
             del draw
-    save_name = strftime('hua%Y-%m-%d %H%M%S', localtime(time())) + '.png'
+    save_name = strftime('hua%Y-%m-%d_%H%M%S', localtime(time())) + '.png'
     new_img.save(_result_path + save_name, 'PNG')
     return save_name

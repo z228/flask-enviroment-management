@@ -4,70 +4,11 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <meta charset="UTF-8">
     <title>去水印结果下载</title>
-    <style>
-        body {
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            background: #2d303a;
-            /* overflow-y: hidden; */
-        }
-
-        .button {
-            width: 140px;
-            line-height: 38px;
-            text-align: center;
-            font-weight: bold;
-            color: #fff;
-            text-shadow: 1px 1px 1px #333;
-            border-radius: 5px;
-            margin: 0 20px 20px 0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .button.blue {
-            border: 1px solid #1e7db9;
-            box-shadow: 0 1px 2px #8fcaee inset, 0 -1px 0 #497897 inset, 0 -2px 3px #8fcaee inset;
-            background: -webkit-linear-gradient(top, #42a4e0, #2e88c0);
-            background: -moz-linear-gradient(top, #42a4e0, #2e88c0);
-            background: linear-gradient(top, #42a4e0, #2e88c0);
-        }
-
-        .side:after {
-            position: absolute;
-            display: inline-block;
-            content: "\00bb";
-            top: 3px;
-            right: -4px;
-            width: 38px;
-            height: 30px;
-            font-weight: normal;
-            line-height: 26px;
-            border-radius: 0 0 5px 5px;
-            text-shadow: -2px 0 1px #333;
-            -webkit-transform: rotate(-90deg);
-            -moz-transform: rotate(-90deg);
-            transform: rotate(-90deg);
-        }
-
-        .blue.side:after {
-            border-top: 1px solid #1971a8;
-            box-shadow: -2px 0 1px #559dca inset;
-            background: -webkit-linear-gradient(right, #2482bd, #3fa2e0 60%);
-            background: -moz-linear-gradient(right, #2482bd, #3fa2e0 60%);
-            background: linear-gradient(right, #2482bd, #3fa2e0 60%);
-        }
-
-        .exa {
-        {#width: 100%;#} height: 600px;
-            object-fit: cover;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/jump.css') }}">
 </head>
-<body>
+<body style=" background: #2d303a">
 <div style="text-align: center">
-    <img src="../static/result/{{ name }}" alt="" class="exa">
+    <img src="{{ url_for('static',filename='results/'+name) }}" alt="" class="exa">
     <div>
         <form>
             <input type="submit" name="water" value="加大力度" class="button blue side" formmethod="post">

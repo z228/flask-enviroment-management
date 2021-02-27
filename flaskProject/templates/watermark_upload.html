@@ -8,11 +8,12 @@
 </head>
 <script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
 <body>
-<div style="margin-left:10px;">
+<div style=" width: 50%;float: left">
     <form action="" enctype='multipart/form-data' method='POST'>
         <label for="file" class="but">上传图片</label><br/>
         <input type="file" id="file" name="file"><br/>
-        <input type="submit" value="去水印" class="button red"><br/>
+        <input type="submit" name="water" value="去水印" class="button red">
+        <input type="submit" name="ocr" value="读取文字" class="button red"><br/>
         {#    请上传要转换的图片#}
         {#    <input type="file" name="file" ><br/>#}
         {#    <input type="submit" value="转换">#}
@@ -37,6 +38,10 @@
         </script>
 
     </form>
+
+</div>
+<div style="width: 50%;float: right">
+    <a href="{{ url_for('image.upload') }}" class="but button red">我要去画字符画</a>
 </div>
 </body>
 </html>
