@@ -2,14 +2,15 @@ import os
 import time
 from shutil import copy2, rmtree
 import filecmp
-from_path = ['Z:/v8.6/', 'Z:/v8.8/', 'Z:/v9.0/', 'Z:/v9.1/', 'Z:/v9.2/', 'Z:/develop/']
+ip = r'\\192.168.0.141\productJar/'
+from_path = [ip+'v8.6/', ip+'v8.8/', ip+'v9.0/', ip+'v9.1/', ip+'v9.2/', ip+'develop/']
 to_path = ['D:/old version/8.6/', 'D:/old version/8.8/', 'D:/old version/9.0/', 'D:/old version/9.1/',
            'D:/old version/9.2/', 'C:/']
 
 
 def restart_tomcat(space):
     path = 'Yonghong Z-Suite/tomcat/bin'
-    space = 'Z:/' + space + '/'
+    space = ip + space + '/'
     index = from_path.index(space)
     # os.system("taskkill /F /IM java.exe")
     work_dir = to_path[index] + path
@@ -64,7 +65,7 @@ def clean_jar(path):
 
 def new_copy(v):
     log = '<p>'
-    v = 'X:/' + v + '/'
+    v = ip + v + '/'
     path = 'Yonghong Z-Suite/Yonghong'
     tomcat_path = 'Yonghong Z-Suite/tomcat/bin/'
     log += time.strftime("%H:%M:%S", time.localtime()) + '</p><p>'
