@@ -2,10 +2,10 @@ import os
 import time
 from shutil import copy2, rmtree
 import filecmp
-ip = r'\\192.168.0.141\productJar/'
-from_path = [ip+'v8.6/', ip+'v8.8/', ip+'v9.0/', ip+'v9.1/', ip+'v9.2/', ip+'develop/']
+ip = '\\\\192.168.0.141/productJar/'
+from_path = [ip+'v8.6/', ip+'v8.8/', ip+'v9.0/', ip+'v9.1/', ip+'v9.2/',ip+'v9.2.1/', ip+'develop/']
 to_path = ['D:/old version/8.6/', 'D:/old version/8.8/', 'D:/old version/9.0/', 'D:/old version/9.1/',
-           'D:/old version/9.2/', 'C:/']
+           'D:/old version/9.2/','D:/old version/9.2.1/', 'C:/']
 
 
 def restart_tomcat(space):

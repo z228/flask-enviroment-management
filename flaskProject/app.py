@@ -28,7 +28,7 @@ def favicon():
 
 
 # 主页面
-@app.route('/', methods=['POST', 'GET'])
+@app.route('/index', methods=['POST', 'GET'])
 def hello_world():
     return render_template('index.html')
 

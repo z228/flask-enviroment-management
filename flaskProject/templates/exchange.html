@@ -7,12 +7,16 @@
     <title>更换JAR</title>
 </head>
 <body class="bounce">
+    <a href="{{ url_for('productJar.product') }}">
+        <input type="submit" value="返回" class="button red" style="float: left;">
+    </a>
 <form>
     <input type="submit" name="exchange" value="v8.6" class="button red" formmethod="post">
     <input type="submit" name="exchange" value="v8.8" class="button red" formmethod="post">
     <input type="submit" name="exchange" value="v9.0" class="button red" formmethod="post">
     <input type="submit" name="exchange" value="v9.1" class="button red" formmethod="post">
     <input type="submit" name="exchange" value="v9.2" class="button red" formmethod="post">
+    <input type="submit" name="exchange" value="v9.2.1" class="button red" formmethod="post">
     <input type="submit" name="exchange" value="develop" class="button red" formmethod="post">
 </form>
 </body>

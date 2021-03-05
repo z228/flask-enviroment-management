@@ -5,7 +5,7 @@ productJar_operate = Blueprint('productJar', __name__)
 
 
 # 产品jar功能页面
-@productJar_operate.route('', methods=['POST', 'GET'])
+@productJar_operate.route('/', methods=['POST', 'GET'])
 def product():
     return render_template('product.html')
 
