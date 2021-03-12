@@ -33,7 +33,7 @@ def copy_Jar(from_path_in, to_path_in):
                 if path0[-2:] == '01':
                     if str(eval(path0[-4:-2]) - 1) in day_31:
                         path0 = path0[0:4] + str(eval(path0[-4:-2]) - 1) + '31'
-                    elif str(eval(path0[-4:-2]) - 1)=='02':
+                    elif str(eval(path0[-4:-2]) - 1) == '02':
                         path0 = path0[0:4] + str(eval(path0[-4:-2]) - 1) + '28'
                     else:
                         path0 = path0[0:4] + str(eval(path0[-4:-2]) - 1) + '30'
@@ -41,6 +41,7 @@ def copy_Jar(from_path_in, to_path_in):
                     path0 = str(eval(path0) - 1)
             else:
                 break
+        log += path0 + '</p><p>'
         backup_path = to_path_in + '/backup_product'
         path = from_path_in + path0
         dirs = os.listdir(path)
