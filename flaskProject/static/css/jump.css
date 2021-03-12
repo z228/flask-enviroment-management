@@ -37,6 +37,8 @@ input[id=file] {
     margin: 0 20px 20px 0;
     position: relative;
     overflow: hidden;
+    white-space: nowrap;
+    /* 文本不换行 */
 }
 
 .button.red {
@@ -125,8 +127,7 @@ input[id=file] {
     color: white;
     height: 100%;
     font: normal bold 6rem "Product Sans", sans-serif;
-    white-space: nowrap;
-    /* 文本不换行 */
+    
 }
 
 .exa {

@@ -2,10 +2,12 @@ import os
 import time
 from shutil import copy2, rmtree
 import filecmp
+
 ip = '\\\\192.168.0.141/productJar/'
-from_path = [ip+'v8.6/', ip+'v8.8/', ip+'v9.0/', ip+'v9.1/', ip+'v9.2/',ip+'v9.2.1/', ip+'develop/']
+from_path = [ip + 'v8.6/', ip + 'v8.8/', ip + 'v9.0/', ip + 'v9.1/', ip + 'v9.2/', ip + 'v9.2.1/', ip + 'develop/']
 to_path = ['D:/old version/8.6/', 'D:/old version/8.8/', 'D:/old version/9.0/', 'D:/old version/9.1/',
-           'D:/old version/9.2/','D:/old version/9.2.1/', 'C:/']
+           'D:/old version/9.2/', 'D:/old version/9.2.1/', 'C:/']
+day_31 = ['01', '03', '05', '07', '08', '10', '12']
 
 
 def restart_tomcat(space):
@@ -25,6 +27,20 @@ def copy_Jar(from_path_in, to_path_in):
     log = ''
     try:
         path0 = time.strftime("%Y%m%d", time.localtime())
+        # 检测是否有当天的新Jar，否则往前推一天
+        while 1:
+            if not os.path.exists(from_path_in + path0):
+                if path0[-2:] == '01':
+                    if str(eval(path0[-4:-2]) - 1) in day_31:
+                        path0 = path0[0:4] + str(eval(path0[-4:-2]) - 1) + '31'
+                    elif str(eval(path0[-4:-2]) - 1)=='02':
+                        path0 = path0[0:4] + str(eval(path0[-4:-2]) - 1) + '28'
+                    else:
+                        path0 = path0[0:4] + str(eval(path0[-4:-2]) - 1) + '30'
+                else:
+                    path0 = str(eval(path0) - 1)
+            else:
+                break
         backup_path = to_path_in + '/backup_product'
         path = from_path_in + path0
         dirs = os.listdir(path)
