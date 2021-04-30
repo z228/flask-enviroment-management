@@ -30,15 +30,8 @@ def reload():
         aim = request.form['reload']
         print(request.form['reload'])
         log = restart_tomcat(aim)
-        return log + '''<script type="text/javascript">setTimeout("history.go(-1)", 10000);  </script>
-                            <SCRIPT language=javascript>
-                            function go()
-                            {
-                             window.history.go(-1);
-                            }
-                            setTimeout("go()",3000);
-                            </SCRIPT>
-                            '''
+        return '''<link rel="shortcut icon" href="{{ url_for('static', 
+        filename='favicon.ico') }}">''' + log
     return render_template('reload.html')
 
 # 备份功能
