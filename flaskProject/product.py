@@ -3,15 +3,30 @@ import time
 from shutil import copy2, rmtree
 import filecmp
 import socket
+from task import clean_jar
+import json
 
+host_ip = '127.0.0.1'
 ip = '\\\\192.168.0.141/productJar/'
 # ip = '\\\\192.168.1.134/git-package/'
-from_path = [ip + 'v8.6/', ip + 'v8.8/', ip + 'v9.0/', ip +
-             'v9.1/', ip + 'v9.2/', ip + 'v9.2.1/', ip + 'develop/']
-to_path = ['D:/old_version/8.6/', 'D:/old_version/8.8/', 'D:/old_version/9.0/', 'D:/old_version/9.1/',
-           'D:/old_version/9.2/', 'D:/old_version/9.2.1/', 'C:/']
+from_path = []
+to_path = []
 day_31 = ['02', '04', '06', '08', '09', '11']
-port = ['8086', '', '8090', '8091', '8092', '8921', '8080']
+port = []
+ubuntu_path = []
+
+#读取配置文件
+with open('properties.json', 'r', encoding='utf-8') as properties:
+    property_dict = json.load(properties)
+    for i in property_dict["version"].keys():
+        from_path.append(f'{ip}{i}/')
+        to_path.append(property_dict["version"][i][0])
+        port.append(property_dict["version"][i][1])
+        ubuntu_path.append(property_dict["version"][i][2])
+
+    root_path = property_dict["mid_path"]
+YongHong_path = f'{root_path}/Yonghong'
+tomcat_path = f'{root_path}/tomcat/bin/'
 
 
 def is_port_used(ip, port):
@@ -33,40 +48,65 @@ def is_port_used(ip, port):
         s.close()
 
 
-def restart_tomcat(v):
-    host_ip = '127.0.0.1'
-    version = v
-    log = '<p>'
-    v = ip + v + '/'
-    path = 'Yonghong_Z-Suite/Yonghong'
-    tomcat_path = 'Yonghong_Z-Suite/tomcat/bin/'
-    log += time.strftime("%H:%M:%S", time.localtime()) + '</p><p>'
-    index = from_path.index(v)
-    # print('清理备份的jar')
-    # log += '清理备份的jar' + '</p><p>'
-    # clean_jar(to_path[index] + path)
-    host_port = eval(port[index])
+def current_time():
+    return time.strftime("%H:%M:%S", time.localtime())
 
-    work_dir = to_path[index]+tomcat_path
+
+def restart_tomcat(v):
+    version = v
+    log = f'{current_time}<p>'
+    v = ip + v + '/'
+    log += f'{current_time()}</p><p>'
+    index = from_path.index(v)
+    host_port = eval(port[index])
+    work_dir = to_path[index] + tomcat_path
+    log += shut_tomcat(work_dir, host_port)
+    log += start_tomcat(work_dir, host_port)
+    return f'{log}</p><p>检查完毕</p>'
+
+
+# 停止tomcat
+def shut_tomcat(work_dir, host_port):
+    """
+    :param work_dir: tomcat工作目录
+    :param host_ip: ip地址
+    :param host_port: 端口
+    :return:
+    """
     os.chdir(work_dir)
-    # 判断tomcat是否是启动状态
-    if(is_port_used(host_ip, host_port)):
+    if (is_port_used(host_ip, host_port)):
         os.system('shutdown')
-        log += '停止tomcat服务' + '</p><p>'
+        return '停止tomcat服务</p><p>'
     else:
-        log += 'tomcat服务未启动' + '</p><p>'
-    log += copy_Jar(from_path[index], to_path[index] + path,version)
+        return 'tomcat服务未启动</p><p>'
+
+
+def start_tomcat(work_dir, host_port):
+    """
+    :param work_dir: tomcat工作目录
+    :param host_ip: ip地址
+    :param host_port: 端口
+    :return:
+    """
+    os.chdir(work_dir)
     for i in range(100):
-        if(is_port_used(host_ip, host_port)):
+        if (is_port_used(host_ip, host_port)):
+            print('tomcat正在停止中')
             time.sleep(10)
         else:
             os.system('startup')
             break
-    log += '重启tomcat服务成功' + '</p><p>'
-    return log + '</p><p>检查完毕</p>'
+    return '启动tomcat服务成功</p><p></p>'
 
 
-def copy_Jar(from_path_in, to_path_in, version):
+def copy_Jar(from_path_in, to_path_in, version, index):
+    """
+    :param
+    from_path_in:源路径
+    to_path_in：目标路径
+    version：版本号
+    index：列表中下标
+    """
     log = ''
     flag = 0
     try:
@@ -105,42 +145,45 @@ def copy_Jar(from_path_in, to_path_in, version):
             from_file = path + "/" + file_name
             to_file = to_path_in + "/product/" + file_name
             backup_file = backup_path + "/" + file_name
+            ubuntu_file = ubuntu_path[index] + '/' + file_name
             try:
                 if not filecmp.cmp(from_file, to_file):
                     log += version + "有新的" + file_name + '</p><p>'
                     print(version + "有新的" + file_name, end='...')
-                    copy2(to_file, backup_file)
+                    # copy2(to_file, backup_file)
                     copy2(from_file, to_file)
-                    log += "更新完毕,时间：" + \
-                        time.strftime("%H:%M:%S", time.localtime()) + '</p><p>'
-                    print("更新完毕,时间：", time.strftime(
-                        "%H:%M:%S", time.localtime()))
+                    copy2(from_file, ubuntu_file)
+                    log += f"更新完毕,时间：{current_time()}</p><p>"
+                    print(f"更新完毕,时间：{current_time()}")
                     flag = 1
             except PermissionError:
-                log += path + "下" + file_name + "正在被占用，请稍等...time:" + time.strftime("%H:%M:%S",
-                                                                                    time.localtime()) + '</p><p>'
-                print(path + "下", file_name, "正在被占用，请稍等...time:" +
-                      time.strftime("%H:%M:%S", time.localtime()))
+                log += f"{path}下{file_name}正在被占用，请稍等...time{current_time()}</p><p>"
+                print(f"{path}下{file_name}正在被占用，请稍等...time{current_time()}")
         # if flag == 1:
-            # clean_jar(to_path_in)
+        # clean_jar(to_path_in)
     except FileNotFoundError as err:
-        log += '\nfile error:{0}'.format(err) + '</p><p>'
-        print('\nfile error:{0}'.format(err))
+        log += f'\nfile error:{err}</p><p>'
+        print(f'\nfile error:{err}')
     return log
 
 
-
-
-
 def new_copy(v):
+    """
+    :param v: 版本号 vdevelop
+    :return:
+    """
     log = '<p>'
     v = ip + v + '/'
-    path = 'Yonghong_Z-Suite/Yonghong'
-    tomcat_path = 'Yonghong_Z-Suite/tomcat/bin/'
-    log += time.strftime("%H:%M:%S", time.localtime()) + '</p><p>'
+    log += f'{current_time()}</p><p>'
     index = from_path.index(v)
     print('清理备份的jar')
-    log += '清理备份的jar' + '</p><p>'
-    clean_jar(to_path[index] + path)
-    log += copy_Jar(from_path[index], to_path[index] + path, v)
-    return log + '</p><p>检查完毕</p>'
+    log += '清理备份的jar</p><p>'
+    # clean_jar(to_path[index] + path)
+    work_dir = to_path[index] + tomcat_path
+    host_port = eval(port[index])
+    os.chdir(work_dir)
+    # 先关闭tomcat，然后换JAR，再启动tomcat
+    log += shut_tomcat(work_dir, host_port)
+    log += copy_Jar(from_path[index], to_path[index] + YongHong_path, v, index)
+    log += start_tomcat(work_dir, host_port)
+    return f'{log}</p><p>检查完毕</p>'

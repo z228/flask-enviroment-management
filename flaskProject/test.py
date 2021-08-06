@@ -3,11 +3,11 @@ import shutil
 import time
 
 path = {
-    'back_up_folder_name': r'C:\Yonghong_Z-Suite\Yonghong',
+    'back_up_folder_name': r'D:\old_version\trunk\Yonghong_Z-Suite\Yonghong',
     'junit': r'D:\\SVN\\trunk\\test\\assetExecute\\work\\DBPainter',
     'UiAuto': r'D:\\SVN\trunk\test\YHAuto\\TestData\\DB\\Common'
 }
-bi_home = r'C:\\Yonghong_Z-Suite\\Yonghong\bihome'
+bi_home = r'D:\old_version\trunk\\Yonghong_Z-Suite\\Yonghong\bihome'
 back_up_folder_name = r'C:\\Yonghong_Z-Suite\\Yonghong\\' + 'bihome_' + time.strftime("%Y_%m_%d", time.localtime())
 
 

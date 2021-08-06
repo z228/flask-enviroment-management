@@ -1,6 +1,7 @@
 from flask import Blueprint, request, redirect, render_template, url_for
 from product import *
 import test
+
 productJar_operate = Blueprint('productJar', __name__)
 
 
@@ -18,7 +19,14 @@ def exchange():
         print(request.form['exchange'])
         log = new_copy(aim)
         return '''<link rel="shortcut icon" href="{{ url_for('static', 
-        filename='favicon.ico') }}">''' + log
+        filename='favicon.ico') }}">''' + log+'''<script type="text/javascript">setTimeout("history.go(-1)", 3000);  </script>
+            <SCRIPT language=javascript>
+            function go()
+            {
+             window.history.go(-1);
+            }
+            setTimeout("go()",3000);
+            </SCRIPT>'''
         # request.form.
     return render_template('exchange.html')
 
@@ -31,8 +39,16 @@ def reload():
         print(request.form['reload'])
         log = restart_tomcat(aim)
         return '''<link rel="shortcut icon" href="{{ url_for('static', 
-        filename='favicon.ico') }}">''' + log
+        filename='favicon.ico') }}">''' + log+'''<script type="text/javascript">setTimeout("history.go(-1)", 3000);  </script>
+            <SCRIPT language=javascript>
+            function go()
+            {
+             window.history.go(-1);
+            }
+            setTimeout("go()",3000);
+            </SCRIPT>'''
     return render_template('reload.html')
+
 
 # 备份功能
 @productJar_operate.route('/backup', methods=['POST', 'GET'])
@@ -40,8 +56,8 @@ def backup():
     if request.method == 'POST':
         aim = request.form['backup']
         print(request.form['backup'])
-        if aim=='还原':
-            flag =test.revert_bi_home()
+        if aim == '还原':
+            flag = test.revert_bi_home()
         else:
             flag = test.copy_db_to_bi_home(test.path[aim])
         if flag:

@@ -1,14 +1,20 @@
 import os
 import product
+import shutil
 
 to_path = ['D:/old_version/8.6/', 'D:/old_version/8.8/', 'D:/old_version/9.0/', 'D:/old_version/9.1/',
-           'D:/old_version/9.2/', 'D:/old_version/9.2.1/', 'C:/']
+           'D:/old_version/9.2/', 'D:/old_version/9.2.1/', 'D:/old_version/9.3/', 'D:/old_version/trunk/']
 path = 'Yonghong_Z-Suite/Yonghong'
+
 
 def clean_jar():
     for i in to_path:
         back_path = i + path + '/backup_product'
-        rmtree(back_path)
+        if os.path.exists(back_path):
+            shutil.rmtree(back_path)
+        else:
+            continue
+
 
 def static_clean():
     print('clean---')
@@ -18,6 +24,7 @@ def static_clean():
     for f in os.listdir('./static/uploads'):
         print('删除文件' + f)
         os.remove('./static/uploads/' + f)
+
 
 def Jacoco_change_Jar():
     product.restart_tomcat('develop')

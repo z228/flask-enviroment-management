@@ -1,5 +1,5 @@
-from image_operate import *
-from productJar_operate import *
+from image_router import *
+from productJar_router import *
 from flask import Flask, send_from_directory
 from datetime import timedelta
 from config import APSchedulerJobConfig
