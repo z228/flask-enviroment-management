@@ -15,7 +15,12 @@ day_31 = ['02', '04', '06', '08', '09', '11']
 port = []
 ubuntu_path = []
 
-#读取配置文件
+
+def succ(data):
+    return json.dumps({"code": 200, "data": data})
+
+
+# 读取配置文件
 with open('properties.json', 'r', encoding='utf-8') as properties:
     property_dict = json.load(properties)
     for i in property_dict["version"].keys():

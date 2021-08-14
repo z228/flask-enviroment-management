@@ -1,6 +1,7 @@
 from image_router import *
 from productJar_router import *
 from flask import Flask, send_from_directory
+from flask_cors import CORS
 from datetime import timedelta
 from config import APSchedulerJobConfig
 from flask_apscheduler import APScheduler
@@ -14,7 +15,7 @@ app.debug = True
 bootstrap = Bootstrap(app)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = timedelta(seconds=1)
 app.config.from_object(APSchedulerJobConfig())
-
+CORS(app)
 scheduler = APScheduler()  # 实例化APScheduler
 scheduler.init_app(app)  # 把任务列表载入实例flask
 scheduler.start()  # 启动任务计划

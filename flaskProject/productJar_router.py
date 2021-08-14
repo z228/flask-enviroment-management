@@ -11,6 +11,16 @@ def product():
     return render_template('product.html')
 
 
+# 获取所有版本号
+@productJar_operate.route('/all', methods=['GET'])
+def get_all_version():
+    with open('properties.json', 'r', encoding='utf-8') as version:
+        v = json.load(version)['version']
+        for key in v.keys():
+            v[key] = v[key][0]
+        return succ(v)
+
+
 # 更换jar功能页面
 @productJar_operate.route('/exchange', methods=['POST', 'GET'])
 def exchange():
@@ -19,7 +29,7 @@ def exchange():
         print(request.form['exchange'])
         log = new_copy(aim)
         return '''<link rel="shortcut icon" href="{{ url_for('static', 
-        filename='favicon.ico') }}">''' + log+'''<script type="text/javascript">setTimeout("history.go(-1)", 3000);  </script>
+        filename='favicon.ico') }}">''' + log + '''<script type="text/javascript">setTimeout("history.go(-1)", 3000);  </script>
             <SCRIPT language=javascript>
             function go()
             {
@@ -39,7 +49,7 @@ def reload():
         print(request.form['reload'])
         log = restart_tomcat(aim)
         return '''<link rel="shortcut icon" href="{{ url_for('static', 
-        filename='favicon.ico') }}">''' + log+'''<script type="text/javascript">setTimeout("history.go(-1)", 3000);  </script>
+        filename='favicon.ico') }}">''' + log + '''<script type="text/javascript">setTimeout("history.go(-1)", 3000);  </script>
             <SCRIPT language=javascript>
             function go()
             {

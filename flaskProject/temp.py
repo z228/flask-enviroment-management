@@ -1,3 +1,7 @@
-test_str = '20210106'
-str2 = str(eval(test_str[5:6]) - 1)+test_str[-2:]
-print(str2)
+import json
+
+with open('properties.json', 'r', encoding='utf-8') as version:
+    V = json.load(version)['version']
+    for key in V.keys():
+        V[key]= V[key][0]
+    print(V)
