@@ -8,7 +8,7 @@ import json
 
 host_ip = '127.0.0.1'
 ip = '\\\\192.168.0.141/productJar/'
-# ip = '\\\\192.168.1.134/git-package/'
+ip_134 = '\\\\192.168.1.134/git-package/'
 from_path = []
 to_path = []
 day_31 = ['02', '04', '06', '08', '09', '11']
@@ -23,29 +23,31 @@ def succ(data):
 # 读取配置文件
 with open('properties.json', 'r', encoding='utf-8') as properties:
     property_dict = json.load(properties)
+    config = property_dict['version']
     for i in property_dict["version"].keys():
-        from_path.append(f'{ip}{i}/')
-        to_path.append(property_dict["version"][i][0])
-        port.append(property_dict["version"][i][1])
-        ubuntu_path.append(property_dict["version"][i][2])
+        pass
+        # from_path.append(f'{ip}{i}/')
+        # to_path.append(property_dict["version"][i][0])
+        # port.append(property_dict["version"][i][1])
+        # ubuntu_path.append(property_dict["version"][i][2])
 
     root_path = property_dict["mid_path"]
 YongHong_path = f'{root_path}/Yonghong'
 tomcat_path = f'{root_path}/tomcat/bin/'
 
 
-def is_port_used(ip, port):
+def is_port_used(c_ip, c_port):
     """
     check whether the port is used by other program
     检测端口是否被占用
 
-    :param ip:
-    :param port:
+    :param c_ip:
+    :param c_port:
     :return:
     """
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
-        s.connect((ip, port))
+        s.connect((c_ip, c_port))
         return True
     except OSError:
         return False
@@ -58,53 +60,44 @@ def current_time():
 
 
 def restart_tomcat(v):
-    version = v
     log = f'{current_time}<p>'
-    v = ip + v + '/'
-    log += f'{current_time()}</p><p>'
-    index = from_path.index(v)
-    host_port = eval(port[index])
-    work_dir = to_path[index] + tomcat_path
-    log += shut_tomcat(work_dir, host_port)
-    log += start_tomcat(work_dir, host_port)
-    return f'{log}</p><p>检查完毕</p>'
+    log += shut_tomcat(v)
+    log += start_tomcat(v)
+    return f'重启成功！'
 
 
 # 停止tomcat
-def shut_tomcat(work_dir, host_port):
-    """
-    :param work_dir: tomcat工作目录
-    :param host_ip: ip地址
-    :param host_port: 端口
-    :return:
-    """
+def shut_tomcat(v):
+    # v = ip + v + '/'
+    # index = from_path.index(v)
+    # host_port = eval(port[index])
+    host_port = eval(config[v][1])
+    work_dir = config[v][0] + tomcat_path
     os.chdir(work_dir)
-    if (is_port_used(host_ip, host_port)):
+    if is_port_used(host_ip, host_port):
         os.system('shutdown')
-        return '停止tomcat服务</p><p>'
+        return '停止tomcat服务成功！'
     else:
-        return 'tomcat服务未启动</p><p>'
+        return 'tomcat服务未启动'
 
 
-def start_tomcat(work_dir, host_port):
-    """
-    :param work_dir: tomcat工作目录
-    :param host_ip: ip地址
-    :param host_port: 端口
-    :return:
-    """
+def start_tomcat(v):
+    # v = ip + v + '/'
+    # index = from_path.index(v)
+    host_port = eval(config[v][1])
+    work_dir = config[v][0] + tomcat_path
     os.chdir(work_dir)
-    for i in range(100):
-        if (is_port_used(host_ip, host_port)):
+    for scape in range(100):
+        if is_port_used(host_ip, host_port):
             print('tomcat正在停止中')
             time.sleep(10)
         else:
             os.system('startup')
             break
-    return '启动tomcat服务成功</p><p></p>'
+    return '启动tomcat服务成功'
 
 
-def copy_Jar(from_path_in, to_path_in, version, index):
+def copy_Jar(from_path_in, to_path_in, version):
     """
     :param
     from_path_in:源路径
@@ -134,7 +127,7 @@ def copy_Jar(from_path_in, to_path_in, version, index):
                     path0 = str(eval(path0) - 1)
             else:
                 break
-        log += path0 + '的包</p><p>'
+        log += path0 + '的包'
         backup_path = to_path_in + '/backup_product'
         path = from_path_in + path0
         dirs = os.listdir(path)
@@ -150,45 +143,67 @@ def copy_Jar(from_path_in, to_path_in, version, index):
             from_file = path + "/" + file_name
             to_file = to_path_in + "/product/" + file_name
             backup_file = backup_path + "/" + file_name
-            ubuntu_file = ubuntu_path[index] + '/' + file_name
+            ubuntu_file = config[version][2] + '/' + file_name
             try:
-                if not filecmp.cmp(from_file, to_file):
-                    log += version + "有新的" + file_name + '</p><p>'
-                    print(version + "有新的" + file_name, end='...')
-                    # copy2(to_file, backup_file)
-                    copy2(from_file, to_file)
-                    copy2(from_file, ubuntu_file)
-                    log += f"更新完毕,时间：{current_time()}</p><p>"
-                    print(f"更新完毕,时间：{current_time()}")
-                    flag = 1
+                from_134_file = from_file.replace(ip, ip_134)
+                if not filecmp.cmp(from_file, from_134_file):
+                    from_file = from_134_file
+                    if not filecmp.cmp(from_file, to_file):
+                        log += version + "有新的" + file_name + ''
+                        print(version + "有新的" + file_name, end='...')
+                        # copy2(to_file, backup_file)
+                        copy2(from_file, to_file)
+                        copy2(from_file, ubuntu_file)
+                        log += f"更新完毕,时间：{current_time()}</p><p>"
+                        print(f"更新完毕,时间：{current_time()}")
+                        flag = 1
             except PermissionError:
-                log += f"{path}下{file_name}正在被占用，请稍等...time{current_time()}</p><p>"
+                log += f"{path}下{file_name}正在被占用，请稍等...time{current_time()}"
                 print(f"{path}下{file_name}正在被占用，请稍等...time{current_time()}")
         # if flag == 1:
         # clean_jar(to_path_in)
     except FileNotFoundError as err:
-        log += f'\nfile error:{err}</p><p>'
+        log += f'\nfile error:{err}'
         print(f'\nfile error:{err}')
     return log
 
 
-def new_copy(v):
+def copy_and_reload(v):
     """
-    :param v: 版本号 vdevelop
+    :param v: 版本号 develop
     :return:
     """
     log = '<p>'
+    version = v
     v = ip + v + '/'
     log += f'{current_time()}</p><p>'
     index = from_path.index(v)
     print('清理备份的jar')
-    log += '清理备份的jar</p><p>'
+    log += '清理备份的jar'
+    # clean_jar(to_path[index] + path)
+    # 先关闭tomcat，然后换JAR，再启动tomcat
+    log += shut_tomcat(version)
+    log += copy_Jar(f'{ip}{version}/', config[version][0] + YongHong_path, v)
+    log += start_tomcat(version)
+    return f'{log}检查完毕'
+
+
+def new_copy(v):
+    """
+    :param v: 版本号 develop
+    :return:
+    """
+    log = ''
+    version = v
+    v = ip + v + '/'
+    log += f'{current_time()}'
+    index = from_path.index(v)
+    # print('清理备份的jar')
+    # log += '清理备份的jar'
     # clean_jar(to_path[index] + path)
     work_dir = to_path[index] + tomcat_path
     host_port = eval(port[index])
     os.chdir(work_dir)
     # 先关闭tomcat，然后换JAR，再启动tomcat
-    log += shut_tomcat(work_dir, host_port)
-    log += copy_Jar(from_path[index], to_path[index] + YongHong_path, v, index)
-    log += start_tomcat(work_dir, host_port)
-    return f'{log}</p><p>检查完毕</p>'
+    log += copy_Jar(f'{ip}{version}/', config[version][0] + YongHong_path, v)
+    return f'{log}检查完毕'
