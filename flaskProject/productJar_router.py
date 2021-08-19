@@ -14,22 +14,15 @@ def product():
 # 获取所有版本号
 @productJar_operate.route('/allScript', methods=['GET'])
 def get_all_script():
-    job_list = {}
-    index = 1
-    for job in os.listdir('./static/job'):
-        job_list[index]={'name': job}
-        index += 1
-    return succ(job_list)
-
+    return succ(getAllScript())
 
 # 获取所有版本号
 @productJar_operate.route('/all', methods=['GET'])
 def get_all_version():
-    with open('properties.json', 'r', encoding='utf-8') as version:
-        v = json.load(version)['version']
-        for key in v.keys():
-            v[key] = v[key][0]
-        return succ(v)
+    v = {}
+    for key in config.keys():
+            v[key] = config[key][0]
+    return succ(v)
 
 
 # 停止产品
@@ -58,7 +51,7 @@ def update_jar():
 
 
 # 重启产品
-@productJar_operate.route('/reload', methods=['POST'])
+@productJar_operate.route('/reload_product', methods=['POST'])
 def reload_product():
     data = json.loads(request.get_data())
     return succ(restart_tomcat(data['version']))
@@ -68,7 +61,8 @@ def reload_product():
 @productJar_operate.route('/updateReload', methods=['POST'])
 def update_and_reload_product():
     data = json.loads(request.get_data())
-    return succ(copy_and_reload(data['version']))
+    copy_and_reload(data['version'])
+    return succ('更换jar并重启成功！')
 
 
 # 更换jar功能页面

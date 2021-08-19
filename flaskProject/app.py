@@ -15,7 +15,7 @@ app.debug = True
 bootstrap = Bootstrap(app)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = timedelta(seconds=1)
 app.config.from_object(APSchedulerJobConfig())
-CORS(app)
+CORS(app, supports_credentials=True)
 scheduler = APScheduler()  # 实例化APScheduler
 scheduler.init_app(app)  # 把任务列表载入实例flask
 scheduler.start()  # 启动任务计划

@@ -9,6 +9,28 @@ path = {
 }
 bi_home = r'D:\old_version\trunk\\Yonghong_Z-Suite\\Yonghong\bihome'
 back_up_folder_name = r'C:\\Yonghong_Z-Suite\\Yonghong\\' + 'bihome_' + time.strftime("%Y_%m_%d", time.localtime())
+date_img = ['assetExecute/testcases/DBPainter/exp/Tab/properties/padding__日期过滤1__RT.png',
+            'assetExecute/testcases/DBPainter/exp/Tab/properties/padding__选项卡6__RT.png',
+            'assetExecute/testcases/DBPainter/exp/Tab/properties/positionType__日期过滤1__RT.png',
+            'assetExecute/testcases/DBPainter/exp/Tab/properties/positionType__日期过滤2__RT.png',
+            'assetExecute/testcases/DBPainter/exp/Tab/properties/positionType__日期过滤3__RT.png',
+            'assetExecute/testcases/DBPainter/exp/Tab/properties/positionType__日期过滤4__RT.png',
+            'assetExecute/testcases/DBPainter/exp/Tab/properties/positionType__日期过滤5__RT.png',
+            'assetExecute/testcases/DBPainter/exp/Tab/properties/positionType__日期过滤6__RT.png',
+            'assetExecute/testcases/DBPainter/exp/Tab/properties/positionType__日期过滤7__RT.png',
+            'assetExecute/testcases/DBPainter/exp/Tab/properties/positionType__日期过滤8__RT.png',
+            'assetExecute/testcases/DBPainter/exp/Carousel/elemsFilt.pdf'
+            ]
+
+
+def exchange_junit_res():
+    for img_path in date_img:
+        dist = '\\\\192.168.1.199/trunk_test/' + img_path.replace('exp', 'res')
+        aim = 'D:/ubuntu_wsl/rootfs/SVN/trunk/test/' + img_path
+        shutil.copy2(dist, aim)
+    SVN_dir = 'D:/ubuntu_wsl/rootfs/SVN/trunk/test/assetExecute/testcases/DBPainter/exp'
+    os.system(f'svn commit {SVN_dir} -m "dateElem change"')
+    return True
 
 
 def _back_up_bi_home():
@@ -32,8 +54,8 @@ def revert_bi_home():
         print(u'bihome 恢复完成')
         return True
     else:
-        os.mkdir(self.bi_home, 0o777)
-        raise Exception('%s is not exist, now make it, please try again!' % self.bi_home)
+        os.mkdir(bi_home, 0o777)
+        raise Exception('%s is not exist, now make it, please try again!' % bi_home)
 
 
 def copy_db_to_bi_home(new_bi_home_folder_path):
