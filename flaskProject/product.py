@@ -1,10 +1,13 @@
 import os
+import signal
 import time
 from shutil import copy2, rmtree
 import filecmp
 import socket
 from task import clean_jar
 import json
+import win32api as api
+import win32console as con
 
 host_ip = '127.0.0.1'
 ip = '\\\\192.168.0.141/productJar/'
@@ -15,18 +18,58 @@ day_31 = ['02', '04', '06', '08', '09', '11']
 port = []
 ubuntu_path = []
 
+# 向某个进程发送crtl+c指令
+def send_ctrl_c(pid):
+    con.FreeConsole()
+    if con.AttachConsole(int(pid)) == None:
+        api.SetConsoleCtrlHandler(None, 1)
+        api.GenerateConsoleCtrlEvent(con.CTRL_C_EVENT, 0)
+        api.Sleep(2000)
+        con.FreeConsole()
+        api.SetConsoleCtrlHandler(None, 0)
+
+# 通过host+port获取进程pid
+def get_pid_from_port(port):
+    res = os.popen(f'netstat -ano |findstr "{port}"').readlines()
+    for i in res:
+        if i.split()[-2] == 'LISTENING':
+            print(i)
+            return i.split()[-1]
+
 
 def succ(data):
     return json.dumps({"code": 200, "data": data})
 
 
+# 获取脚本列表
 def getAllScript():
     job_list = {}
     index = 1
     for job in os.listdir(r'C:\Users\228\PycharmProjects\flaskProject\static\job'):
-        job_list[index]={'name': job}
+        job_list[index] = {'name': job}
         index += 1
     return job_list
+
+# 执行脚本
+def executeScript(task):
+    os.chdir(r'C:\Users\228\PycharmProjects\flaskProject\static\job')
+    os.system(f'python {task}')
+    return f'{task}执行成功'
+
+
+# 删除脚本
+def deleteScript(task):
+    os.chdir(r'C:\Users\228\PycharmProjects\flaskProject\static\job')
+    os.system(f'del {task}')
+    return f'{task}删除成功'
+
+# 保存脚本
+def saveScript(content, name, type):
+    if type == 'python':
+        script = name + '.py'
+    with open('C:/Users/228/PycharmProjects/flaskProject/static/job/'+script, 'w', encoding='utf-8') as newScript:
+        newScript.write(content)
+    return f'{script}保存成功'
 
 
 # 读取配置文件
@@ -77,14 +120,18 @@ def restart_tomcat(v):
 
 # 停止tomcat
 def shut_tomcat(v):
-    # v = ip + v + '/'
-    # index = from_path.index(v)
-    # host_port = eval(port[index])
     host_port = eval(config[v][1])
-    work_dir = config[v][0] + tomcat_path
-    os.chdir(work_dir)
+
     if is_port_used(host_ip, host_port):
-        os.system('shutdown')
+        if v == 'develop':
+            print('停止trunk tomcat进程')
+            os.system(f'python C:/Users/228/PycharmProjects/flaskProject/static/job/stopTrunk.py')
+            # send_ctrl_c(get_pid_from_port(host_port))
+        else:
+            work_dir = config[v][0] + tomcat_path
+            os.chdir(work_dir)
+            os.system('shutdown')
+            
         return '停止tomcat服务成功！'
     else:
         return 'tomcat服务未启动'
@@ -123,17 +170,25 @@ def copy_Jar(to_path_in, version):
         # 检测是否有当天的新Jar，否则往前推一天
         while 1:
             if not os.path.exists(os.path.join(from_path_in, path0)):
-                if path0[-2:] == '01':
-                    if path0[5:6] in day_31:
-                        path0 = path0[0:5] + str(eval(path0[5:6]) - 1) + '31'
-                    elif path0[5:6] == '03' and eval(path0[0:4]) % 4 == 0:
-                        path0 = path0[0:5] + str(eval(path0[5:6]) - 1) + '29'
-                    elif path0[5:6] == '03' and eval(path0[0:4]) % 4 != 0:
-                        path0 = path0[0:5] + str(eval(path0[5:6]) - 1) + '28'
-                    elif path0[4:6] == '01':
-                        path0 = str(eval(path0[0:4]) - 1) + '1231'
+                year = path0[0:4]
+                month = path0[4:6]
+                day = path0[-2:]
+                month_1 = eval(month.replace('0',''))-1
+                if (month_1) > 9:
+                    month_1 = str(month_1)
+                else:
+                    month_1 = f'0{str(month_1)}'
+                if day == '01':
+                    if month in day_31:
+                        path0 = f'{year}{month_1}31'
+                    elif month == '03' and eval(year) % 4 == 0:
+                        path0 = f'{year}0229'
+                    elif month == '03' and eval(year) % 4 != 0:
+                        path0 = f'{year}0228'
+                    elif month == '01':
+                        path0 = f'{str(eval(year) - 1)}1231'
                     else:
-                        path0 = path0[0:5] + str(eval(path0[5:6]) - 1) + '30'
+                        path0 = f'{year}{month_1}30'
                 else:
                     path0 = str(eval(path0) - 1)
             else:
@@ -153,8 +208,8 @@ def copy_Jar(to_path_in, version):
         for file_name in dirs:
             from_file = os.path.join(path, file_name)
             to_file = os.path.join(to_path_in, "product", file_name)
-            backup_file = os.path.join(backup_path , file_name)
-            ubuntu_file = os.path.join(config[version][2] ,file_name)
+            backup_file = os.path.join(backup_path, file_name)
+            ubuntu_file = os.path.join(config[version][2], file_name)
             try:
                 from_134_file = from_file.replace(ip, ip_134)
                 if not filecmp.cmp(from_file, from_134_file):

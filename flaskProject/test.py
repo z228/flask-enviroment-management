@@ -21,15 +21,21 @@ date_img = ['assetExecute/testcases/DBPainter/exp/Tab/properties/padding__日期
             'assetExecute/testcases/DBPainter/exp/Tab/properties/positionType__日期过滤8__RT.png',
             'assetExecute/testcases/DBPainter/exp/Carousel/elemsFilt.pdf'
             ]
+dist_list = ['v8.6_test','v9.0_test','v9.2.1_test','trunk_test']
+aim_list = ['branch/v8.6','branch/v9.0','branch/v9.2.1','trunk']
 
 
 def exchange_junit_res():
-    for img_path in date_img:
-        dist = '\\\\192.168.1.199/trunk_test/' + img_path.replace('exp', 'res')
-        aim = 'D:/ubuntu_wsl/rootfs/SVN/trunk/test/' + img_path
-        shutil.copy2(dist, aim)
-    SVN_dir = 'D:/ubuntu_wsl/rootfs/SVN/trunk/test/assetExecute/testcases/DBPainter/exp'
-    os.system(f'svn commit {SVN_dir} -m "dateElem change"')
+    for i in range(len(dist_list)):
+        for img_path in date_img:
+            if dist_list[i] =='v8.6_test' and 'Carousel' in img_path:
+                continue
+            dist = f'\\\\192.168.1.199/{dist_list[i]}/' + img_path.replace('exp', 'res')
+            aim = f'D:/ubuntu_wsl/rootfs/SVN/{aim_list[i]}/test/' + img_path
+            print(dist)
+            shutil.copy2(dist, aim)
+        SVN_dir = f'D:/ubuntu_wsl/rootfs/SVN/{aim_list[i]}/test/assetExecute/testcases/DBPainter/exp'
+        os.system(f'svn commit {SVN_dir} -m "dateElem change"')
     return True
 
 

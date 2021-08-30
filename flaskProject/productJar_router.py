@@ -11,10 +11,29 @@ def product():
     return render_template('product.html')
 
 
-# 获取所有版本号
+# 获取脚本列表
 @productJar_operate.route('/allScript', methods=['GET'])
 def get_all_script():
     return succ(getAllScript())
+
+# 执行脚本
+@productJar_operate.route('/execute', methods=['post'])
+def execute_script():
+    data = json.loads(request.get_data())
+    return succ(executeScript(data['name']))
+
+# 删除脚本
+@productJar_operate.route('/delete', methods=['post'])
+def delete_script():
+    data = json.loads(request.get_data())
+    return succ(deleteScript(data['name']))
+
+
+# 保存脚本
+@productJar_operate.route('/saveScript', methods=['post'])
+def save_script():
+    data = json.loads(request.get_data())
+    return succ(saveScript(data['content'],data['name'],data['type']))
 
 # 获取所有版本号
 @productJar_operate.route('/all', methods=['GET'])
@@ -112,6 +131,8 @@ def backup():
         print(request.form['backup'])
         if aim == '还原':
             flag = test.revert_bi_home()
+        elif aim =='trunkJunit更换':
+            flag = test.exchange_junit_res()
         else:
             flag = test.copy_db_to_bi_home(test.path[aim])
         if flag:
