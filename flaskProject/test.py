@@ -1,6 +1,7 @@
 import os
 import shutil
 import time
+from flask import current_app
 
 path = {
     'back_up_folder_name': r'D:\old_version\trunk\Yonghong_Z-Suite\Yonghong',
@@ -32,10 +33,14 @@ def exchange_junit_res():
                 continue
             dist = f'\\\\192.168.1.199/{dist_list[i]}/' + img_path.replace('exp', 'res')
             aim = f'D:/ubuntu_wsl/rootfs/SVN/{aim_list[i]}/test/' + img_path
+            # aim = f'\\\\192.168.1.199/{dist_list[i]}/' + img_path
+            current_app.logger.info(dist)
             print(dist)
             shutil.copy2(dist, aim)
+        # SVN_dir = f'\\\\192.168.1.199/{dist_list[i]}/assetExecute/testcases/DBPainter/exp'
         SVN_dir = f'D:/ubuntu_wsl/rootfs/SVN/{aim_list[i]}/test/assetExecute/testcases/DBPainter/exp'
-        os.system(f'svn commit {SVN_dir} -m "dateElem change"')
+        os.system(f'svn update {SVN_dir}')
+        os.system(f'svn commit {SVN_dir} -m "dateElem change" > SVN_{dist_list[i]}_Commit.txt')
     return True
 
 

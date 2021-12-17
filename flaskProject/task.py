@@ -14,6 +14,7 @@ def clean_jar():
             shutil.rmtree(back_path)
         else:
             continue
+            pass
 
 
 def static_clean():

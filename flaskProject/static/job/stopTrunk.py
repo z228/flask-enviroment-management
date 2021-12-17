@@ -1,6 +1,7 @@
 import win32api as api
 import win32console as con
 import os
+import sys
 
 # 向某个进程发送crtl+c指令
 def send_ctrl_c(pid):
@@ -20,4 +21,6 @@ def get_pid_from_port(port):
             print(i)
             return i.split()[-1]
 
-send_ctrl_c(get_pid_from_port("8080"))
+port = sys.argv[1]
+
+send_ctrl_c(get_pid_from_port(port))

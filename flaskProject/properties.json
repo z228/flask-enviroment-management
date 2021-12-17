@@ -35,6 +35,16 @@
       "8093",
       "D:\\ubuntu_wsl\\rootfs\\opt\\productJar\\9.3"
     ],
+    "v9.4":[
+      "D:/old_version/9.4/",
+      "8094",
+      "D:\\ubuntu_wsl\\rootfs\\opt\\Yonghong_Z-Suite_94\\Yonghong\\product"
+    ],
+    "v9.4.1":[
+      "D:/old_version/9.4.1/",
+      "8941",
+      "D:\\ubuntu_wsl\\rootfs\\opt\\Yonghong_Z-Suite_941\\Yonghong\\product"
+    ],
     "develop": [
       "D:/old_version/trunk/",
       "8080",

@@ -1,5 +1,6 @@
 from flask import Blueprint, request, redirect, render_template, url_for
 from product import *
+import json
 import test
 
 productJar_operate = Blueprint('productJar', __name__)
@@ -17,12 +18,16 @@ def get_all_script():
     return succ(getAllScript())
 
 # 执行脚本
+
+
 @productJar_operate.route('/execute', methods=['post'])
 def execute_script():
     data = json.loads(request.get_data())
     return succ(executeScript(data['name']))
 
 # 删除脚本
+
+
 @productJar_operate.route('/delete', methods=['post'])
 def delete_script():
     data = json.loads(request.get_data())
@@ -33,14 +38,16 @@ def delete_script():
 @productJar_operate.route('/saveScript', methods=['post'])
 def save_script():
     data = json.loads(request.get_data())
-    return succ(saveScript(data['content'],data['name'],data['type']))
+    return succ(saveScript(data['content'], data['name'], data['type']))
 
 # 获取所有版本号
+
+
 @productJar_operate.route('/all', methods=['GET'])
 def get_all_version():
     v = {}
     for key in config.keys():
-            v[key] = config[key][0]
+        v[key] = config[key][0]
     return succ(v)
 
 
@@ -128,10 +135,10 @@ def reload():
 def backup():
     if request.method == 'POST':
         aim = request.form['backup']
-        print(request.form['backup'])
+        # print(request.form['backup'])
         if aim == '还原':
             flag = test.revert_bi_home()
-        elif aim =='trunkJunit更换':
+        elif aim == 'trunkJunit更换':
             flag = test.exchange_junit_res()
         else:
             flag = test.copy_db_to_bi_home(test.path[aim])
