@@ -8,6 +8,8 @@ from flask_apscheduler import APScheduler
 from flask_bootstrap import Bootstrap
 from BaseError import *
 import logging
+import os
+import time
 
 # clean.static_clean() #清理资源文件夹
 app = Flask(__name__)
@@ -48,7 +50,7 @@ def custom_error_handler(e):
 
 
 if __name__ == '__main__':
-    handler = logging.FileHandler('flask.log', encoding='UTF-8')   # 设置日志字符集和存储路径名字
+    handler = logging.FileHandler(f'flask.log.{time.strftime("%Y-%m-%d", time.localtime())}.log', encoding='UTF-8')   # 设置日志字符集和存储路径名字
     logging_format = logging.Formatter(                            # 设置日志格式
         '%(asctime)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s - %(message)s')
     handler.setFormatter(logging_format)
