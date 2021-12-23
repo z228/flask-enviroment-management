@@ -8,8 +8,9 @@ from flask_apscheduler import APScheduler
 from flask_bootstrap import Bootstrap
 from BaseError import *
 import logging
+from logging.handlers import TimedRotatingFileHandler
 import os
-import time
+import re
 
 # clean.static_clean() #清理资源文件夹
 app = Flask(__name__)
@@ -50,7 +51,11 @@ def custom_error_handler(e):
 
 
 if __name__ == '__main__':
-    handler = logging.FileHandler(f'flask.log.{time.strftime("%Y-%m-%d", time.localtime())}.log', encoding='UTF-8')   # 设置日志字符集和存储路径名字
+    handler = TimedRotatingFileHandler(filename=f'./log/flask.log',when="MIDNIGHT", interval=1,backupCount=31, encoding='UTF-8')   # 设置日志字符集和存储路径名字
+    handler.suffix = "%Y-%m-%d.log"
+    # extMatch是编译好正则表达式，用于匹配日志文件名后缀
+    # 需要注意的是suffix和extMatch一定要匹配的上，如果不匹配，过期日志不会被删除。
+    handler.extMatch = re.compile(r"^\d{4}-\d{2}-\d{2}.log$")
     logging_format = logging.Formatter(                            # 设置日志格式
         '%(asctime)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s - %(message)s')
     handler.setFormatter(logging_format)
