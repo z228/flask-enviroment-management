@@ -1,16 +1,15 @@
-
-from productJar_router import *
 from flask import Flask, send_from_directory,jsonify
 from flask_cors import CORS
+import os
 from datetime import timedelta
 from config import APSchedulerJobConfig
 from flask_apscheduler import APScheduler
 from flask_bootstrap import Bootstrap
-from BaseError import *
 import logging
 from logging.handlers import TimedRotatingFileHandler
-import os
-import re
+from apps.lib.BaseError import *
+from apps.productApp.productJar_router import *
+from apps.lib.MyHandlers import *
 
 # clean.static_clean() #清理资源文件夹
 app = Flask(__name__)
@@ -51,13 +50,12 @@ def custom_error_handler(e):
 
 
 if __name__ == '__main__':
-    handler = TimedRotatingFileHandler(filename=f'./log/flask.log',when="MIDNIGHT", interval=1,backupCount=31, encoding='UTF-8')   # 设置日志字符集和存储路径名字
-    handler.suffix = "%Y-%m-%d.log"
-    # extMatch是编译好正则表达式，用于匹配日志文件名后缀
-    # 需要注意的是suffix和extMatch一定要匹配的上，如果不匹配，过期日志不会被删除。
-    handler.extMatch = re.compile(r"^\d{4}-\d{2}-\d{2}.log$")
+    log_path = './logs/flask.log'
+    log_path_today = f'./logs/flask.log'
+    handler = MidnightRotatingFileHandler(log_path)   # 设置日志字符集和存储路径名字
     logging_format = logging.Formatter(                            # 设置日志格式
         '%(asctime)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s - %(message)s')
     handler.setFormatter(logging_format)
     app.logger.addHandler(handler)
+    # os.symlink(log_path, log_path_today)
     app.run(host='0.0.0.0')
