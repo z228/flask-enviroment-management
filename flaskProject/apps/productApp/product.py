@@ -192,7 +192,7 @@ class ProductAction:
             else:
                 work_dir = self.config[v][0] + self.tomcat_path
                 os.chdir(work_dir)
-                os.system(f'shutdown.sh > caches.txt')
+                os.system(f'sh shutdown.sh > caches.txt')
             current_app.logger.info(f'{v}tomcat服务停止成功')
             return f'{v}tomcat服务停止成功'
         else:
@@ -213,7 +213,7 @@ class ProductAction:
                 if(self.current_system == "Windows"):
                     os.system('startup > caches.txt')
                 else:
-                    os.system('startup.sh > caches.txt')
+                    os.system('sh startup.sh > caches.txt')
                 break
         current_app.logger.info(f'启动{v}tomcat服务成功')
         return f'启动{v}tomcat服务成功'

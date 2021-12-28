@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 from ftplib import  FTP
 import os
+from warnings import catch_warnings
 from flask import current_app
  
 class MyFTP:
@@ -28,17 +29,20 @@ class MyFTP:
     def connect(self):
         current_app.logger.info('is connecting to ftp server %s on %s' % (self.ftp_host, self.ftp_port))
         # print('is connecting to ftp server %s on %s' % (self.ftp_host, self.ftp_port))
-        self.ftp.connect(self.ftp_host, self.ftp_port)
+        try:
+            self.ftp.connect(self.ftp_host, self.ftp_port)
+        except Exception as e:
+            current_app.logger.error(e)
  
     # 登陆到ftp服务器
     def login(self):
-        current_app.logger.info('ready to login ftp server')
-        # print('ready to login ftp server')
-        self.ftp.login(self.ftp_user, self.ftp_passwd)
-        current_app.logger.info('login ftp server successfully')
-        # print('login ftp server successfully')
-        current_app.logger.info(self.ftp.getwelcome())
-        # print(self.ftp.getwelcome())
+        try:
+            current_app.logger.info('ready to login ftp server')
+            self.ftp.login(self.ftp_user, self.ftp_passwd)
+            current_app.logger.info('login ftp server successfully')
+            current_app.logger.info(self.ftp.getwelcome())
+        except Exception as e:
+            current_app.logger.error(e)
  
     # 友好的关闭连接
     def quit(self):
@@ -47,7 +51,7 @@ class MyFTP:
             current_app.logger.info('colose ftp connection successfully')
             # print('colose ftp connection successfully')
         except Exception as e:
-            current_app.logger.info(e)
+            current_app.logger.error(e)
             # print('%s' % e)
  
     # 上传文件夹
@@ -70,9 +74,8 @@ class MyFTP:
         # 如果ftp服务器上不存在该路径,则创建对应路径下的目录
         try:
             self.ftp.mkd(last_dir)
-        except:
-            #print('dir: %s already exists' % last_dir)
-            pass
+        except Exception as e:
+            current_app.logger.error(e)
  
         sub_items = os.listdir(local_path)
         for sub_item in sub_items:
@@ -91,11 +94,14 @@ class MyFTP:
                 # print("文件%s已存在" % remote_path)
                 self.ftp.delete(remote_path)
         except Exception as e:
-            pass
-        with open(src_file_path, 'rb') as file_handler:
-            self.ftp.storbinary('STOR %s' % remote_path , file_handler)
-            current_app.logger.info(f'{src_file_path}已更新到服务器')
-            # print('文件：%s 已经上传到ftp' % src_file_path)
+            current_app.logger.error(e)
+        try:
+            with open(src_file_path, 'rb') as file_handler:
+                self.ftp.storbinary('STOR %s' % remote_path , file_handler)
+                current_app.logger.info(f'{src_file_path}已更新到服务器')
+                # print('文件：%s 已经上传到ftp' % src_file_path)
+        except Exception as e:
+            current_app.logger.error(e)
  
  
     # 下载目录
@@ -142,7 +148,7 @@ class MyFTP:
  
 if __name__ == '__main__':
     pass
-    # ftp = MyFTP('./config/ftp.conf')
+    # ftp = MyFTP()
     # ftp.connect()
     # ftp.login()
     # ftp.upload_folder()
