@@ -124,19 +124,23 @@ class ProductAction:
             self.config[key][1] = self.get_bi_port(key)
 
     def change_bi_home(self,version,bihome):
+        if(self.current_system == "Windows"):
+            split_str = '\\'
+        else:
+            split_str = '/'
         self.shut_tomcat(version)
         file_path = f'{self.config[version][0]}{self.bi_xml_path}'
         dom  = xml.dom.minidom.parse(file_path)
         root = dom.documentElement
         param = root.getElementsByTagName('param-value')
         entry = root.getElementsByTagName('env-entry-value')
-        param_value = param[0].firstChild.data.split('\\')
-        entry_value = entry[0].firstChild.data.split('\\')
+        param_value = param[0].firstChild.data.split(split_str)
+        entry_value = entry[0].firstChild.data.split(split_str)
         param_value[-1] = bihome
         entry_value[-1] = bihome
         current_app.logger.info(f'bihome修改为{bihome}')
-        param[0].firstChild.data = '\\'.join(param_value)
-        entry[0].firstChild.data = '\\'.join(entry_value)
+        param[0].firstChild.data = split_str.join(param_value)
+        entry[0].firstChild.data = split_str.join(entry_value)
         with open(file_path, 'w') as f:
             dom.writexml(f,encoding='utf-8')
         self.start_tomcat(version)
