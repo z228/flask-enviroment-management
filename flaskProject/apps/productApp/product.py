@@ -8,10 +8,12 @@ import json
 from flask import current_app
 import  xml.dom.minidom
 import platform
-from . import properties
 if platform.system()=="Windows":
+    from . import properties
     import win32api as api
     import win32console as con
+else:
+    from . import properties_Linux
 
 class ProductAction:
     host_ip = '127.0.0.1'
