@@ -9,18 +9,18 @@ from flask import current_app
 import  xml.dom.minidom
 import platform
 if platform.system()=="Windows":
-    from . import properties
     import win32api as api
     import win32console as con
+    from . import properties
 else:
-    from . import properties_Linux
+    from . import properties_Linux as properties
 
 class ProductAction:
     host_ip = '127.0.0.1'
     ip = '\\\\192.168.0.141/productJar/'
     ip_134 = '\\\\192.168.1.134/git-package/'
     from_path = []
-    script_path = f"../../static/job"
+    script_path = f"{os.getcwd()}/static/job"
     to_path = []
     day_31 = ['02', '04', '06', '08', '09', '11']
     port = []
@@ -126,7 +126,7 @@ class ProductAction:
             self.config[key][1] = self.get_bi_port(key)
 
     def change_bi_home(self,version,bihome):
-        if(self.current_system == "Windows"):
+        if self.current_system == "Windows":
             split_str = '\\'
         else:
             split_str = '/'
@@ -187,14 +187,15 @@ class ProductAction:
         host_port = eval(self.config[v][1])
         if self.is_port_used(self.host_ip, host_port):
             if(self.current_system == "Windows"):
-                if v == 'develop':
+                # if v == 'develop':
                     # print('停止trunk tomcat进程')
-                    current_app.logger.info('停止trunk tomcat进程')
-                    os.system(f'python {self.script_path}/stopTrunk.py {host_port} > stopTomcat.txt')
-                else:
-                    work_dir = self.config[v][0] + self.tomcat_path
-                    os.chdir(work_dir)
-                    os.system(f'shutdown > caches.txt')
+                # print(os.getcwd())
+                current_app.logger.info('停止trunk tomcat进程')
+                os.system(f'python {self.script_path}/stopTrunk.py {host_port} > stopTomcat.txt')
+                # else:
+                #     work_dir = self.config[v][0] + self.tomcat_path
+                #     os.chdir(work_dir)
+                #     os.system(f'shutdown > caches.txt')
             else:
                 work_dir = self.config[v][0] + self.tomcat_path
                 os.chdir(work_dir)

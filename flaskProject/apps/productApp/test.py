@@ -35,12 +35,11 @@ def exchange_junit_res():
             aim = f'D:/ubuntu_wsl/rootfs/SVN/{aim_list[i]}/test/' + img_path
             # aim = f'\\\\192.168.1.199/{dist_list[i]}/' + img_path
             current_app.logger.info(dist)
-            print(dist)
             shutil.copy2(dist, aim)
         # SVN_dir = f'\\\\192.168.1.199/{dist_list[i]}/assetExecute/testcases/DBPainter/exp'
         SVN_dir = f'D:/ubuntu_wsl/rootfs/SVN/{aim_list[i]}/test/assetExecute/testcases/DBPainter/exp'
         os.system(f'svn update {SVN_dir}')
-        os.system(f'svn commit {SVN_dir} -m "dateElem change" > ../../logs/SVN_log/SVN_{dist_list[i]}_Commit.txt')
+        os.system(f'svn commit {SVN_dir} -m "dateElem change" > {os.getcwd()}/logs/SVN_logs/SVN_{dist_list[i]}_Commit.txt')
     return True
 
 
