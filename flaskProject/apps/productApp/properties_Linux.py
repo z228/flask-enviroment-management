@@ -18,7 +18,7 @@ env_list = {
       "D:\\ubuntu_wsl\\rootfs\\opt\\Yonghong_Z-Suite_941\\Yonghong\\product",
       "bihome Export uiAuto"
     ],
-    "vdevelop":[
+    "develop":[
       "/opt/trunk",
       "8080",
       "D:\\ubuntu_wsl\\rootfs\\opt\\Yonghong_Z-Suite_941\\Yonghong\\product",
