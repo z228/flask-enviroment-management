@@ -1,2 +1,6 @@
 /uploads
 /result
+/.vscode
+/.idea
+/_pycache
+*.spec,*.log,*.txt
