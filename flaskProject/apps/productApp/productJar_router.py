@@ -58,7 +58,7 @@ def get_all_bihome():
     v = {}
     productAction = ProductAction()
     for key in productAction.config.keys():
-        v[key] = productAction.config[key][3].split(' ')
+        v[key] = productAction.config[key][2].split(' ')
     return productAction.succ(v)
 
 # 获取141备份的jar包列表

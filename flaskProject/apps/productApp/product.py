@@ -228,7 +228,9 @@ class ProductAction:
     def renameProductJar(self,newName,path):
         jar_list=os.listdir(path)
         for i in jar_list:
-            if newName.split('.')[0] in i.split('.')[0]:
+            if i.split('.')[0]=='product-swf':
+                os.rename(f'{path}/{i}',f'{path}/product-swf.jar')
+            elif newName.split('.')[0] in i.split('.')[0]:
                 os.rename(f'{path}/{i}',f'{path}/{newName}')
     
     def get_recent_jar(self,version):
@@ -296,7 +298,6 @@ class ProductAction:
                 if not os.path.exists(to_file):
                     self.renameProductJar(file_name,os.path.join(to_path_in, "product"))
                 # backup_file = os.path.join(backup_path, file_name)
-                ubuntu_file = os.path.join(self.config[version][2], file_name)
                 try:
                     from_134_file = from_file.replace(self.ip, self.ip_134)
                     if os.path.exists(from_134_file):
