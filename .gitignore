@@ -2,5 +2,5 @@
 /result
 /.vscode
 /.idea
-/_pycache
+/_pycache_
 *.spec,*.log,*.txt
