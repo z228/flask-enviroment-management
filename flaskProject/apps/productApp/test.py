@@ -22,8 +22,8 @@ date_img = ['assetExecute/testcases/DBPainter/exp/Tab/properties/padding__日期
             'assetExecute/testcases/DBPainter/exp/Tab/properties/positionType__日期过滤8__RT.png',
             'assetExecute/testcases/DBPainter/exp/Carousel/elemsFilt.pdf'
             ]
-dist_list = ['v8.6_test','v9.0_test','v9.2.1_test','trunk_test']
-aim_list = ['branch/v8.6','branch/v9.0','branch/v9.2.1','trunk']
+dist_list = ['v8.6_test','v9.0_test','v9.2.1_test','v9.4_test','trunk_test']
+aim_list = ['branch/v8.6','branch/v9.0','branch/v9.2.1','branch/v9.4','trunk']
 
 
 def exchange_junit_res():
@@ -32,12 +32,12 @@ def exchange_junit_res():
             if dist_list[i] =='v8.6_test' and 'Carousel' in img_path:
                 continue
             dist = f'\\\\192.168.1.199/{dist_list[i]}/' + img_path.replace('exp', 'res')
-            aim = f'D:/ubuntu_wsl/rootfs/SVN/{aim_list[i]}/test/' + img_path
+            aim = f'D:/SVN/{aim_list[i]}/test/' + img_path
             # aim = f'\\\\192.168.1.199/{dist_list[i]}/' + img_path
             current_app.logger.info(dist)
             shutil.copy2(dist, aim)
         # SVN_dir = f'\\\\192.168.1.199/{dist_list[i]}/assetExecute/testcases/DBPainter/exp'
-        SVN_dir = f'D:/ubuntu_wsl/rootfs/SVN/{aim_list[i]}/test/assetExecute/testcases/DBPainter/exp'
+        SVN_dir = f'D:/SVN/{aim_list[i]}/test/assetExecute/testcases/DBPainter/exp'
         os.system(f'svn update {SVN_dir}')
         os.system(f'svn commit {SVN_dir} -m "dateElem change" > {os.getcwd()}/logs/SVN_logs/SVN_{dist_list[i]}_Commit.txt')
     return True

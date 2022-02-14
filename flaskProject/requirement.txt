@@ -1,0 +1,12 @@
+APScheduler=3.8.1 
+configparser=5.2.0 
+dbus-python=1.2.16
+Flask=2.0.2 
+Flask-APScheduler=1.12.2
+Flask-Bootstrap=3.3.7.
+Flask-Cors=3.0.10
+Pillow=8.4.0 
+PyYAML=5.3.1 
+requests=2.24.0
+six=1.14.0
+tqdm=4.62.3

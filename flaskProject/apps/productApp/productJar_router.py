@@ -163,10 +163,18 @@ def update_linux_jar():
     ftpServer.login()
     data = json.loads(request.get_data())
     src_path = productAction.get_recent_jar(data['version'])
+    src_path = src_path.replace(productAction.ip,productAction.ip_134)
     dirs = os.listdir(src_path)
     for dir in dirs:
+<<<<<<< HEAD
         src_file = os.path.join(src_path, dir)  
         ftpServer.upload_file(src_file, f'/{data["version"]}')
+=======
+        if dir.split('\\')[-1] not in ['api.jar','product.jar','thirds.jar']:
+            continue
+        src_file= os.path.join(src_path,dir)
+        ftpServer.upload_file(src_file,f'/{data["version"]}')
+>>>>>>> b9e1cde (code review)
     ftpServer.quit()
     return productAction.succ(f'服务器{data["version"]}的Jar包更新成功')
 

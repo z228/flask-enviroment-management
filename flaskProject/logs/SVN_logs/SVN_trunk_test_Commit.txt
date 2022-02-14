@@ -1,0 +1,14 @@
+Sending        D:\SVN\trunk\test\assetExecute\testcases\DBPainter\exp\Carousel\elemsFilt.pdf
+Sending        D:\SVN\trunk\test\assetExecute\testcases\DBPainter\exp\Tab\properties\padding__日期过滤1__RT.png
+Sending        D:\SVN\trunk\test\assetExecute\testcases\DBPainter\exp\Tab\properties\padding__选项卡6__RT.png
+Sending        D:\SVN\trunk\test\assetExecute\testcases\DBPainter\exp\Tab\properties\positionType__日期过滤1__RT.png
+Sending        D:\SVN\trunk\test\assetExecute\testcases\DBPainter\exp\Tab\properties\positionType__日期过滤2__RT.png
+Sending        D:\SVN\trunk\test\assetExecute\testcases\DBPainter\exp\Tab\properties\positionType__日期过滤3__RT.png
+Sending        D:\SVN\trunk\test\assetExecute\testcases\DBPainter\exp\Tab\properties\positionType__日期过滤4__RT.png
+Sending        D:\SVN\trunk\test\assetExecute\testcases\DBPainter\exp\Tab\properties\positionType__日期过滤5__RT.png
+Sending        D:\SVN\trunk\test\assetExecute\testcases\DBPainter\exp\Tab\properties\positionType__日期过滤6__RT.png
+Sending        D:\SVN\trunk\test\assetExecute\testcases\DBPainter\exp\Tab\properties\positionType__日期过滤7__RT.png
+Sending        D:\SVN\trunk\test\assetExecute\testcases\DBPainter\exp\Tab\properties\positionType__日期过滤8__RT.png
+Transmitting file data ...........done
+Committing transaction...
+Committed revision 122112.
