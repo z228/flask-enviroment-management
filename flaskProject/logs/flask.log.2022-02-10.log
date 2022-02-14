@@ -1,0 +1,197 @@
+2022-02-10 11:11:20,101 - INFO - product.py - start_tomcat - 239 - 启动custom_v9.2.3_huawei_distomcat服务成功
+2022-02-10 11:13:09,245 - INFO - product.py - start_tomcat - 239 - 启动custom_v9.2.3_huawei_distomcat服务成功
+2022-02-10 11:27:25,608 - INFO - product.py - shut_tomcat - 220 - custom_v9.4.1_huawei_xiantomcat服务未启动
+2022-02-10 11:27:25,807 - INFO - product.py - start_tomcat - 239 - 启动custom_v9.4.1_huawei_xiantomcat服务成功
+2022-02-10 11:27:25,808 - INFO - product.py - restart_tomcat - 195 - custom_v9.4.1_huawei_xiantomcat重启成功
+2022-02-10 11:27:45,074 - INFO - product.py - start_tomcat - 239 - 启动custom_v9.4.1_huawei_xiantomcat服务成功
+2022-02-10 11:27:50,674 - INFO - product.py - shut_tomcat - 216 - custom_v9.4.1_huawei_xiantomcat服务停止成功
+2022-02-10 11:28:04,867 - INFO - product.py - start_tomcat - 239 - 启动custom_v9.2.3_huawei_distomcat服务成功
+2022-02-10 16:35:46,213 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:35:56,225 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:35:59,762 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:36:06,232 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:36:09,770 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:36:16,245 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:36:19,778 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:36:26,254 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:36:29,785 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:36:36,265 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:36:39,796 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:36:46,275 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:36:49,806 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:36:56,286 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:36:59,817 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:37:06,292 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:37:09,830 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:37:09,872 - INFO - product.py - shut_tomcat - 216 - custom_v9.2.3_huawei_distomcat服务停止成功
+2022-02-10 16:37:09,874 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:37:16,303 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:37:19,842 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:37:19,888 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:37:26,314 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:37:27,433 - INFO - product.py - shut_tomcat - 216 - custom_v9.2.3_huawei_distomcat服务停止成功
+2022-02-10 16:37:27,435 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:37:27,483 - INFO - product.py - shut_tomcat - 216 - custom_v9.2.3_huawei_distomcat服务停止成功
+2022-02-10 16:37:27,521 - INFO - product.py - start_tomcat - 239 - 启动custom_v9.2.3_huawei_distomcat服务成功
+2022-02-10 16:37:27,525 - INFO - product.py - restart_tomcat - 195 - custom_v9.2.3_huawei_distomcat重启成功
+2022-02-10 16:37:29,896 - INFO - product.py - start_tomcat - 239 - 启动custom_v9.2.3_huawei_distomcat服务成功
+2022-02-10 16:37:29,935 - INFO - product.py - start_tomcat - 239 - 启动custom_v9.2.3_huawei_distomcat服务成功
+2022-02-10 16:37:29,936 - INFO - product.py - restart_tomcat - 195 - custom_v9.2.3_huawei_distomcat重启成功
+2022-02-10 16:37:36,343 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:37:37,447 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:37:46,361 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:37:47,459 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:37:56,561 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:37:57,478 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:38:06,572 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:38:07,489 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:38:16,582 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:38:17,499 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:38:26,602 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:38:27,510 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:38:36,689 - INFO - product.py - start_tomcat - 239 - 启动custom_v9.2.3_huawei_distomcat服务成功
+2022-02-10 16:38:37,574 - INFO - product.py - start_tomcat - 239 - 启动custom_v9.2.3_huawei_distomcat服务成功
+2022-02-10 16:38:37,575 - INFO - product.py - restart_tomcat - 195 - custom_v9.2.3_huawei_distomcat重启成功
+2022-02-10 16:51:44,175 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:51:54,188 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:52:04,198 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:52:14,212 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:52:24,222 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:52:34,233 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:52:44,244 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:52:54,257 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:52:56,661 - INFO - product.py - shut_tomcat - 216 - custom_v9.2.3_huawei_distomcat服务停止成功
+2022-02-10 16:52:56,663 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:53:04,259 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:53:06,673 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:53:14,273 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:53:16,681 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:53:24,330 - INFO - product.py - start_tomcat - 239 - 启动custom_v9.2.3_huawei_distomcat服务成功
+2022-02-10 16:53:26,694 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:53:36,706 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:53:46,713 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:53:56,722 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:54:06,729 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:54:16,741 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:54:26,748 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:54:36,759 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:54:46,770 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:54:56,779 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:55:06,789 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:55:16,801 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:55:26,813 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:55:36,825 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:55:46,832 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:55:56,844 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:56:06,853 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:56:16,856 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:56:26,868 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:56:36,879 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:56:46,888 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:56:56,900 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:57:06,912 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:57:16,924 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:57:26,935 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:57:36,947 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:57:42,675 - INFO - product.py - start_tomcat - 239 - 启动custom_v9.4.1_huawei_xiantomcat服务成功
+2022-02-10 16:57:46,960 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:57:56,973 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:58:00,505 - INFO - product.py - shut_tomcat - 216 - custom_v9.4.1_huawei_xiantomcat服务停止成功
+2022-02-10 16:58:07,010 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:58:17,041 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:58:27,048 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:58:37,058 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:58:47,125 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:58:57,220 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:59:07,235 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:59:17,247 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:59:27,260 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:59:37,269 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:59:47,274 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 16:59:57,283 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 17:00:07,290 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 17:00:17,301 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 17:00:27,312 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 17:00:37,323 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 17:00:47,336 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 17:00:57,349 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 17:01:07,354 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 17:01:17,366 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 17:01:27,376 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 17:01:37,385 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 17:01:47,397 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 17:01:57,410 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 17:02:07,424 - INFO - product.py - start_tomcat - 231 - tomcat正在停止中
+2022-02-10 17:48:20,782 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:48:22,787 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:48:24,792 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:48:26,797 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:48:28,802 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:48:30,807 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:48:32,812 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:48:34,818 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:48:36,821 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:48:38,827 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:48:40,831 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:48:42,835 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:48:44,840 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:48:46,845 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:48:48,850 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:48:50,853 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:48:52,858 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:48:54,861 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:48:56,866 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:48:58,869 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:49:00,874 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:49:02,879 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:49:04,884 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:49:06,888 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:49:08,896 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:49:10,900 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:49:12,905 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:49:14,908 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:49:16,912 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:49:18,916 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:49:20,921 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:49:22,926 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:49:24,932 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:49:26,937 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:49:28,942 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:49:30,948 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:49:32,951 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:49:34,955 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:49:36,959 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:49:38,962 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:49:40,966 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:49:42,971 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:49:44,975 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:49:46,980 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:49:48,984 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:49:50,989 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:49:52,993 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:49:54,997 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:49:57,002 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:49:59,005 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:50:01,010 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:50:03,013 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:50:05,019 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:50:07,024 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:50:09,030 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:50:11,036 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:50:13,040 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:50:15,044 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:50:17,049 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:50:19,054 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:50:21,057 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:50:23,060 - INFO - product.py - shut_tomcat - 226 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 17:51:34,862 - INFO - product.py - start_tomcat - 254 - 启动custom_v9.4.1_huawei_xiantomcat服务成功
+2022-02-10 17:51:42,610 - INFO - product.py - shut_tomcat - 227 - custom_v9.4.1_huawei_xian tomcat服务停止中
+2022-02-10 17:51:44,614 - INFO - product.py - shut_tomcat - 229 - custom_v9.4.1_huawei_xian tomcat服务停止成功
+2022-02-10 18:19:36,095 - INFO - product.py - shut_tomcat - 227 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 18:19:38,102 - INFO - product.py - shut_tomcat - 229 - custom_v9.2.3_huawei_dis tomcat服务停止成功
+2022-02-10 18:19:43,662 - INFO - product.py - start_tomcat - 254 - 启动custom_v9.2.3_huawei_distomcat服务成功
+2022-02-10 18:20:06,991 - INFO - product.py - start_tomcat - 254 - 启动custom_v9.4.1_huawei_xiantomcat服务成功
+2022-02-10 18:20:18,478 - INFO - product.py - shut_tomcat - 227 - custom_v9.4.1_huawei_xian tomcat服务停止中
+2022-02-10 18:20:20,482 - INFO - product.py - shut_tomcat - 229 - custom_v9.4.1_huawei_xian tomcat服务停止成功
+2022-02-10 18:20:21,586 - INFO - product.py - shut_tomcat - 227 - custom_v9.2.3_huawei_dis tomcat服务停止中
+2022-02-10 18:20:23,591 - INFO - product.py - shut_tomcat - 229 - custom_v9.2.3_huawei_dis tomcat服务停止成功

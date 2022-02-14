@@ -1,0 +1,4 @@
+2022-01-11 09:41:06,897 - INFO - product.py - shut_tomcat - 207 - custom_v9.2.3_huawei_distomcat服务未启动
+2022-01-11 09:41:07,301 - INFO - product.py - copy_Jar - 316 - custom_v9.2.3_huawei_dis-2022-01-10 Jar包更新完成
+2022-01-11 09:41:07,362 - INFO - product.py - start_tomcat - 226 - 启动custom_v9.2.3_huawei_distomcat服务成功
+2022-01-11 09:59:09,994 - INFO - product.py - start_tomcat - 226 - 启动custom_v9.4.1_huawei_xiantomcat服务成功

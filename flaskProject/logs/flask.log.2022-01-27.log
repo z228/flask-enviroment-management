@@ -1,0 +1,36 @@
+2022-01-27 16:32:09,535 - INFO - product.py - start_tomcat - 236 - 启动custom_v9.2.3_huawei_distomcat服务成功
+2022-01-27 16:32:47,521 - INFO - product.py - start_tomcat - 236 - 启动custom_v9.2.3_huawei_distomcat服务成功
+2022-01-27 16:41:06,645 - INFO - product.py - shut_tomcat - 217 - custom_v9.4.1_huawei_xiantomcat服务未启动
+2022-01-27 16:41:09,011 - INFO - product.py - copy_Jar - 321 - api.jar更新完毕,时间：16:41:09
+2022-01-27 16:42:02,342 - INFO - product.py - copy_Jar - 321 - product.jar更新完毕,时间：16:42:02
+2022-01-27 16:42:24,132 - INFO - product.py - copy_Jar - 321 - thirds.jar更新完毕,时间：16:42:24
+2022-01-27 16:42:24,134 - INFO - product.py - copy_Jar - 326 - custom_v9.4.1_huawei_xian-2022-01-19 Jar包更新完成
+2022-01-27 16:42:24,264 - INFO - product.py - start_tomcat - 236 - 启动custom_v9.4.1_huawei_xiantomcat服务成功
+2022-01-27 16:54:00,657 - INFO - product.py - shut_tomcat - 219 - custom_v9.2.3_huawei_distomcat服务未启动
+2022-01-27 16:54:11,352 - INFO - product.py - shut_tomcat - 216 - custom_v9.4.1_huawei_xiantomcat服务停止成功
+2022-01-27 16:56:00,847 - INFO - product.py - start_tomcat - 239 - 启动custom_v9.4.1_huawei_xiantomcat服务成功
+2022-01-27 16:57:29,155 - INFO - product.py - shut_tomcat - 216 - custom_v9.4.1_huawei_xiantomcat服务停止成功
+2022-01-27 16:57:34,597 - INFO - product.py - start_tomcat - 239 - 启动custom_v9.4.1_huawei_xiantomcat服务成功
+2022-01-27 16:58:36,200 - INFO - product.py - shut_tomcat - 216 - custom_v9.4.1_huawei_xiantomcat服务停止成功
+2022-01-27 16:58:49,903 - INFO - product.py - start_tomcat - 239 - 启动custom_v9.4.1_huawei_xiantomcat服务成功
+2022-01-27 17:03:16,921 - INFO - product.py - shut_tomcat - 216 - custom_v9.4.1_huawei_xiantomcat服务停止成功
+2022-01-27 17:04:46,674 - INFO - product.py - start_tomcat - 239 - 启动custom_v9.4.1_huawei_xiantomcat服务成功
+2022-01-27 17:08:07,195 - INFO - product.py - shut_tomcat - 220 - custom_v9.4.1_huawei_xiantomcat服务未启动
+2022-01-27 17:08:24,809 - INFO - product.py - start_tomcat - 239 - 启动custom_v9.4.1_huawei_xiantomcat服务成功
+2022-01-27 17:16:46,876 - INFO - product.py - start_tomcat - 239 - 启动custom_v9.4.1_huawei_xiantomcat服务成功
+2022-01-27 17:18:22,459 - INFO - product.py - start_tomcat - 239 - 启动custom_v9.2.3_huawei_distomcat服务成功
+2022-01-27 17:22:24,612 - INFO - product.py - shut_tomcat - 220 - custom_v9.2.3_huawei_distomcat服务未启动
+2022-01-27 17:22:24,646 - INFO - product.py - start_tomcat - 239 - 启动custom_v9.2.3_huawei_distomcat服务成功
+2022-01-27 17:22:24,647 - INFO - product.py - restart_tomcat - 195 - custom_v9.2.3_huawei_distomcat重启成功
+2022-01-27 17:22:26,712 - INFO - product.py - copy_Jar - 326 - api.jar更新完毕,时间：17:22:26
+2022-01-27 17:23:22,102 - INFO - product.py - copy_Jar - 326 - product.jar更新完毕,时间：17:23:22
+2022-01-27 17:23:44,585 - INFO - product.py - copy_Jar - 326 - thirds.jar更新完毕,时间：17:23:44
+2022-01-27 17:23:44,588 - INFO - product.py - copy_Jar - 331 - custom_v9.2.3_huawei_dis-2022-01-27 Jar包更新完成
+2022-01-27 17:23:44,590 - INFO - product.py - new_copy - 351 - custom_v9.2.3_huawei_dis-2022-01-27 jar包检查完毕
+2022-01-27 17:26:33,955 - INFO - product.py - shut_tomcat - 220 - custom_v9.4.1_huawei_xiantomcat服务未启动
+2022-01-27 17:26:34,011 - INFO - product.py - start_tomcat - 239 - 启动custom_v9.4.1_huawei_xiantomcat服务成功
+2022-01-27 17:26:34,014 - INFO - product.py - restart_tomcat - 195 - custom_v9.4.1_huawei_xiantomcat重启成功
+2022-01-27 17:36:39,988 - INFO - product.py - shut_tomcat - 216 - custom_v9.4.1_huawei_xiantomcat服务停止成功
+2022-01-27 17:37:06,036 - INFO - product.py - start_tomcat - 239 - 启动custom_v9.2.3_huawei_distomcat服务成功
+2022-01-27 17:37:56,078 - INFO - product.py - start_tomcat - 239 - 启动custom_v9.4.1_huawei_xiantomcat服务成功
+2022-01-27 17:39:26,897 - INFO - product.py - shut_tomcat - 216 - custom_v9.4.1_huawei_xiantomcat服务停止成功

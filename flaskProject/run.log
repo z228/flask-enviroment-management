@@ -1,0 +1,339 @@
+nohup: 忽略输入
+/usr/local/lib/python3.6/site-packages/apscheduler/util.py:95: PytzUsageWarning: The zone attribute is specific to pytz's interface; please migrate to a new time zone provider. For more details on how to do so, see https://pytz-deprecation-shim.readthedocs.io/en/latest/migration.html
+  if obj.zone == 'local':
+/usr/local/lib/python3.6/site-packages/apscheduler/triggers/cron/__init__.py:146: PytzUsageWarning: The normalize method is no longer necessary, as this time zone supports the fold attribute (PEP 495). For more details on migrating to a PEP 495-compliant implementation, see https://pytz-deprecation-shim.readthedocs.io/en/latest/migration.html
+  return self.timezone.normalize(dateval + difference), fieldnum
+/usr/local/lib/python3.6/site-packages/apscheduler/triggers/cron/__init__.py:159: PytzUsageWarning: The localize method is no longer necessary, as this time zone supports the fold attribute (PEP 495). For more details on migrating to a PEP 495-compliant implementation, see https://pytz-deprecation-shim.readthedocs.io/en/latest/migration.html
+  return self.timezone.localize(datetime(**values))
+ * Serving Flask app 'app' (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: on
+ * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+ * Running on http://192.168.0.185:5000/ (Press CTRL+C to quit)
+ * Restarting with stat
+/usr/local/lib/python3.6/site-packages/apscheduler/util.py:95: PytzUsageWarning: The zone attribute is specific to pytz's interface; please migrate to a new time zone provider. For more details on how to do so, see https://pytz-deprecation-shim.readthedocs.io/en/latest/migration.html
+  if obj.zone == 'local':
+/usr/local/lib/python3.6/site-packages/apscheduler/triggers/cron/__init__.py:146: PytzUsageWarning: The normalize method is no longer necessary, as this time zone supports the fold attribute (PEP 495). For more details on migrating to a PEP 495-compliant implementation, see https://pytz-deprecation-shim.readthedocs.io/en/latest/migration.html
+  return self.timezone.normalize(dateval + difference), fieldnum
+/usr/local/lib/python3.6/site-packages/apscheduler/triggers/cron/__init__.py:159: PytzUsageWarning: The localize method is no longer necessary, as this time zone supports the fold attribute (PEP 495). For more details on migrating to a PEP 495-compliant implementation, see https://pytz-deprecation-shim.readthedocs.io/en/latest/migration.html
+  return self.timezone.localize(datetime(**values))
+ * Debugger is active!
+ * Debugger PIN: 463-384-199
+192.168.0.192 - - [11/Feb/2022 10:14:35] "GET /productJar/all HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:14:35] "GET /productJar/allBihome HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:14:35] "GET /productJar/port HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:14:35] "GET /productJar/bi HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:14:35] "GET /productJar/check HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:14:37] "GET /productJar/141jar HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:21:52] "GET /productJar/allBihome HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:21:52] "GET /productJar/all HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:21:52] "GET /productJar/bi HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:21:52] "GET /productJar/port HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:21:52] "GET /productJar/check HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:21:54] "GET /productJar/141jar HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:40:06] "GET /productJar/all HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:40:06] "GET /productJar/allBihome HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:40:07] "GET /productJar/check HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:40:07] "GET /productJar/port HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:40:07] "GET /productJar/bi HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:40:08] "GET /productJar/141jar HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:40:13] "GET /productJar/all HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:40:13] "GET /productJar/allBihome HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:40:13] "GET /productJar/port HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:40:13] "GET /productJar/bi HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:40:13] "GET /productJar/check HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:40:15] "GET /productJar/141jar HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:40:22] "OPTIONS /productJar/startup HTTP/1.1" 200 -
+[2022-02-11 10:40:22,337] INFO in product: 启动v8.6 tomcat服务成功
+192.168.0.192 - - [11/Feb/2022 10:40:22] "POST /productJar/startup HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:42:25] "GET /productJar/allBihome HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:42:25] "GET /productJar/all HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:42:25] "GET /productJar/bi HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:42:25] "GET /productJar/port HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:42:25] "GET /productJar/check HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:42:26] "GET /productJar/141jar HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:43:11] "GET /productJar/all HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:43:11] "GET /productJar/allBihome HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:43:11] "GET /productJar/bi HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:43:11] "GET /productJar/port HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:43:11] "GET /productJar/check HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:43:12] "GET /productJar/141jar HTTP/1.1" 200 -
+ * Detected change in '/mnt/192/my-first-flask/flaskProject/apps/productApp/product.py', reloading
+ * Restarting with stat
+/usr/local/lib/python3.6/site-packages/apscheduler/util.py:95: PytzUsageWarning: The zone attribute is specific to pytz's interface; please migrate to a new time zone provider. For more details on how to do so, see https://pytz-deprecation-shim.readthedocs.io/en/latest/migration.html
+  if obj.zone == 'local':
+/usr/local/lib/python3.6/site-packages/apscheduler/triggers/cron/__init__.py:146: PytzUsageWarning: The normalize method is no longer necessary, as this time zone supports the fold attribute (PEP 495). For more details on migrating to a PEP 495-compliant implementation, see https://pytz-deprecation-shim.readthedocs.io/en/latest/migration.html
+  return self.timezone.normalize(dateval + difference), fieldnum
+/usr/local/lib/python3.6/site-packages/apscheduler/triggers/cron/__init__.py:159: PytzUsageWarning: The localize method is no longer necessary, as this time zone supports the fold attribute (PEP 495). For more details on migrating to a PEP 495-compliant implementation, see https://pytz-deprecation-shim.readthedocs.io/en/latest/migration.html
+  return self.timezone.localize(datetime(**values))
+ * Debugger is active!
+ * Debugger PIN: 463-384-199
+ * Detected change in '/mnt/192/my-first-flask/flaskProject/apps/productApp/product.py', reloading
+ * Restarting with stat
+/usr/local/lib/python3.6/site-packages/apscheduler/util.py:95: PytzUsageWarning: The zone attribute is specific to pytz's interface; please migrate to a new time zone provider. For more details on how to do so, see https://pytz-deprecation-shim.readthedocs.io/en/latest/migration.html
+  if obj.zone == 'local':
+/usr/local/lib/python3.6/site-packages/apscheduler/triggers/cron/__init__.py:146: PytzUsageWarning: The normalize method is no longer necessary, as this time zone supports the fold attribute (PEP 495). For more details on migrating to a PEP 495-compliant implementation, see https://pytz-deprecation-shim.readthedocs.io/en/latest/migration.html
+  return self.timezone.normalize(dateval + difference), fieldnum
+/usr/local/lib/python3.6/site-packages/apscheduler/triggers/cron/__init__.py:159: PytzUsageWarning: The localize method is no longer necessary, as this time zone supports the fold attribute (PEP 495). For more details on migrating to a PEP 495-compliant implementation, see https://pytz-deprecation-shim.readthedocs.io/en/latest/migration.html
+  return self.timezone.localize(datetime(**values))
+ * Debugger is active!
+ * Debugger PIN: 463-384-199
+192.168.0.192 - - [11/Feb/2022 10:46:52] "GET /productJar/allBihome HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:46:52] "GET /productJar/all HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:46:52] "GET /productJar/bi HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:46:52] "GET /productJar/port HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:46:52] "GET /productJar/check HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:46:54] "GET /productJar/141jar HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:46:56] "OPTIONS /productJar/shutdown HTTP/1.1" 200 -
+[2022-02-11 10:46:56,937] INFO in product: v8.6 tomcat服务停止中
+[2022-02-11 10:46:58,942] INFO in product: v8.6 tomcat服务停止成功
+192.168.0.192 - - [11/Feb/2022 10:46:58] "POST /productJar/shutdown HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:47:01] "GET /productJar/all HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:47:01] "GET /productJar/allBihome HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:47:01] "GET /productJar/port HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:47:01] "GET /productJar/bi HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:47:01] "GET /productJar/check HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:47:03] "GET /productJar/141jar HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:47:04] "GET /productJar/all HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:47:04] "GET /productJar/allBihome HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:47:04] "GET /productJar/bi HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:47:04] "GET /productJar/check HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:47:04] "GET /productJar/port HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:47:05] "OPTIONS /productJar/startup HTTP/1.1" 200 -
+[2022-02-11 10:47:05,871] INFO in product: 启动v8.6 tomcat服务成功
+192.168.0.192 - - [11/Feb/2022 10:47:05] "POST /productJar/startup HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:47:06] "GET /productJar/141jar HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:47:09] "OPTIONS /productJar/startup HTTP/1.1" 200 -
+[2022-02-11 10:47:09,587] INFO in product: admin已启动v8.6 tomcat服务
+192.168.0.192 - - [11/Feb/2022 10:47:09] "POST /productJar/startup HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:47:15] "GET /productJar/allBihome HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:47:15] "GET /productJar/all HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:47:15] "GET /productJar/port HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:47:15] "GET /productJar/check HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:47:15] "GET /productJar/bi HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:47:17] "GET /productJar/141jar HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:47:17] "GET /productJar/all HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:47:17] "GET /productJar/allBihome HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:47:17] "GET /productJar/check HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:47:17] "GET /productJar/port HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:47:18] "GET /productJar/bi HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:47:19] "GET /productJar/141jar HTTP/1.1" 200 -
+192.168.0.110 - - [11/Feb/2022 10:51:21] "GET /productJar/all HTTP/1.1" 200 -
+192.168.0.110 - - [11/Feb/2022 10:51:21] "GET /productJar/allBihome HTTP/1.1" 200 -
+192.168.0.110 - - [11/Feb/2022 10:51:21] "GET /productJar/port HTTP/1.1" 200 -
+192.168.0.110 - - [11/Feb/2022 10:51:21] "GET /productJar/bi HTTP/1.1" 200 -
+192.168.0.110 - - [11/Feb/2022 10:51:21] "GET /productJar/check HTTP/1.1" 200 -
+192.168.0.110 - - [11/Feb/2022 10:51:23] "GET /productJar/141jar HTTP/1.1" 200 -
+192.168.0.110 - - [11/Feb/2022 10:51:31] "GET /productJar/all HTTP/1.1" 200 -
+192.168.0.110 - - [11/Feb/2022 10:51:31] "GET /productJar/allBihome HTTP/1.1" 200 -
+192.168.0.110 - - [11/Feb/2022 10:51:31] "GET /productJar/bi HTTP/1.1" 200 -
+192.168.0.110 - - [11/Feb/2022 10:51:31] "GET /productJar/check HTTP/1.1" 200 -
+192.168.0.110 - - [11/Feb/2022 10:51:31] "GET /productJar/port HTTP/1.1" 200 -
+192.168.0.110 - - [11/Feb/2022 10:51:32] "GET /productJar/141jar HTTP/1.1" 200 -
+ * Detected change in '/mnt/192/my-first-flask/flaskProject/apps/productApp/product.py', reloading
+v8.6
+ * Restarting with stat
+/usr/local/lib/python3.6/site-packages/apscheduler/util.py:95: PytzUsageWarning: The zone attribute is specific to pytz's interface; please migrate to a new time zone provider. For more details on how to do so, see https://pytz-deprecation-shim.readthedocs.io/en/latest/migration.html
+  if obj.zone == 'local':
+/usr/local/lib/python3.6/site-packages/apscheduler/triggers/cron/__init__.py:146: PytzUsageWarning: The normalize method is no longer necessary, as this time zone supports the fold attribute (PEP 495). For more details on migrating to a PEP 495-compliant implementation, see https://pytz-deprecation-shim.readthedocs.io/en/latest/migration.html
+  return self.timezone.normalize(dateval + difference), fieldnum
+/usr/local/lib/python3.6/site-packages/apscheduler/triggers/cron/__init__.py:159: PytzUsageWarning: The localize method is no longer necessary, as this time zone supports the fold attribute (PEP 495). For more details on migrating to a PEP 495-compliant implementation, see https://pytz-deprecation-shim.readthedocs.io/en/latest/migration.html
+  return self.timezone.localize(datetime(**values))
+ * Debugger is active!
+ * Debugger PIN: 463-384-199
+ * Detected change in '/mnt/192/my-first-flask/flaskProject/apps/productApp/productJar_router.py', reloading
+ * Restarting with stat
+/usr/local/lib/python3.6/site-packages/apscheduler/util.py:95: PytzUsageWarning: The zone attribute is specific to pytz's interface; please migrate to a new time zone provider. For more details on how to do so, see https://pytz-deprecation-shim.readthedocs.io/en/latest/migration.html
+  if obj.zone == 'local':
+/usr/local/lib/python3.6/site-packages/apscheduler/triggers/cron/__init__.py:146: PytzUsageWarning: The normalize method is no longer necessary, as this time zone supports the fold attribute (PEP 495). For more details on migrating to a PEP 495-compliant implementation, see https://pytz-deprecation-shim.readthedocs.io/en/latest/migration.html
+  return self.timezone.normalize(dateval + difference), fieldnum
+/usr/local/lib/python3.6/site-packages/apscheduler/triggers/cron/__init__.py:159: PytzUsageWarning: The localize method is no longer necessary, as this time zone supports the fold attribute (PEP 495). For more details on migrating to a PEP 495-compliant implementation, see https://pytz-deprecation-shim.readthedocs.io/en/latest/migration.html
+  return self.timezone.localize(datetime(**values))
+ * Debugger is active!
+ * Debugger PIN: 463-384-199
+192.168.0.192 - - [11/Feb/2022 10:54:09] "GET /productJar/all HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:54:09] "GET /productJar/allBihome HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:54:09] "GET /productJar/port HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:54:09] "GET /productJar/check HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:54:09] "GET /productJar/bi HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:54:11] "GET /productJar/141jar HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:54:12] "GET /productJar/all HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:54:12] "GET /productJar/allBihome HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:54:12] "GET /productJar/bi HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:54:12] "GET /productJar/port HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:54:12] "GET /productJar/check HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:54:14] "OPTIONS /productJar/shutdown HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:54:14] "GET /productJar/141jar HTTP/1.1" 200 -
+[2022-02-11 10:54:14,658] INFO in product: v8.6 tomcat服务停止中
+[2022-02-11 10:54:16,665] INFO in product: v8.6 tomcat服务停止成功
+192.168.0.192 - - [11/Feb/2022 10:54:16] "POST /productJar/shutdown HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:54:18] "GET /productJar/all HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:54:18] "GET /productJar/allBihome HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:54:18] "GET /productJar/bi HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:54:18] "GET /productJar/port HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:54:18] "GET /productJar/check HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:54:20] "GET /productJar/141jar HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:54:22] "GET /productJar/all HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:54:22] "GET /productJar/allBihome HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:54:22] "GET /productJar/port HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:54:22] "GET /productJar/bi HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:54:22] "GET /productJar/check HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:54:24] "GET /productJar/141jar HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:54:25] "OPTIONS /productJar/startup HTTP/1.1" 200 -
+[2022-02-11 10:54:25,257] INFO in product: 启动v8.6 tomcat服务成功
+192.168.0.192 - - [11/Feb/2022 10:54:25] "POST /productJar/startup HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:54:27] "OPTIONS /productJar/startup HTTP/1.1" 200 -
+[2022-02-11 10:54:27,716] INFO in product: admin已启动v8.6 tomcat服务
+192.168.0.192 - - [11/Feb/2022 10:54:27] "POST /productJar/startup HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:54:47] "OPTIONS /productJar/startup HTTP/1.1" 200 -
+[2022-02-11 10:54:47,532] INFO in product: admin已启动v8.6 tomcat服务
+192.168.0.192 - - [11/Feb/2022 10:54:47] "POST /productJar/startup HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:55:52] "OPTIONS /productJar/startup HTTP/1.1" 200 -
+[2022-02-11 10:55:52,943] INFO in product: admin已启动v8.6 tomcat服务
+192.168.0.192 - - [11/Feb/2022 10:55:52] "POST /productJar/startup HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:56:28] "GET /productJar/all HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:56:28] "GET /productJar/allBihome HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:56:28] "GET /productJar/port HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:56:28] "GET /productJar/bi HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:56:28] "GET /productJar/check HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:56:30] "GET /productJar/141jar HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:56:31] "GET /productJar/all HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:56:31] "GET /productJar/allBihome HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:56:31] "GET /productJar/bi HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:56:31] "GET /productJar/port HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:56:31] "GET /productJar/check HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:56:33] "GET /productJar/141jar HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:56:34] "OPTIONS /productJar/startup HTTP/1.1" 200 -
+[2022-02-11 10:56:34,354] INFO in product: admin已启动v8.6 tomcat服务
+192.168.0.192 - - [11/Feb/2022 10:56:34] "POST /productJar/startup HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:56:49] "GET /productJar/all HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:56:49] "GET /productJar/allBihome HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:56:49] "GET /productJar/check HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:56:49] "GET /productJar/port HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:56:49] "GET /productJar/bi HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:56:51] "GET /productJar/141jar HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:56:51] "GET /productJar/all HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:56:51] "GET /productJar/allBihome HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:56:51] "GET /productJar/port HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:56:51] "GET /productJar/bi HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:56:51] "GET /productJar/check HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:56:53] "GET /productJar/141jar HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:56:54] "OPTIONS /productJar/startup HTTP/1.1" 200 -
+[2022-02-11 10:56:54,042] INFO in product: admin已启动v8.6 tomcat服务
+192.168.0.192 - - [11/Feb/2022 10:56:54] "POST /productJar/startup HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:57:13] "GET /productJar/allBihome HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:57:13] "GET /productJar/all HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:57:13] "GET /productJar/bi HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:57:13] "GET /productJar/port HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:57:13] "GET /productJar/check HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:57:15] "GET /productJar/141jar HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:57:15] "GET /productJar/all HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:57:15] "GET /productJar/allBihome HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:57:15] "GET /productJar/bi HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:57:15] "GET /productJar/port HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:57:15] "GET /productJar/check HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:57:16] "GET /productJar/141jar HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:57:17] "OPTIONS /productJar/startup HTTP/1.1" 200 -
+[2022-02-11 10:57:17,331] INFO in product: admin已启动v8.6 tomcat服务
+192.168.0.192 - - [11/Feb/2022 10:57:17] "POST /productJar/startup HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:59:04] "GET /productJar/all HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:59:04] "GET /productJar/allBihome HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:59:04] "GET /productJar/bi HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:59:04] "GET /productJar/port HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:59:04] "GET /productJar/check HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:59:06] "GET /productJar/141jar HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:59:11] "GET /productJar/all HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:59:11] "GET /productJar/allBihome HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:59:11] "GET /productJar/bi HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:59:11] "GET /productJar/port HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:59:11] "GET /productJar/check HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:59:12] "GET /productJar/141jar HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 10:59:14] "OPTIONS /productJar/startup HTTP/1.1" 200 -
+[2022-02-11 10:59:14,156] INFO in product: admin已启动v8.6 tomcat服务
+192.168.0.192 - - [11/Feb/2022 10:59:14] "POST /productJar/startup HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:00:36] "GET /productJar/all HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:00:36] "GET /productJar/allBihome HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:00:36] "GET /productJar/bi HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:00:36] "GET /productJar/port HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:00:36] "GET /productJar/check HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:00:38] "GET /productJar/141jar HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:00:40] "OPTIONS /productJar/startup HTTP/1.1" 200 -
+[2022-02-11 11:00:40,490] INFO in product: admin已启动v8.6 tomcat服务
+192.168.0.192 - - [11/Feb/2022 11:00:40] "POST /productJar/startup HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:01:09] "GET /productJar/all HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:01:09] "GET /productJar/allBihome HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:01:09] "GET /productJar/port HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:01:09] "GET /productJar/bi HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:01:09] "GET /productJar/check HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:01:11] "GET /productJar/141jar HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:01:11] "OPTIONS /productJar/startup HTTP/1.1" 200 -
+[2022-02-11 11:01:11,713] INFO in product: admin已启动v8.6 tomcat服务
+192.168.0.192 - - [11/Feb/2022 11:01:11] "POST /productJar/startup HTTP/1.1" 200 -
+192.168.0.67 - - [11/Feb/2022 11:02:40] "GET /productJar/all HTTP/1.1" 200 -
+192.168.0.67 - - [11/Feb/2022 11:02:40] "GET /productJar/allBihome HTTP/1.1" 200 -
+192.168.0.67 - - [11/Feb/2022 11:02:40] "GET /productJar/port HTTP/1.1" 200 -
+192.168.0.67 - - [11/Feb/2022 11:02:40] "GET /productJar/check HTTP/1.1" 200 -
+192.168.0.67 - - [11/Feb/2022 11:02:40] "GET /productJar/bi HTTP/1.1" 200 -
+192.168.0.67 - - [11/Feb/2022 11:02:42] "GET /productJar/141jar HTTP/1.1" 200 -
+192.168.0.67 - - [11/Feb/2022 11:02:53] "GET /productJar/all HTTP/1.1" 200 -
+192.168.0.67 - - [11/Feb/2022 11:02:53] "GET /productJar/allBihome HTTP/1.1" 200 -
+192.168.0.67 - - [11/Feb/2022 11:02:53] "GET /productJar/bi HTTP/1.1" 200 -
+192.168.0.67 - - [11/Feb/2022 11:02:53] "GET /productJar/port HTTP/1.1" 200 -
+192.168.0.67 - - [11/Feb/2022 11:02:53] "GET /productJar/check HTTP/1.1" 200 -
+192.168.0.67 - - [11/Feb/2022 11:02:55] "GET /productJar/141jar HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:03:24] "GET /productJar/all HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:03:24] "GET /productJar/allBihome HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:03:24] "GET /productJar/port HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:03:24] "GET /productJar/bi HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:03:24] "GET /productJar/check HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:03:26] "GET /productJar/141jar HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:03:26] "OPTIONS /productJar/shutdown HTTP/1.1" 200 -
+[2022-02-11 11:03:26,975] INFO in product: v8.6 tomcat服务停止中
+[2022-02-11 11:03:28,982] INFO in product: v8.6 tomcat服务停止成功
+192.168.0.192 - - [11/Feb/2022 11:03:28] "POST /productJar/shutdown HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:03:45] "GET /productJar/all HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:03:45] "GET /productJar/allBihome HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:03:45] "GET /productJar/port HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:03:45] "GET /productJar/bi HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:03:45] "GET /productJar/check HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:03:47] "GET /productJar/141jar HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:03:49] "GET /productJar/all HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:03:49] "GET /productJar/allBihome HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:03:49] "GET /productJar/bi HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:03:49] "GET /productJar/port HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:03:49] "GET /productJar/check HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:03:51] "GET /productJar/141jar HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:03:54] "OPTIONS /productJar/startup HTTP/1.1" 200 -
+[2022-02-11 11:03:54,445] INFO in product: 启动v8.6 tomcat服务成功
+192.168.0.192 - - [11/Feb/2022 11:03:54] "POST /productJar/startup HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:03:58] "OPTIONS /productJar/startup HTTP/1.1" 200 -
+[2022-02-11 11:03:58,999] INFO in product: zcl已启动v8.6 tomcat服务
+192.168.0.192 - - [11/Feb/2022 11:03:59] "POST /productJar/startup HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:04:02] "GET /productJar/all HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:04:02] "GET /productJar/allBihome HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:04:02] "GET /productJar/port HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:04:02] "GET /productJar/bi HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:04:02] "GET /productJar/check HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:04:03] "GET /productJar/141jar HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:04:04] "OPTIONS /productJar/startup HTTP/1.1" 200 -
+[2022-02-11 11:04:04,065] INFO in product: zcl已启动v8.6 tomcat服务
+192.168.0.192 - - [11/Feb/2022 11:04:04] "POST /productJar/startup HTTP/1.1" 200 -
+192.168.0.192 - - [11/Feb/2022 11:04:07] "OPTIONS /productJar/shutdown HTTP/1.1" 200 -
+[2022-02-11 11:04:07,694] INFO in product: v8.6 tomcat服务停止中
+[2022-02-11 11:04:09,699] INFO in product: v8.6 tomcat服务停止成功
+192.168.0.192 - - [11/Feb/2022 11:04:09] "POST /productJar/shutdown HTTP/1.1" 200 -
+192.168.0.67 - - [11/Feb/2022 11:05:29] "GET /productJar/all HTTP/1.1" 200 -
+192.168.0.67 - - [11/Feb/2022 11:05:29] "GET /productJar/allBihome HTTP/1.1" 200 -
+192.168.0.67 - - [11/Feb/2022 11:05:29] "GET /productJar/check HTTP/1.1" 200 -
+192.168.0.67 - - [11/Feb/2022 11:05:29] "GET /productJar/bi HTTP/1.1" 200 -
+192.168.0.67 - - [11/Feb/2022 11:05:29] "GET /productJar/port HTTP/1.1" 200 -
+192.168.0.67 - - [11/Feb/2022 11:05:31] "GET /productJar/141jar HTTP/1.1" 200 -
+192.168.0.244 - - [11/Feb/2022 11:05:39] "GET /productJar/all HTTP/1.1" 200 -
+192.168.0.244 - - [11/Feb/2022 11:05:39] "GET /productJar/allBihome HTTP/1.1" 200 -
+192.168.0.244 - - [11/Feb/2022 11:05:39] "GET /productJar/port HTTP/1.1" 200 -
+192.168.0.244 - - [11/Feb/2022 11:05:39] "GET /productJar/bi HTTP/1.1" 200 -
+192.168.0.244 - - [11/Feb/2022 11:05:39] "GET /productJar/check HTTP/1.1" 200 -
+192.168.0.244 - - [11/Feb/2022 11:05:41] "GET /productJar/141jar HTTP/1.1" 200 -
