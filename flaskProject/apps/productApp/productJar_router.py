@@ -97,6 +97,7 @@ def shutdown_product():
 def start_product():
     productAction = ProductAction()
     data = json.loads(request.get_data())
+<<<<<<< HEAD
     if 'user' in data.keys():
         res = productAction.start_tomcat(data['version'],data['user'])
         if '成功' not in res:
@@ -138,6 +139,9 @@ def get_view_port():
     for key in productAction.config.keys():
         v[key] = productAction.get_bi_port(key)
     return productAction.succ(v)
+=======
+    return productAction.succ(productAction.start_tomcat(data['version']))
+>>>>>>> 7151340 (code review)
 
 
 # 更换Jar包
