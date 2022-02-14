@@ -1,4 +1,5 @@
 # from _typeshed import Self
+import imp
 import os
 import time
 from shutil import copy2, rmtree
@@ -7,6 +8,7 @@ import socket
 import json
 from flask import current_app
 import  xml.dom.minidom
+from .status import toked
 import platform
 if platform.system()=="Windows":
     import win32api as api
@@ -17,8 +19,9 @@ else:
 
 class ProductAction:
     host_ip = '127.0.0.1'
-    ip = '\\\\192.168.0.141/productJar/'
-    ip_134 = '\\\\192.168.1.134/git-package/'
+    ip = '/mnt/141/productJar/'
+    ip_134 = '/mnt/134/productJar/'
+    ip = ip_134
     from_path = []
     script_path = f"{os.getcwd()}/static/job"
     to_path = []
@@ -77,6 +80,9 @@ class ProductAction:
 
     def succ(self,data):
         return json.dumps({"code": 200, "data": data})
+    
+    def info(self,data):
+        return json.dumps({"code": 205, "data": data})
 
     # 获取脚本列表
     def getAllScript(self):
@@ -124,6 +130,16 @@ class ProductAction:
         self.server_xml_path = f'{self.root_path}/tomcat/conf/server.xml'
         for key in self.config.keys():
             self.config[key][1] = self.get_bi_port(key)
+
+    def get_debug_port(self,version):
+        if self.current_system == "Windows":
+            catalina_path = f'{self.config[version][0]}{self.tomcat_path}catalina.bat'
+        else:
+            catalina_path = f'{self.config[version][0]}{self.tomcat_path}catalina.sh'
+        with open(catalina_path,'r',encoding='utf-8') as catalina:
+            for i in catalina.readlines():
+                if 'JPDA_ADDRESS' in i:
+                    return i.split('=')[1].split(':')[1][0:-1]
 
     def change_bi_home(self,version,bihome):
         if self.current_system == "Windows":
@@ -176,11 +192,20 @@ class ProductAction:
     def current_time(self):
         return time.strftime("%H:%M:%S", time.localtime())
 
-    def restart_tomcat(self,v):
+    def restart_tomcat(self,v,user=''):
         self.shut_tomcat(v)
-        self.start_tomcat(v)
-        current_app.logger.info(f'{v}tomcat重启成功')
-        return f'{v}tomcat重启成功！'
+        self.start_tomcat(v,user)
+        current_app.logger.info(f'{v} tomcat重启成功')
+        return f'{v} tomcat重启成功！'
+
+    def get_pid_by_port(self,port):
+        res = os.popen(f'lsof -i:{port}').readlines()
+        res.pop(0)
+        pid =[]
+        for i in res:
+            pid.append(i.split()[1])
+        return ','.join(list(set(pid)))
+        
 
     # 停止tomcat
     def shut_tomcat(self,v):
@@ -199,14 +224,21 @@ class ProductAction:
             else:
                 work_dir = self.config[v][0] + self.tomcat_path
                 os.chdir(work_dir)
-                os.system(f'sh shutdown.sh > caches.txt')
-            current_app.logger.info(f'{v}tomcat服务停止成功')
-            return f'{v}tomcat服务停止成功'
+                os.system(f'kill -9 {self.get_pid_by_port(str(host_port))}')
+            while 1:
+                if self.is_port_used(self.host_ip, host_port):
+                    current_app.logger.info(f'{v} tomcat服务停止中')
+                else:
+                    current_app.logger.info(f'{v} tomcat服务停止成功')
+                    break
+                time.sleep(2)
+            toked[v]=''
+            return f'{v} tomcat服务停止成功'
         else:
-            current_app.logger.info(f'{v}tomcat服务未启动')
-            return f'{v}tomcat服务未启动'
+            current_app.logger.info(f'{v} tomcat服务未启动')
+            return f'{v} tomcat服务未启动'
 
-    def start_tomcat(self,v):
+    def start_tomcat(self,v,user=''):
         # v = ip + v + '/'
         # index = from_path.index(v)
         host_port = eval(self.config[v][1])
@@ -214,16 +246,22 @@ class ProductAction:
         os.chdir(work_dir)
         for scape in range(100):
             if self.is_port_used(self.host_ip, host_port):
-                current_app.logger.info('tomcat正在停止中')
-                time.sleep(10)
+                if toked[v]!='':
+                    current_app.logger.info(f'{toked[v]}已启动{v} tomcat服务')
+                    return f'{toked[v]}已启动{v} tomcat服务'
+                elif toked[v]=='':
+                    current_app.logger.info('tomcat正在停止中')
+                    time.sleep(10)
             else:
                 if(self.current_system == "Windows"):
                     os.system('startup > caches.txt')
                 else:
-                    os.system('sh startup.sh > caches.txt')
+                    os.system('sh catalina.sh jpda start > caches.txt')
                 break
-        current_app.logger.info(f'启动{v}tomcat服务成功')
-        return f'启动{v}tomcat服务成功'
+        current_app.logger.info(f'启动{v} tomcat服务成功')
+        if user!='':
+            toked[v]=user
+        return f'启动{v} tomcat服务成功'
 
     def renameProductJar(self,newName,path):
         jar_list=os.listdir(path)
@@ -300,22 +338,22 @@ class ProductAction:
                 # backup_file = os.path.join(backup_path, file_name)
                 try:
                     from_134_file = from_file.replace(self.ip, self.ip_134)
-                    if os.path.exists(from_134_file):
-                        if not filecmp.cmp(from_file, from_134_file):
-                            from_file = from_134_file
+                    # if os.path.exists(from_134_file):
+                    #     if not filecmp.cmp(from_file, from_134_file):
+                    #         from_file = from_134_file
                     if not filecmp.cmp(from_file, to_file):
                         # copy2(to_file, backup_file)
                         copy2(from_file, to_file)
                         # copy2(from_file, ubuntu_file)
-                        current_app.logger.info(f"{file_name}更新完毕,时间：{self.current_time()}\n")
+                        current_app.logger.info(f"{file_name}更新完毕,时间：{self.current_time()}")
                 except PermissionError:
                     current_app.logger.info(f"{path}下{file_name}正在被占用，请稍等...time{self.current_time()}")
         except FileNotFoundError as err:
-            current_app.logger.info(f'file error:{err}\n')
+            current_app.logger.info(f'file error:{err}')
         current_app.logger.info(f'{version}-{self.formatDateStr(date)} Jar包更新完成')
         return f'{version}-{self.formatDateStr(date)} Jar包更新完成'
 
-    def copy_and_reload(self,v,date=''):
+    def copy_and_reload(self,v,date='',user=''):
         """
         :param v: 版本号 develop
         :return:
@@ -323,7 +361,7 @@ class ProductAction:
         # 先关闭tomcat，然后换JAR，再启动tomcat
         self.shut_tomcat(v)
         self.copy_Jar(self.config[v][0] + self.YongHong_path, v,date)
-        self.start_tomcat(v)
+        self.start_tomcat(v,user)
         return f'{v}已更换{self.formatDateStr(date)} jar包并重启Tomcat成功'
 
     def new_copy(self,v,date=''):
