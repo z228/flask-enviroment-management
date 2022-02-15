@@ -68,10 +68,7 @@ def get_141_jar():
     # data = json.loads(request.get_data())
     for key in productAction.config.keys():
         key2 = "v9.4" if key == "v9.4.1"else key
-        # if key=="custom_v9.4.1_huawei_xian":
-        #     v[key] = ['']
-        #     continue
-        v[key] = os.listdir(f'/mnt/134/productJar/{key2}')
+        v[key] = os.listdir(f'\\\\192.168.0.141/productJar/{key2}')
         v[key] = productAction.clear_list_not_num(v[key])
         v[key].reverse()
     return productAction.succ(v)
@@ -97,7 +94,6 @@ def shutdown_product():
 def start_product():
     productAction = ProductAction()
     data = json.loads(request.get_data())
-<<<<<<< HEAD
     if 'user' in data.keys():
         res = productAction.start_tomcat(data['version'],data['user'])
         if '成功' not in res:
@@ -138,11 +134,7 @@ def get_view_port():
     productAction = ProductAction()
     for key in productAction.config.keys():
         v[key] = productAction.get_bi_port(key)
-    return productAction.succ(v)
-=======
     return productAction.succ(productAction.start_tomcat(data['version']))
->>>>>>> 7151340 (code review)
-
 
 # 更换Jar包
 @productJar_operate.route('/update', methods=['POST'])
@@ -170,15 +162,12 @@ def update_linux_jar():
     src_path = src_path.replace(productAction.ip,productAction.ip_134)
     dirs = os.listdir(src_path)
     for dir in dirs:
-<<<<<<< HEAD
         src_file = os.path.join(src_path, dir)  
         ftpServer.upload_file(src_file, f'/{data["version"]}')
-=======
         if dir.split('\\')[-1] not in ['api.jar','product.jar','thirds.jar']:
             continue
         src_file= os.path.join(src_path,dir)
         ftpServer.upload_file(src_file,f'/{data["version"]}')
->>>>>>> b9e1cde (code review)
     ftpServer.quit()
     return productAction.succ(f'服务器{data["version"]}的Jar包更新成功')
 
