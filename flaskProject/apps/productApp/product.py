@@ -215,7 +215,7 @@ class ProductAction:
                 # if v == 'develop':
                     # print('停止trunk tomcat进程')
                 # print(os.getcwd())
-                current_app.logger.info('停止trunk tomcat进程')
+                current_app.logger.info(f'停止{v} tomcat进程')
                 os.system(f'python {self.script_path}/stopTrunk.py {host_port} > stopTomcat.txt')
                 # else:
                 #     work_dir = self.config[v][0] + self.tomcat_path
@@ -224,7 +224,7 @@ class ProductAction:
             else:
                 work_dir = self.config[v][0] + self.tomcat_path
                 os.chdir(work_dir)
-                os.system(f'kill -9 {self.get_pid_by_port(str(host_port))}')
+                os.system(f'sh shutdown.sh')
             while 1:
                 if self.is_port_used(self.host_ip, host_port):
                     current_app.logger.info(f'{v} tomcat服务停止中')
