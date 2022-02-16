@@ -134,7 +134,7 @@ def get_view_port():
     productAction = ProductAction()
     for key in productAction.config.keys():
         v[key] = productAction.get_bi_port(key)
-    return productAction.succ(productAction.start_tomcat(data['version']))
+    return productAction.succ(v)
 
 # 更换Jar包
 @productJar_operate.route('/update', methods=['POST'])
@@ -163,7 +163,6 @@ def update_linux_jar():
     dirs = os.listdir(src_path)
     for dir in dirs:
         src_file = os.path.join(src_path, dir)  
-        ftpServer.upload_file(src_file, f'/{data["version"]}')
         if dir.split('\\')[-1] not in ['api.jar','product.jar','thirds.jar']:
             continue
         src_file= os.path.join(src_path,dir)
