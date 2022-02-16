@@ -175,14 +175,22 @@ def update_linux_jar():
 def reload_product():
     productAction = ProductAction()
     data = json.loads(request.get_data())
-    return productAction.succ(productAction.restart_tomcat(data['version']))
+    if 'user' in data.keys():
+        res = productAction.restart_tomcat(data['version'],data['user'])
+        return productAction.succ(res)
+    else:
+        return productAction.succ(productAction.restart_tomcat(data['version']))
 
 # 更换Jar包并重启产品
 @productJar_operate.route('/updateReload', methods=['POST'])
 def update_and_reload_product():
     productAction = ProductAction()
     data = json.loads(request.get_data())
-    return productAction.succ(productAction.copy_and_reload(data['version'], data['date']))
+    if 'user' in data.keys():
+        res = productAction.copy_and_reload(data['version'],user=data['user'])
+        return productAction.succ(res)
+    else:
+        return productAction.succ(productAction.copy_and_reload(data['version']))
 
 # 更换jar功能页面
 @productJar_operate.route('/exchange', methods=['POST', 'GET'])
