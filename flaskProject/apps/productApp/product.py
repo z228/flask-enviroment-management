@@ -225,11 +225,8 @@ class ProductAction:
                 work_dir = self.config[v][0] + self.tomcat_path
                 os.chdir(work_dir)
                 current_app.logger.info(f'进入目录{work_dir}')
-                if v=='develop':
-                    os.system(f'kill -9 {self.get_pid_by_port(str(host_port))}')
-                else:
-                    os.popen(f'sh {work_dir}shutdown.sh')
-                    current_app.logger.info(f'sh {work_dir}shutdown.sh')
+                    # os.system(f'kill -9 {self.get_pid_by_port(str(host_port))}')
+                os.popen(f'sh {work_dir}shutdown.sh')
             while 1:
                 if self.is_port_used(self.host_ip, host_port):
                     current_app.logger.info(f'{v} tomcat服务停止中')
