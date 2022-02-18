@@ -229,6 +229,7 @@ class ProductAction:
                     os.system(f'kill -9 {self.get_pid_by_port(str(host_port))}')
                 else:
                     os.popen(f'sh {work_dir}shutdown.sh')
+                    current_app.logger.info(f'sh {work_dir}shutdown.sh')
             while 1:
                 if self.is_port_used(self.host_ip, host_port):
                     current_app.logger.info(f'{v} tomcat服务停止中')
