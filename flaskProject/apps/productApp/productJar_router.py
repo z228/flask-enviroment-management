@@ -68,7 +68,7 @@ def get_141_jar():
     # data = json.loads(request.get_data())
     for key in productAction.config.keys():
         key2 = "v9.4" if key == "v9.4.1"else key
-        v[key] = os.listdir(f'\\\\192.168.0.141/productJar/{key2}')
+        v[key] = os.listdir(f'{productAction.ip_134}{key2}')
         v[key] = productAction.clear_list_not_num(v[key])
         v[key].reverse()
     return productAction.succ(v)

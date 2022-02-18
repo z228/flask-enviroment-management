@@ -224,6 +224,7 @@ class ProductAction:
             else:
                 work_dir = self.config[v][0] + self.tomcat_path
                 os.chdir(work_dir)
+                current_app.logger.info(f'进入目录{work_dir}')
                 if v=='develop':
                     os.system(f'kill -9 {self.get_pid_by_port(str(host_port))}')
                 else:
