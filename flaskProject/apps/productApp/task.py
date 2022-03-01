@@ -32,3 +32,6 @@ def Jacoco_change_Jar():
     work_dir = r'D:\SVN\trunk\test\assetExecute'
     os.chdir(work_dir)
     os.system('ant test report')
+
+def killall_java():
+    os.system('killall -9 java')
