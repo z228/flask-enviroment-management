@@ -9,29 +9,36 @@ from apps.lib.FtpServer import MyFTP
 
 productJar_operate = Blueprint('productJar', __name__)
 
+productAction = ProductAction()
+jarlist = productAction.get_jar_list()
+status = productAction.check_product_status()
 # 产品jar功能页面
 @productJar_operate.route('/', methods=['POST', 'GET'])
 def product():
     return render_template('product.html')
 
+def updateStatus():
+    global status
+    status = productAction.check_product_status()
+
 # 获取脚本列表
 @productJar_operate.route('/allScript', methods=['GET'])
 def get_all_script():
-    productAction = ProductAction()
+    #productAction = ProductAction()
     return productAction.succ(productAction.getAllScript())
 
 # 执行脚本
 @productJar_operate.route('/execute', methods=['post'])
 def execute_script():
     data = json.loads(request.get_data())
-    productAction = ProductAction()
+    #productAction = ProductAction()
     return productAction.succ(productAction.executeScript(data['name']))
 
 # 删除脚本
 @productJar_operate.route('/delete', methods=['post'])
 def delete_script():
     data = json.loads(request.get_data())
-    productAction = ProductAction()
+    #productAction = ProductAction()
     return productAction.succ(productAction.deleteScript(data['name']))
 
 
@@ -39,13 +46,13 @@ def delete_script():
 @productJar_operate.route('/saveScript', methods=['post'])
 def save_script():
     data = json.loads(request.get_data())
-    productAction = ProductAction()
+    #productAction = ProductAction()
     return productAction.succ(productAction.saveScript(data['content'], data['name'], data['type']))
 
 # 获取所有版本号
 @productJar_operate.route('/all', methods=['GET'])
 def get_all_version():
-    productAction = ProductAction()
+    #productAction = ProductAction()
     v = {}
     for key in productAction.config.keys():
         v[key] = productAction.config[key][0]
@@ -55,7 +62,7 @@ def get_all_version():
 @productJar_operate.route('/allBihome', methods=['GET'])
 def get_all_bihome():
     v = {}
-    productAction = ProductAction()
+    #productAction = ProductAction()
     for key in productAction.config.keys():
         v[key] = productAction.config[key][2].split(' ')
     return productAction.succ(v)
@@ -63,27 +70,28 @@ def get_all_bihome():
 # 获取141备份的jar包列表
 @productJar_operate.route('/141jar', methods=['GET'])
 def get_141_jar():
-    v = {}
-    productAction = ProductAction()
-    # data = json.loads(request.get_data())
-    for key in productAction.config.keys():
-        key2 = "v9.4" if key == "v9.4.1"else key
-        v[key] = os.listdir(f'{productAction.ip_134}{key2}')
-        v[key] = productAction.clear_list_not_num(v[key])
-        v[key].reverse()
+    # v = {}
+    #productAction = ProductAction()
+    v = productAction.jar_list
+    # # data = json.loads(request.get_data())
+    # for key in productAction.config.keys():
+    #     key2 = "v9.4" if key == "v9.4.1"else key
+    #     v[key] = os.listdir(f'{productAction.ip_134}{key2}')
+    #     v[key] = productAction.clear_list_not_num(v[key])
+    #     v[key].reverse()
     return productAction.succ(v)
 
 # 更换环境bihome
 @productJar_operate.route('/changeBihome', methods=['POST'])
 def change_bihome():
-    productAction = ProductAction()
+    #productAction = ProductAction()
     data = json.loads(request.get_data())
     return productAction.succ(productAction.change_bi_home(data['version'], data['bihome']))
 
 # 停止产品
 @productJar_operate.route('/shutdown', methods=['POST'])
 def shutdown_product():
-    productAction = ProductAction()
+    #productAction = ProductAction()
     data = json.loads(request.get_data())
     print(data['version'])
     # return succ('关闭成功')
@@ -92,7 +100,7 @@ def shutdown_product():
 # 启动产品
 @productJar_operate.route('/startup', methods=['POST'])
 def start_product():
-    productAction = ProductAction()
+    #productAction = ProductAction()
     data = json.loads(request.get_data())
     if 'user' in data.keys():
         res = productAction.start_tomcat(data['version'],data['user'])
@@ -106,23 +114,23 @@ def start_product():
 # 检测产品是否启动中
 @productJar_operate.route('/check', methods=['GET'])
 def check_product():
-    v = {}
-    productAction = ProductAction()
-    for key in productAction.config.keys():
-        if productAction.is_port_used('localhost',eval(productAction.config[key][1])):
-            if  key not in toked.keys():
-                v[key] =''
-            else:
-                v[key] =toked[key]
-        else:
-            v[key] ='0'
-    return productAction.succ(v)
+    # v = {}
+    #productAction = ProductAction()
+    # for key in productAction.config.keys():
+    #     if productAction.is_port_used('localhost',eval(productAction.config[key][1])):
+    #         if  key not in toked.keys():
+    #             v[key] =''
+    #         else:
+    #             v[key] =toked[key]
+    #     else:
+    #         v[key] ='0'
+    return productAction.succ(productAction.check_product_status())
 
 # 获取debug端口
 @productJar_operate.route('/port', methods=['GET'])
 def get_port():
     v = {}
-    productAction = ProductAction()
+    #productAction = ProductAction()
     for key in productAction.config.keys():
         v[key] = productAction.get_debug_port(key)
     return productAction.succ(v)
@@ -131,7 +139,7 @@ def get_port():
 @productJar_operate.route('/bi', methods=['GET'])
 def get_view_port():
     v = {}
-    productAction = ProductAction()
+    #productAction = ProductAction()
     for key in productAction.config.keys():
         v[key] = productAction.get_bi_port(key)
     return productAction.succ(v)
@@ -139,21 +147,21 @@ def get_view_port():
 # 更换Jar包
 @productJar_operate.route('/update', methods=['POST'])
 def update_jar():
-    productAction = ProductAction()
+    #productAction = ProductAction()
     data = json.loads(request.get_data())
     return productAction.succ(productAction.new_copy(data['version'], data['date']))
 
 # 更换指定日期Jar包
 @productJar_operate.route('/updatewithDate', methods=['POST'])
 def update_jar_with_date():
-    productAction = ProductAction()
+    #productAction = ProductAction()
     data = json.loads(request.get_data())
     return productAction.succ(productAction.new_copy(data['version'], data['date']))
 
 # 更换Linux服务器Jar包
 @productJar_operate.route('/updateLinuxJar', methods=['POST'])
 def update_linux_jar():
-    productAction = ProductAction()
+    #productAction = ProductAction()
     ftpServer = MyFTP()
     ftpServer.connect()
     ftpServer.login()
@@ -173,21 +181,21 @@ def update_linux_jar():
 # 重启产品
 @productJar_operate.route('/reload_product', methods=['POST'])
 def reload_product():
-    productAction = ProductAction()
+    #productAction = ProductAction()
     data = json.loads(request.get_data())
     return productAction.succ(productAction.restart_tomcat(data['version']))
 
 # 更换Jar包并重启产品
 @productJar_operate.route('/updateReload', methods=['POST'])
 def update_and_reload_product():
-    productAction = ProductAction()
+    #productAction = ProductAction()
     data = json.loads(request.get_data())
     return productAction.succ(productAction.copy_and_reload(data['version'], data['date']))
 
 # 更换jar功能页面
 @productJar_operate.route('/exchange', methods=['POST', 'GET'])
 def exchange():
-    productAction = ProductAction()
+    #productAction = ProductAction()
     if request.method == 'POST':
         aim = request.form['exchange']
         print(request.form['exchange'])
@@ -207,7 +215,7 @@ def exchange():
 # 重启服务功能页面
 @productJar_operate.route('/reload', methods=['POST', 'GET'])
 def reload():
-    productAction = ProductAction()
+    #productAction = ProductAction()
     if request.method == 'POST':
         aim = request.form['reload']
         print(request.form['reload'])
@@ -226,7 +234,7 @@ def reload():
 # 备份功能
 @productJar_operate.route('/backup', methods=['POST', 'GET'])
 def backup():
-    productAction = ProductAction()
+    #productAction = ProductAction()
     if request.method == 'POST':
         aim = request.form['backup']
         # print(request.form['backup'])

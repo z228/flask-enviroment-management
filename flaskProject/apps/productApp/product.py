@@ -10,6 +10,9 @@ from flask import current_app
 import  xml.dom.minidom
 from .status import toked
 import platform
+import _thread
+
+from apps.productApp import status
 if platform.system()=="Windows":
     import win32api as api
     import win32console as con
@@ -36,9 +39,13 @@ class ProductAction:
     tomcat_path = ''
     bi_xml_path = ''
     config={}
+    jar_list = {}
+    status = {}
     # current_system="linux"
     def __init__(self) -> None:
         self.readConfig()
+        self.jar_list = self.get_jar_list()
+        self.status = self.check_product_status()
 
     # 向某个进程发送crtl+c指令
     def send_ctrl_c(self,pid):
@@ -212,20 +219,14 @@ class ProductAction:
         host_port = eval(self.config[v][1])
         if self.is_port_used(self.host_ip, host_port):
             if(self.current_system == "Windows"):
-                # if v == 'develop':
-                    # print('停止trunk tomcat进程')
-                # print(os.getcwd())
                 current_app.logger.info(f'停止{v} tomcat进程')
                 os.system(f'python {self.script_path}/stopTrunk.py {host_port} > stopTomcat.txt')
-                # else:
-                #     work_dir = self.config[v][0] + self.tomcat_path
-                #     os.chdir(work_dir)
-                #     os.system(f'shutdown > caches.txt')
             else:
                 work_dir = self.config[v][0] + self.tomcat_path
                 os.chdir(work_dir)
                 current_app.logger.info(f'进入目录{work_dir}')
                     # os.system(f'kill -9 {self.get_pid_by_port(str(host_port))}')
+                current_app.logger.info(f'执行命令：sh {work_dir}shutdown.sh')
                 os.popen(f'sh {work_dir}shutdown.sh')
             while 1:
                 if self.is_port_used(self.host_ip, host_port):
@@ -233,8 +234,9 @@ class ProductAction:
                 else:
                     current_app.logger.info(f'{v} tomcat服务停止成功')
                     break
-                time.sleep(2)
+                time.sleep(30)
             toked[v]=''
+            status[v] = '0'
             return f'{v} tomcat服务停止成功'
         else:
             current_app.logger.info(f'{v} tomcat服务未启动')
@@ -263,6 +265,9 @@ class ProductAction:
         current_app.logger.info(f'启动{v} tomcat服务成功')
         if user!='':
             toked[v]=user
+            status[v] = user
+        else:
+            status[v] = ''
         return f'启动{v} tomcat服务成功'
 
     def renameProductJar(self,newName,path):
@@ -333,6 +338,8 @@ class ProductAction:
             dirs = os.listdir(path)
             # 遍历目标地址中的项目jar
             for file_name in dirs:
+                if version =='develop' and file_name not in ['api.jar','product.jar','thirds.jar']:
+                    continue
                 from_file = os.path.join(path, file_name)
                 to_file = os.path.join(to_path_in, "product", file_name)
                 if not os.path.exists(to_file):
@@ -374,3 +381,40 @@ class ProductAction:
         self.copy_Jar(self.config[v][0] + self.YongHong_path, v,date)
         current_app.logger.info(f'{v}-{self.formatDateStr(date)} jar包检查完毕')
         return f'{v}已更换{self.formatDateStr(date)} jar包'
+
+    def get_jar_list(self):
+        jarList = {}
+        for key in self.config.keys():
+            key2 = "v9.4" if key == "v9.4.1"else key
+            jarList[key] = os.listdir(f'{self.ip_134}{key2}')
+            jarList[key] = self.clear_list_not_num(jarList[key])
+            jarList[key].reverse()
+        return jarList
+
+    def check_product_status(self):
+        v = {}
+        end = len(self.config)
+        start = 0
+        mid = end//2
+        _thread.start_new_thread(self.get_status_thread,(start,mid))
+        _thread.start_new_thread(self.get_status_thread,(mid,end))
+        # for key in self.config.keys():
+        #     if self.is_port_used('localhost',eval(self.config[key][1])):
+        #         if  key not in toked.keys():
+        #             v[key] =''
+        #         else:
+        #             v[key] =toked[key]
+        #     else:
+        #         v[key] ='0'
+        return self.status
+    
+    def get_status_thread(self,start,end,):
+        ketList = list(self.config.keys())
+        for i in range(start,end):
+            if self.is_port_used('localhost',eval(self.config[ketList[i]][1])):
+                if  ketList[i] not in toked.keys():
+                    self.status[ketList[i]] =''
+                else:
+                    self.status[ketList[i]] =toked[ketList[i]]
+            else:
+                self.status[ketList[i]] ='0'
