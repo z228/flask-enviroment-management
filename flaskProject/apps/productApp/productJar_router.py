@@ -10,8 +10,8 @@ from apps.lib.FtpServer import MyFTP
 productJar_operate = Blueprint('productJar', __name__)
 
 productAction = ProductAction()
-jarlist = productAction.get_jar_list()
-status = productAction.check_product_status()
+# jarlist = productAction.get_jar_list()
+# status = productAction.check_product_status()
 # 产品jar功能页面
 @productJar_operate.route('/', methods=['POST', 'GET'])
 def product():
