@@ -44,7 +44,8 @@ class ProductAction:
     # current_system="linux"
     def __init__(self) -> None:
         self.readConfig()
-        self.jar_list = self.get_jar_list()
+        if self.current_system == "Windows":
+            self.jar_list = self.get_jar_list()
         self.status = self.check_product_status()
 
     # 向某个进程发送crtl+c指令
