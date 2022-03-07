@@ -43,20 +43,24 @@ def renameProductJar(newName,path):
 
 # renameProductJar('product.jar','D:\old_version\9.0\Yonghong_Z-Suite\Yonghong\product')
 # print(os.listdir(r"D:\old_version\9.0\Yonghong_Z-Suite\Yonghong\product"))
-import  xml.dom.minidom
+# import  xml.dom.minidom
 
-file_path = r'D:\old_version\8.7\Yonghong_Z-Suite\tomcat\conf\server.xml'
-dom  = xml.dom.minidom.parse(file_path)
-root = dom.documentElement
-param = root.getElementsByTagName('Connector')
-print(param)
-# entry = root.getElementsByTagName('env-entry-value')
-param_value = param[0].getAttribute('port')
+# file_path = r'D:\old_version\8.7\Yonghong_Z-Suite\tomcat\conf\server.xml'
+# dom  = xml.dom.minidom.parse(file_path)
+# root = dom.documentElement
+# param = root.getElementsByTagName('Connector')
+# # print(param)
+# # entry = root.getElementsByTagName('env-entry-value')
+# param_value = param[0].getAttribute('port')
 
-print(param_value)
+# print(param_value)
 # entry_value = entry[0].firstChild.data.split('\\')
 # param_value[-1] = "bihome"
 # entry_value[-1] = "bihome"
 # param[0].firstChild.data = '\\'.join(param_value)
 # entry[0].firstChild.data = '\\'.join(entry_value)
+
+res = os.popen('netstat -ano |findstr 8080').read()
+if "LISTENING" in res:
+  print(res)
 

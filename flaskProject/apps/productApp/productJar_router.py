@@ -1,4 +1,4 @@
-from time import perf_counter
+from time import perf_counter,sleep
 from flask import Blueprint, request, render_template
 from .product import ProductAction
 import json
@@ -10,16 +10,14 @@ from apps.lib.FtpServer import MyFTP
 productJar_operate = Blueprint('productJar', __name__)
 
 productAction = ProductAction()
-# jarlist = productAction.get_jar_list()
-# status = productAction.check_product_status()
+
+# while(1):
+#     productAction.jar_List = productAction.get_jar_list()
+#     sleep(3600)
 # 产品jar功能页面
 @productJar_operate.route('/', methods=['POST', 'GET'])
 def product():
     return render_template('product.html')
-
-def updateStatus():
-    global status
-    status = productAction.check_product_status()
 
 # 获取脚本列表
 @productJar_operate.route('/allScript', methods=['GET'])
@@ -73,12 +71,6 @@ def get_141_jar():
     # v = {}
     #productAction = ProductAction()
     v = productAction.jar_list
-    # # data = json.loads(request.get_data())
-    # for key in productAction.config.keys():
-    #     key2 = "v9.4" if key == "v9.4.1"else key
-    #     v[key] = os.listdir(f'{productAction.ip_134}{key2}')
-    #     v[key] = productAction.clear_list_not_num(v[key])
-    #     v[key].reverse()
     return productAction.succ(v)
 
 # 更换环境bihome
@@ -114,17 +106,17 @@ def start_product():
 # 检测产品是否启动中
 @productJar_operate.route('/check', methods=['GET'])
 def check_product():
-    # v = {}
-    #productAction = ProductAction()
-    # for key in productAction.config.keys():
-    #     if productAction.is_port_used('localhost',eval(productAction.config[key][1])):
-    #         if  key not in toked.keys():
-    #             v[key] =''
-    #         else:
-    #             v[key] =toked[key]
-    #     else:
-    #         v[key] ='0'
-    return productAction.succ(productAction.check_product_status())
+    v = {}
+    # productAction = ProductAction()
+    for key in productAction.config.keys():
+        if productAction.is_port_used_fast(eval(productAction.config[key][1])):
+            if  key not in toked.keys():
+                v[key] =''
+            else:
+                v[key] =toked[key]
+        else:
+            v[key] ='0'
+    return productAction.succ(v)
 
 # 获取debug端口
 @productJar_operate.route('/port', methods=['GET'])

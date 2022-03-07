@@ -46,7 +46,6 @@ class ProductAction:
         self.readConfig()
         if self.current_system == "Windows":
             self.jar_list = self.get_jar_list()
-        self.status = self.check_product_status()
 
     # 向某个进程发送crtl+c指令
     def send_ctrl_c(self,pid):
@@ -197,6 +196,18 @@ class ProductAction:
         finally:
             s.close()
 
+    def is_port_used_fast(self,c_port):
+        if self.current_system == "Windows":
+            res = os.popen(f'netstat -ano |findstr {c_port}').read()
+            if "LISTENING" in res:
+                return True
+            return False
+        else:
+            res = os.popen(f'lsof -i:{c_port}').read()
+            if "LISTEN" in res:
+                return True
+            return False
+
     def current_time(self):
         return time.strftime("%H:%M:%S", time.localtime())
 
@@ -237,7 +248,6 @@ class ProductAction:
                     break
                 time.sleep(30)
             toked[v]=''
-            status[v] = '0'
             return f'{v} tomcat服务停止成功'
         else:
             current_app.logger.info(f'{v} tomcat服务未启动')
@@ -266,9 +276,6 @@ class ProductAction:
         current_app.logger.info(f'启动{v} tomcat服务成功')
         if user!='':
             toked[v]=user
-            status[v] = user
-        else:
-            status[v] = ''
         return f'启动{v} tomcat服务成功'
 
     def renameProductJar(self,newName,path):
