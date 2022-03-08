@@ -29,6 +29,11 @@ env_list = {
       "/opt/Yonghong_Z-Suite_xian_941",
       "8941",
       "bihome Export UIauto"
+    ],
+    "custom_v9.4_dis_M3": [
+      "/opt/custom_v9.4_dis_M3",
+      "8941",
+      "bihome Export"
     ]
   },
   "mid_path": ""
