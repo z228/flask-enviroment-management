@@ -34,6 +34,11 @@ env_list = {
       "/opt/custom_v9.4_dis_M3",
       "8941",
       "bihome Export"
+    ],
+    "develop": [
+      "/opt/trunk",
+      "8080",
+      "bihome"
     ]
   },
   "mid_path": ""
