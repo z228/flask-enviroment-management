@@ -1,11 +1,13 @@
 from time import perf_counter
-from flask import Blueprint, request, render_template
+from flask import Blueprint, request, render_template, send_file
 from .product import ProductAction
 import json
 from . import test
 from .status import toked
 import os
 from apps.lib.FtpServer import MyFTP
+from werkzeug.utils import secure_filename
+ALLOWED_EXTENSIONS = {'jar'}
 
 productJar_operate = Blueprint('productJar', __name__)
 
@@ -58,6 +60,24 @@ def get_all_bihome():
     productAction = ProductAction()
     for key in productAction.config.keys():
         v[key] = productAction.config[key][2].split(' ')
+    return productAction.succ(v)
+
+# 获取当前bihome
+@productJar_operate.route('/currentBihome', methods=['GET'])
+def get_current_bihome():
+    v = {}
+    productAction = ProductAction()
+    for key in productAction.config.keys():
+        v[key] = productAction.config[key][3]
+    return productAction.succ(v)
+
+# 获取当前bihome
+@productJar_operate.route('/url', methods=['GET'])
+def get_url():
+    v = {}
+    productAction = ProductAction()
+    for key in productAction.config.keys():
+        v[key] = productAction.config[key][4]
     return productAction.succ(v)
 
 # 获取141备份的jar包列表
@@ -153,6 +173,40 @@ def update_jar_with_date():
     productAction = ProductAction()
     data = json.loads(request.get_data())
     return productAction.succ(productAction.new_copy(data['version'], data['date']))
+
+def allowed_file(filename):
+    """
+    检验文件名尾缀是否满足格式要求
+    :param filename:
+    :return:
+    """
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# 上传ar包
+@productJar_operate.route('/uploadJar', methods=['POST'])
+def upload_jar():
+    version = request.form.get('version')
+    productAction = ProductAction()
+    file = request.files['file']
+    if 'file' not in request.files:
+        return productAction.error("No file part")
+    if file.filename == '':
+        return productAction.error('No selected file')
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        if 'api' in filename:
+            filename = 'api.jar'
+        elif 'product' in filename:
+            filename = 'product.jar'
+        elif 'third' in filename:
+            filename = 'third.jar'
+        elif 'product-swf' in filename:
+            filename = 'product-swf.jar'
+        jar_path =productAction.config[version][0]+'/Yonghong/product'
+        file.save(os.path.join(jar_path, filename))
+        return productAction.succ(f'{file.filename} uploaded successfully')
+    return productAction.error("file uploaded Fail")
 
 # 更换Linux服务器Jar包
 @productJar_operate.route('/updateLinuxJar', methods=['POST'])

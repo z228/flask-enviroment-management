@@ -3,17 +3,22 @@ env_list = {
     "v8.6": [
       "/opt/86",
       "8921",
-      "bihome Export UIauto"
+      "bihome"
+    ],
+    "v8.8": [
+      "/opt/88",
+      "8921",
+      "bihome"
     ],
     "v9.0": [
       "/opt/90",
       "8921",
-      "bihome Export UIauto"
+      "bihome"
     ],
     "v9.2.1": [
       "/opt/921",
       "8921",
-      "bihome Export UIauto"
+      "bihome"
     ],
     "v9.4": [
       "/opt/94",
@@ -23,7 +28,7 @@ env_list = {
     "custom_v9.2.3_huawei_dis": [
       "/opt/Yonghong_Z-Suite_dis_923",
       "8921",
-      "bihome Export UIauto"
+      "bihome Export"
     ],
     "custom_v9.4.1_huawei_xian": [
       "/opt/Yonghong_Z-Suite_xian_941",

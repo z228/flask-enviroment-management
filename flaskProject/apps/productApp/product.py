@@ -80,6 +80,9 @@ class ProductAction:
 
     def succ(self,data):
         return json.dumps({"code": 200, "data": data})
+
+    def error(self,data):
+        return json.dumps({"code": 500, "data": data})
     
     def info(self,data):
         return json.dumps({"code": 205, "data": data})
@@ -130,6 +133,11 @@ class ProductAction:
         self.server_xml_path = f'{self.root_path}/tomcat/conf/server.xml'
         for key in self.config.keys():
             self.config[key][1] = self.get_bi_port(key)
+            self.config[key].append(self.get_bi_home(key))
+            if 'dis' in key:
+                self.config[key].append('/bi/?showOthers=true')
+            else:
+                self.config[key].append('/bi')
 
     def get_debug_port(self,version):
         if self.current_system == "Windows":
@@ -146,7 +154,11 @@ class ProductAction:
             split_str = '\\'
         else:
             split_str = '/'
-        self.shut_tomcat(version)
+        reload = False
+        if self.is_port_used('localhost',eval(self.config[version][1])):
+            reload = True
+        if reload == True:
+            self.shut_tomcat(version)
         file_path = f'{self.config[version][0]}{self.bi_xml_path}'
         dom  = xml.dom.minidom.parse(file_path)
         root = dom.documentElement
@@ -156,13 +168,31 @@ class ProductAction:
         entry_value = entry[0].firstChild.data.split(split_str)
         param_value[-1] = bihome
         entry_value[-1] = bihome
+        self.config[version][3] = bihome
         current_app.logger.info(f'bihome修改为{bihome}')
         param[0].firstChild.data = split_str.join(param_value)
         entry[0].firstChild.data = split_str.join(entry_value)
         with open(file_path, 'w') as f:
             dom.writexml(f,encoding='utf-8')
-        self.start_tomcat(version)
+        if reload == True:
+            self.start_tomcat(version)
         return "bihome修改成功"
+
+    def get_bi_home(self,version):
+        if self.current_system == "Windows":
+            split_str = '\\'
+        else:
+            split_str = '/'
+        file_path = f'{self.config[version][0]}{self.bi_xml_path}'
+        dom  = xml.dom.minidom.parse(file_path)
+        root = dom.documentElement
+        param = root.getElementsByTagName('param-value')
+        entry = root.getElementsByTagName('env-entry-value')
+        param_value = param[0].firstChild.data.split(split_str)
+        entry_value = entry[0].firstChild.data.split(split_str)
+        if param_value[-1] == entry_value[-1]:
+            return param_value[-1]
+        return "error bihome"
 
     def get_bi_port(self,version):
         file_path = f'{self.config[version][0]}{self.server_xml_path}'
