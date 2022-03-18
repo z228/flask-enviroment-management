@@ -135,9 +135,9 @@ class ProductAction:
             self.config[key][1] = self.get_bi_port(key)
             self.config[key].append(self.get_bi_home(key))
             if 'dis' in key:
-                self.config[key].append('/bi/?showOthers=true')
+                self.config[key].append(self.config[key][1]+'/bi/?showOthers=true')
             else:
-                self.config[key].append('/bi')
+                self.config[key].append(self.config[key][1]+'/bi')
 
     def get_debug_port(self,version):
         if self.current_system == "Windows":
