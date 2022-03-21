@@ -93,6 +93,7 @@ def get_141_jar():
         #     continue
         v[key] = os.listdir(f'/mnt/134/productJar/{key2}')
         v[key] = productAction.clear_list_not_num(v[key])
+        v[key].sort()
         v[key].reverse()
     return productAction.succ(v)
 
