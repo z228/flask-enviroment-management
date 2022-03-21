@@ -138,6 +138,7 @@ class ProductAction:
                 self.config[key].append(self.config[key][1]+'/bi/?showOthers=true')
             else:
                 self.config[key].append(self.config[key][1]+'/bi')
+            self.config[key].append(self.get_debug_port(key))
 
     def get_debug_port(self,version):
         if self.current_system == "Windows":

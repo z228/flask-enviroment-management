@@ -147,7 +147,7 @@ def get_port():
     v = {}
     productAction = ProductAction()
     for key in productAction.config.keys():
-        v[key] = productAction.config[key][1]
+        v[key] = productAction.config[key][-1]
     return productAction.succ(v)
 
 # 获取产品端口
@@ -156,7 +156,7 @@ def get_view_port():
     v = {}
     productAction = ProductAction()
     for key in productAction.config.keys():
-        v[key] = productAction.get_bi_port(key)
+        v[key] = productAction.config[key][1]
     return productAction.succ(v)
 
 
