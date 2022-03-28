@@ -19,8 +19,9 @@ else:
 
 class ProductAction:
     host_ip = '127.0.0.1'
-    ip = '/mnt/141/productJar/'
-    ip_134 = '/mnt/134/productJar/'
+    ip = '\\\\192.168.0.141/productJar/'
+    ip_134 = '\\\\192.168.1.134/git-package/'
+    ip_local = '/home/share/'
     ip = ip_134
     from_path = []
     script_path = f"{os.getcwd()}/static/job"
@@ -215,7 +216,7 @@ class ProductAction:
                 # if v == 'develop':
                     # print('停止trunk tomcat进程')
                 # print(os.getcwd())
-                current_app.logger.info('停止trunk tomcat进程')
+                current_app.logger.info(f'停止{v} tomcat进程')
                 os.system(f'python {self.script_path}/stopTrunk.py {host_port} > stopTomcat.txt')
                 # else:
                 #     work_dir = self.config[v][0] + self.tomcat_path
@@ -224,7 +225,9 @@ class ProductAction:
             else:
                 work_dir = self.config[v][0] + self.tomcat_path
                 os.chdir(work_dir)
-                os.system(f'kill -9 {self.get_pid_by_port(str(host_port))}')
+                current_app.logger.info(f'进入目录{work_dir}')
+                    # os.system(f'kill -9 {self.get_pid_by_port(str(host_port))}')
+                os.popen(f'sh {work_dir}shutdown.sh')
             while 1:
                 if self.is_port_used(self.host_ip, host_port):
                     current_app.logger.info(f'{v} tomcat服务停止中')
@@ -256,7 +259,7 @@ class ProductAction:
                 if(self.current_system == "Windows"):
                     os.system('startup > caches.txt')
                 else:
-                    os.system('sh catalina.sh jpda start > caches.txt')
+                    os.system('sh startup.sh > caches.txt')
                 break
         current_app.logger.info(f'启动{v} tomcat服务成功')
         if user!='':
@@ -330,6 +333,8 @@ class ProductAction:
                 path = self.get_recent_jar(version)
             dirs = os.listdir(path)
             # 遍历目标地址中的项目jar
+            if version == 'develop':
+                path = path.replace(self.ip, self.ip_local)
             for file_name in dirs:
                 from_file = os.path.join(path, file_name)
                 to_file = os.path.join(to_path_in, "product", file_name)
@@ -338,9 +343,9 @@ class ProductAction:
                 # backup_file = os.path.join(backup_path, file_name)
                 try:
                     from_134_file = from_file.replace(self.ip, self.ip_134)
-                    # if os.path.exists(from_134_file):
-                    #     if not filecmp.cmp(from_file, from_134_file):
-                    #         from_file = from_134_file
+                    if os.path.exists(from_134_file):
+                        if not filecmp.cmp(from_file, from_134_file):
+                            from_file = from_134_file
                     if not filecmp.cmp(from_file, to_file):
                         # copy2(to_file, backup_file)
                         copy2(from_file, to_file)
