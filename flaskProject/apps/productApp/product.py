@@ -21,6 +21,7 @@ class ProductAction:
     host_ip = '127.0.0.1'
     ip = '/mnt/141/productJar/'
     ip_134 = '/mnt/134/productJar/'
+    ip_local = '/home/share/'
     ip = ip_134
     from_path = []
     script_path = f"{os.getcwd()}/static/job"
@@ -360,6 +361,8 @@ class ProductAction:
             else:
                 path = self.get_recent_jar(version)
             dirs = os.listdir(path)
+            if version =='develop':
+                path = path.replace(self.ip, self.ip_local)
             # 遍历目标地址中的项目jar
             for file_name in dirs:
                 from_file = os.path.join(path, file_name)
