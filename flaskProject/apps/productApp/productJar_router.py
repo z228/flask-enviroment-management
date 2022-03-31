@@ -3,7 +3,7 @@ from flask import Blueprint, request, render_template, send_file
 from .product import ProductAction
 import json
 from . import test
-from .status import toked
+# from .status import toked
 import os
 from apps.lib.FtpServer import MyFTP
 from werkzeug.utils import secure_filename
@@ -133,14 +133,14 @@ def check_product():
     v = {}
     productAction = ProductAction()
     for key in productAction.config.keys():
-        if productAction.is_port_used('localhost',eval(productAction.config[key][1])):
-            if  key not in toked.keys():
+        if productAction.is_port_used_fast(eval(productAction.config[key][1])):
+            if  key not in productAction.toked.keys():
                 v[key] =''
             else:
-                v[key] =toked[key]
+                v[key] =productAction.toked[key]
         else:
             v[key] ='0'
-    return productAction.succ(v)
+    return productAction.succ(productAction.toked)
 
 # 获取debug端口
 @productJar_operate.route('/port', methods=['GET'])
@@ -228,7 +228,7 @@ def update_linux_jar():
 # 重启产品
 @productJar_operate.route('/reload_product', methods=['POST'])
 def reload_product():
-    productAction = ProductAction()
+    productAction = ProductAction() 
     data = json.loads(request.get_data())
     if 'user' in data.keys():
         res = productAction.restart_tomcat(data['version'],data['user'])
