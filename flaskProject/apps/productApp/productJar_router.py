@@ -36,7 +36,6 @@ def delete_script():
     productAction = ProductAction()
     return productAction.succ(productAction.deleteScript(data['name']))
 
-
 # 保存脚本
 @productJar_operate.route('/saveScript', methods=['post'])
 def save_script():
@@ -71,13 +70,16 @@ def get_current_bihome():
         v[key] = productAction.config[key][3]
     return productAction.succ(v)
 
-# 获取当前bihome
+# 获取当前url
 @productJar_operate.route('/url', methods=['GET'])
 def get_url():
     v = {}
     productAction = ProductAction()
     for key in productAction.config.keys():
-        v[key] = productAction.config[key][4]
+        if 'dis' in key:
+            v[key] =productAction.config[key][1]+'/bi/?showOthers=true'
+        else:
+            v[key] =productAction.config[key][1]+'/bi'
     return productAction.succ(v)
 
 # 获取141备份的jar包列表
@@ -148,7 +150,7 @@ def get_port():
     v = {}
     productAction = ProductAction()
     for key in productAction.config.keys():
-        v[key] = productAction.config[key][-1]
+        v[key] = productAction.get_debug_port(key)
     return productAction.succ(v)
 
 # 获取产品端口
@@ -200,8 +202,8 @@ def upload_jar():
             filename = 'api.jar'
         elif 'product' in filename:
             filename = 'product.jar'
-        elif 'third' in filename:
-            filename = 'third.jar'
+        elif 'thirds' in filename:
+            filename = 'thirds.jar'
         elif 'product-swf' in filename:
             filename = 'product-swf.jar'
         jar_path =productAction.config[version][0]+'/Yonghong/product'
