@@ -361,7 +361,7 @@ class ProductAction:
             else:
                 path = self.get_recent_jar(version)
             dirs = os.listdir(path)
-            if version =='develop':
+            if version in ['v8.6','v9.0','v9.2.1','v9.4','develop']:
                 path = path.replace(self.ip, self.ip_local)
             # 遍历目标地址中的项目jar
             for file_name in dirs:
