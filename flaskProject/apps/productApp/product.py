@@ -8,7 +8,7 @@ import socket
 import json
 from flask import current_app
 import  xml.dom.minidom
-from .status import toked
+# from .status import toked
 import platform
 if platform.system()=="Windows":
     import win32api as api
@@ -21,10 +21,10 @@ class ProductAction:
     host_ip = '127.0.0.1'
     ip = '/mnt/141/productJar/'
     ip_134 = '/mnt/134/productJar/'
-    ip_local = '/home/share/'
     ip = ip_134
     from_path = []
     script_path = f"{os.getcwd()}/static/job"
+    status_path = f"{os.getcwd()}/apps/productApp/status.json"
     to_path = []
     day_31 = ['02', '04', '06', '08', '09', '11']
     port = []
@@ -37,6 +37,7 @@ class ProductAction:
     tomcat_path = ''
     bi_xml_path = ''
     config={}
+    toked = {}
     # current_system="linux"
     def __init__(self) -> None:
         self.readConfig()
@@ -140,6 +141,16 @@ class ProductAction:
             else:
                 self.config[key].append(self.config[key][1]+'/bi')
             self.config[key].append(self.get_debug_port(key))
+            if key not in self.toked.keys():
+                self.toked[key]={}
+                self.toked[key]['start']=False
+                self.toked[key]['status']='0'
+                self.toked[key]['shutdown']=False
+                self.toked[key]['update']=False
+                self.toked[key]['reload']=False
+                self.toked[key]['updateAndReload']=False
+                self.toked[key]['changeBihome']=False
+        self.change_status()
 
     def get_debug_port(self,version):
         if self.current_system == "Windows":
@@ -152,6 +163,8 @@ class ProductAction:
                     return i.split('=')[1].split(':')[1][0:-1]
 
     def change_bi_home(self,version,bihome):
+        if self.toked[version]['changeBihome'] ==True:
+            return "bihome正在修改中"
         if self.current_system == "Windows":
             split_str = '\\'
         else:
@@ -220,11 +233,26 @@ class ProductAction:
             return False
         finally:
             s.close()
+    
+    def is_port_used_fast(self,c_port):
+        if self.current_system == "Windows":
+            res = os.popen(f'netstat -ano |findstr {c_port}').read()
+            if "LISTENING" in res:
+                return True
+            return False
+        else:
+            res = os.popen(f'lsof -i:{c_port}').read()
+            if "LISTEN" in res:
+                return True
+            return False
 
     def current_time(self):
         return time.strftime("%H:%M:%S", time.localtime())
 
     def restart_tomcat(self,v,user=''):
+        if self.toked[v]['reload'] ==True:
+            current_app.logger.info(f'{user}操作{v} tomcat重启成功')
+            return f'{v} tomcat正在重启中'
         self.shut_tomcat(v)
         self.start_tomcat(v,user)
         current_app.logger.info(f'{v} tomcat重启成功')
@@ -241,6 +269,8 @@ class ProductAction:
 
     # 停止tomcat
     def shut_tomcat(self,v):
+        if self.toked[v]['shutdown'] ==True:
+            return f'{v} tomcat服务正在停止中'
         host_port = eval(self.config[v][1])
         if self.is_port_used(self.host_ip, host_port):
             if(self.current_system == "Windows"):
@@ -264,13 +294,16 @@ class ProductAction:
                     current_app.logger.info(f'{v} tomcat服务停止成功')
                     break
                 time.sleep(2)
-            toked[v]=''
+            self.toked[v]['status']=''
             return f'{v} tomcat服务停止成功'
         else:
             current_app.logger.info(f'{v} tomcat服务未启动')
             return f'{v} tomcat服务未启动'
 
     def start_tomcat(self,v,user=''):
+        if self.toked[v]['start'] ==True:
+            current_app.logger.info(f'{user} 启动{v} tomcat服务')
+            return f'{v} tomcat服务正在启动中'
         # v = ip + v + '/'
         # index = from_path.index(v)
         host_port = eval(self.config[v][1])
@@ -278,10 +311,10 @@ class ProductAction:
         os.chdir(work_dir)
         for scape in range(100):
             if self.is_port_used(self.host_ip, host_port):
-                if toked[v]!='':
+                if self.toked[v]['status']!='':
                     current_app.logger.info(f'{toked[v]}已启动{v} tomcat服务')
                     return f'{toked[v]}已启动{v} tomcat服务'
-                elif toked[v]=='':
+                elif self.toked[v]['status']=='':
                     current_app.logger.info('tomcat正在停止中')
                     time.sleep(10)
             else:
@@ -290,9 +323,9 @@ class ProductAction:
                 else:
                     os.system('sh catalina.sh jpda start > caches.txt')
                 break
-        current_app.logger.info(f'启动{v} tomcat服务成功')
+        current_app.logger.info(f'{user} 启动{v} tomcat服务成功')
         if user!='':
-            toked[v]=user
+            self.toked[v]['status']=user
         return f'启动{v} tomcat服务成功'
 
     def renameProductJar(self,newName,path):
@@ -361,10 +394,10 @@ class ProductAction:
             else:
                 path = self.get_recent_jar(version)
             dirs = os.listdir(path)
-            if version =='develop':
-                path = path.replace(self.ip, self.ip_local)
             # 遍历目标地址中的项目jar
             for file_name in dirs:
+                if version =='develop' and file_name not in ['api.jar','product.jar','thirds.jar']:
+                    continue
                 from_file = os.path.join(path, file_name)
                 to_file = os.path.join(to_path_in, "product", file_name)
                 if not os.path.exists(to_file):
@@ -406,3 +439,12 @@ class ProductAction:
         self.copy_Jar(self.config[v][0] + self.YongHong_path, v,date)
         current_app.logger.info(f'{v}-{self.formatDateStr(date)} jar包检查完毕')
         return f'{v}已更换{self.formatDateStr(date)} jar包'
+
+    def upload_jar(self,v):
+        pass
+
+    def change_status(self,key1='',key2='',value=''):
+        if key1 != '':
+            self.toked[key1][key2] = value
+        with open(self.status_path,'w') as status:
+            json.dump(self.toked,status)
