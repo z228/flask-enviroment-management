@@ -90,10 +90,10 @@ def get_141_jar():
     # data = json.loads(request.get_data())
     for key in productAction.config.keys():
         key2 = "v9.4" if key == "v9.4.1"else key
-        # if key=="custom_v9.4.1_huawei_xian":
-        #     v[key] = ['']
-        #     continue
-        v[key] = os.listdir(f'/mnt/134/productJar/{key2}')
+        if key2 in ['v8.6','v9.0','v9.2.1','v9.4','develop']:
+                v[key] = os.listdir(f'{self.ip_local}{key2}')
+            else:
+                v[key] = os.listdir(f'{self.ip_134}{key2}')
         v[key] = productAction.clear_list_not_num(v[key])
         v[key].sort()
         v[key].reverse()
