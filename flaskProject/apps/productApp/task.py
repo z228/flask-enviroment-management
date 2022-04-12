@@ -1,11 +1,21 @@
 import os
 from . import product
 import shutil
+import os
 
 to_path = ['D:/old_version/8.6/', 'D:/old_version/8.8/', 'D:/old_version/9.0/', 'D:/old_version/9.1/',
            'D:/old_version/9.2/', 'D:/old_version/9.2.1/', 'D:/old_version/9.3/', 'D:/old_version/trunk/']
 path = 'Yonghong_Z-Suite/Yonghong'
 productAction = product.ProductAction()
+version= ['v8.6','v9.0','v9.2.1','v9.4','develop']
+product_path = r'/home/share'
+
+def clean_backupJar():
+    for i in version:
+        for j in os.popen(f"ls {os.path.join(product_path,i)}").read().split():
+            if diffDay(j,"%Y%m%d") >5:
+                os.system(f"rm -R {os.path.join(product_path,i,j)}")
+                print(f"rm -R {os.path.join(product_path,i,j)}")
 
 def clean_jar():
     for i in to_path:
@@ -35,3 +45,9 @@ def Jacoco_change_Jar():
 
 def killall_java():
     os.system('killall -9 java')
+
+def diffDay(ftime,fmt):
+    nowDay = eval(time.strftime("%j",time.localtime()).lstrip("0"))
+    pDay = eval(time.strftime("%j",time.strptime(ftime,fmt)).lstrip("0"))
+    return nowDay-pDay
+
