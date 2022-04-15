@@ -3,20 +3,23 @@ from . import product
 import shutil
 import os
 from flask import current_app
+import time
 
 to_path = ['D:/old_version/8.6/', 'D:/old_version/8.8/', 'D:/old_version/9.0/', 'D:/old_version/9.1/',
            'D:/old_version/9.2/', 'D:/old_version/9.2.1/', 'D:/old_version/9.3/', 'D:/old_version/trunk/']
 path = 'Yonghong_Z-Suite/Yonghong'
 productAction = product.ProductAction()
-version= ['v8.6','v9.0','v9.2.1','v9.4','develop']
+version = ['v8.6', 'v9.0', 'v9.2.1', 'v9.4', 'develop']
 product_path = r'/home/share'
 
-def clean_backupJar():
+
+def clean_backup_jar():
     for i in version:
-        for j in os.popen(f"ls {os.path.join(product_path,i)}").read().split():
-            if diffDay(j,"%Y%m%d") >5:
-                os.system(f"rm -R {os.path.join(product_path,i,j)}")
-                current_app.logger.info(f"rm -R {os.path.join(product_path,i,j)}")
+        for j in os.popen(f"ls {os.path.join(product_path, i)}").read().split():
+            if diffDay(j, "%Y%m%d") > 5:
+                os.system(f"rm -R {os.path.join(product_path, i, j)}")
+                current_app.logger.info(f"rm -R {os.path.join(product_path, i, j)}")
+
 
 def clean_jar():
     for i in to_path:
@@ -44,12 +47,13 @@ def Jacoco_change_Jar():
     os.chdir(work_dir)
     os.system('ant test report')
 
+
 def killall_java():
     os.system('killall -9 java')
     current_app.logger.info(f'杀死所有java进程')
 
-def diffDay(ftime,fmt):
-    nowDay = eval(time.strftime("%j",time.localtime()).lstrip("0"))
-    pDay = eval(time.strftime("%j",time.strptime(ftime,fmt)).lstrip("0"))
-    return nowDay-pDay
 
+def diffDay(ftime, fmt):
+    nowDay = eval(time.strftime("%j", time.localtime()).lstrip("0"))
+    pDay = eval(time.strftime("%j", time.strptime(ftime, fmt)).lstrip("0"))
+    return nowDay - pDay
