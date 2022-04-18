@@ -244,10 +244,10 @@ def update_and_reload_product():
     productAction = ProductAction()
     data = json.loads(request.get_data())
     if 'user' in data.keys():
-        res = productAction.copy_and_reload(data['version'],user=data['user'])
+        res = productAction.copy_and_reload(data['version'],date = data['date'],user=data['user'])
         return productAction.succ(res)
     else:
-        return productAction.succ(productAction.copy_and_reload(data['version']))
+        return productAction.succ(productAction.copy_and_reload(data['version'],date = data['date']))
 
 # 更换jar功能页面
 @productJar_operate.route('/exchange', methods=['POST', 'GET'])
