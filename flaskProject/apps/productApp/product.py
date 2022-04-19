@@ -243,7 +243,7 @@ class ProductAction:
     def shut_tomcat(self,v):
         host_port = eval(self.config[v][1])
         if self.is_port_used(self.host_ip, host_port):
-            if(self.current_system == "Windows"):
+            if self.current_system == "Windows":
                 # if v == 'develop':
                     # print('停止trunk tomcat进程')
                 # print(os.getcwd())
@@ -256,7 +256,10 @@ class ProductAction:
             else:
                 work_dir = self.config[v][0] + self.tomcat_path
                 os.chdir(work_dir)
-                os.system(f'kill -9 {self.get_pid_by_port(str(host_port))}')
+                if v=="develop":
+                    os.system(f'sh  {self.config[v][0]}/tomcat/bin/shutdown.sh')
+                else:
+                    os.system(f'kill -9 {self.get_pid_by_port(str(host_port))}')
             while 1:
                 if self.is_port_used(self.host_ip, host_port):
                     current_app.logger.info(f'{v} tomcat服务停止中')
