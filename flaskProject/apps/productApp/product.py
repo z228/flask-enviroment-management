@@ -415,7 +415,7 @@ class ProductAction:
         return f'{v}已更换{self.formatDateStr(date)} jar包'
     
     def get_jar_info(self,v):
-        product_path = os.path.join(self.config[v][0],self.YongHong_path,'product')
+        product_path = os.path.join(self.config[v][0]+self.YongHong_path,'product')
         info_list = []
         for i in os.listdir(product_path):
             change_time = time.strftime("日期:%Y%m%d 时间:%H:%M:%S",time.localtime(os.stat(os.path.join(product_path,i)).st_mtime))
