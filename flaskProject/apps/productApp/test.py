@@ -35,9 +35,12 @@ def exchange_junit_res():
             aim = f'D:/SVN/{aim_list[i]}/test/' + img_path
             # aim = f'\\\\192.168.1.199/{dist_list[i]}/' + img_path
             current_app.logger.info(dist)
+            if "v9.4" or "trunk" in aim_list[i] and "elemsFilt" in img_path:
+                continue
             shutil.copy2(dist, aim)
         # SVN_dir = f'\\\\192.168.1.199/{dist_list[i]}/assetExecute/testcases/DBPainter/exp'
         SVN_dir = f'D:/SVN/{aim_list[i]}/test/assetExecute/testcases/DBPainter/exp'
+        print(SVN_dir)
         os.system(f'svn update {SVN_dir}')
         os.system(f'svn commit {SVN_dir} -m "dateElem change" > {os.getcwd()}/logs/SVN_logs/SVN_{dist_list[i]}_Commit.txt')
     return True

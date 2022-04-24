@@ -8,7 +8,7 @@ import socket
 import json
 from flask import current_app
 import  xml.dom.minidom
-from .status import toked
+# from .status import toked
 import platform
 import _thread
 
@@ -24,9 +24,11 @@ class ProductAction:
     host_ip = '127.0.0.1'
     ip = '\\\\192.168.0.141/productJar/'
     ip_134 = '\\\\192.168.1.134/git-package/'
+    ip_187 = '\\\\192.168.0.187/share/'
     ip = ip_134
     from_path = []
     script_path = f"{os.getcwd()}/static/job"
+    status_path = f"{os.getcwd()}/apps/productApp/status.json"
     to_path = []
     day_31 = ['02', '04', '06', '08', '09', '11']
     port = []
@@ -41,9 +43,12 @@ class ProductAction:
     config={}
     jar_list = {}
     status = {}
+    toked = {}
     # current_system="linux"
     def __init__(self) -> None:
         self.readConfig()
+        with open(self.status_path, 'r') as f:
+            self.toked = json.load(f)
         if self.current_system == "Windows":
             self.jar_list = self.get_jar_list()
 
@@ -137,6 +142,19 @@ class ProductAction:
         self.server_xml_path = f'{self.root_path}/tomcat/conf/server.xml'
         for key in self.config.keys():
             self.config[key][1] = self.get_bi_port(key)
+            if key not in self.toked.keys():
+                self.toked[key]={}
+                self.toked[key]['start']=False
+                self.toked[key]['status']='0'
+                self.toked[key]['shutdown']=False
+                self.toked[key]['update']=False
+                self.toked[key]['reload']=False
+                self.toked[key]['updateAndReload']=False
+            if 'dis' in key:
+                self.config[key].append(self.config[key][1]+'/bi/?showOthers=true')
+            else:
+                self.config[key].append(self.config[key][1]+'/bi')
+        self.change_status()
 
     def get_debug_port(self,version):
         if self.current_system == "Windows":
@@ -212,9 +230,13 @@ class ProductAction:
         return time.strftime("%H:%M:%S", time.localtime())
 
     def restart_tomcat(self,v,user=''):
+        # self.toked[v]['reload']=True
+        self.change_status(v,'reload',True)
         self.shut_tomcat(v)
         self.start_tomcat(v,user)
-        current_app.logger.info(f'{v} tomcat重启成功')
+        current_app.logger.info(f'[user]-{v} tomcat重启成功')
+        # self.toked[v]['reload']=False
+        self.change_status(v,'reload',False)
         return f'{v} tomcat重启成功！'
 
     def get_pid_by_port(self,port):
@@ -228,6 +250,8 @@ class ProductAction:
 
     # 停止tomcat
     def shut_tomcat(self,v):
+        # self.toked[v]['shutdown']=True
+        self.change_status(v,'shutdown',True)
         host_port = eval(self.config[v][1])
         if self.is_port_used(self.host_ip, host_port):
             if(self.current_system == "Windows"):
@@ -247,13 +271,20 @@ class ProductAction:
                     current_app.logger.info(f'{v} tomcat服务停止成功')
                     break
                 time.sleep(30)
-            toked[v]=''
+            # self.toked[v]['status']='0'
+            self.change_status(v,'status','0')
+            # self.toked[v]['shutdown']=False
+            self.change_status(v,'shutdown',False)
             return f'{v} tomcat服务停止成功'
         else:
+            # self.toked[v]['shutdown']=False
+            self.change_status(v,'shutdown',False)
             current_app.logger.info(f'{v} tomcat服务未启动')
             return f'{v} tomcat服务未启动'
 
     def start_tomcat(self,v,user=''):
+        # self.toked[v]['start']=True
+        self.change_status(v,'start',True)
         # v = ip + v + '/'
         # index = from_path.index(v)
         host_port = eval(self.config[v][1])
@@ -261,10 +292,10 @@ class ProductAction:
         os.chdir(work_dir)
         for scape in range(100):
             if self.is_port_used(self.host_ip, host_port):
-                if toked[v]!='':
-                    current_app.logger.info(f'{toked[v]}已启动{v} tomcat服务')
-                    return f'{toked[v]}已启动{v} tomcat服务'
-                elif toked[v]=='':
+                if self.toked[v]['status']!='0':
+                    current_app.logger.info(f'{self.toked[v]["status"]}已启动{v} tomcat服务')
+                    return f'{self.toked[v]["status"]}已启动{v} tomcat服务'
+                elif self.toked[v]['status']=='0':
                     current_app.logger.info('tomcat正在停止中')
                     time.sleep(10)
             else:
@@ -275,7 +306,10 @@ class ProductAction:
                 break
         current_app.logger.info(f'启动{v} tomcat服务成功')
         if user!='':
-            toked[v]=user
+            # self.toked[v]['status']=user
+            self.change_status(v,'status',user)
+        # self.toked[v]['start']=False
+        self.change_status(v,'start',False)
         return f'启动{v} tomcat服务成功'
 
     def renameProductJar(self,newName,path):
@@ -325,6 +359,8 @@ class ProductAction:
         return os.path.join(from_path_in, path0)
 
     def copy_Jar(self,to_path_in, version, date=''):
+        # self.toked[v]['update']=True
+        self.change_status(version,'update',True)
         """
         :param
         from_path_in:源路径
@@ -340,10 +376,14 @@ class ProductAction:
                 if os.path.exists(f'{self.ip}{version}/{date}'):
                     path = f'{self.ip}{version}/{date}'
                 else:
+                    # self.toked[v]['update']=False
+                    self.change_status(version,'update',True)
                     return f'{self.formatDateStr(date)}的包不存在'
             else:
                 path = self.get_recent_jar(version)
             dirs = os.listdir(path)
+            if version in ['v8.6','v9.0','v9.2.1','v9.4','develop']:
+                path = path.replace(self.ip, self.ip_187)
             # 遍历目标地址中的项目jar
             for file_name in dirs:
                 if version =='develop' and file_name not in ['api.jar','product.jar','thirds.jar']:
@@ -352,25 +392,31 @@ class ProductAction:
                 to_file = os.path.join(to_path_in, "product", file_name)
                 if not os.path.exists(to_file):
                     self.renameProductJar(file_name,os.path.join(to_path_in, "product"))
-                # backup_file = os.path.join(backup_path, file_name)
                 try:
                     from_134_file = from_file.replace(self.ip, self.ip_134)
                     if os.path.exists(from_134_file):
                         if not filecmp.cmp(from_file, from_134_file):
                             from_file = from_134_file
-                    if not filecmp.cmp(from_file, to_file):
-                        # copy2(to_file, backup_file)
+                    if not os.path.exists(to_file):
                         copy2(from_file, to_file)
-                        # copy2(from_file, ubuntu_file)
+                        current_app.logger.info(f"{file_name}更新完毕,时间：{self.current_time()}")
+                        continue
+                    if not filecmp.cmp(from_file, to_file):
+                        copy2(from_file, to_file)
                         current_app.logger.info(f"{file_name}更新完毕,时间：{self.current_time()}")
                 except PermissionError:
+                    self.change_status(version,'update',True)
                     current_app.logger.info(f"{path}下{file_name}正在被占用，请稍等...time{self.current_time()}")
         except FileNotFoundError as err:
+            self.change_status(version,'update',True)
             current_app.logger.info(f'file error:{err}')
         current_app.logger.info(f'{version}-{self.formatDateStr(date)} Jar包更新完成')
+        self.change_status(version,'update',True)
         return f'{version}-{self.formatDateStr(date)} Jar包更新完成'
 
     def copy_and_reload(self,v,date='',user=''):
+        # self.toked[v]['updateAndReload']=True
+        self.change_status(v,'updateAndReload',True)
         """
         :param v: 版本号 develop
         :return:
@@ -379,6 +425,8 @@ class ProductAction:
         self.shut_tomcat(v)
         self.copy_Jar(self.config[v][0] + self.YongHong_path, v,date)
         self.start_tomcat(v,user)
+        # self.toked[v]['updateAndReload']=False
+        self.change_status(v,'updateAndReload',False)
         return f'{v}已更换{self.formatDateStr(date)} jar包并重启Tomcat成功'
 
     def new_copy(self,v,date=''):
@@ -386,16 +434,24 @@ class ProductAction:
         :param v: 版本号 develop
         :return:
         """
+        # self.toked[v]['update']=True
+        self.change_status(v,'update',True)
         self.copy_Jar(self.config[v][0] + self.YongHong_path, v,date)
         current_app.logger.info(f'{v}-{self.formatDateStr(date)} jar包检查完毕')
+        # self.toked[v]['update']=False
+        self.change_status(v,'update',False)
         return f'{v}已更换{self.formatDateStr(date)} jar包'
 
     def get_jar_list(self):
         jarList = {}
         for key in self.config.keys():
             key2 = "v9.4" if key == "v9.4.1"else key
-            jarList[key] = os.listdir(f'{self.ip_134}{key2}')
+            if key2 in ['v8.6','v9.0','v9.2.1','v9.4','develop']:
+                jarList[key] = os.listdir(f'{self.ip_187}{key2}')
+            else:
+                jarList[key] = os.listdir(f'{self.ip_134}{key2}')
             jarList[key] = self.clear_list_not_num(jarList[key])
+            jarList[key].sort()
             jarList[key].reverse()
         return jarList
 
@@ -423,6 +479,12 @@ class ProductAction:
                 if  ketList[i] not in toked.keys():
                     self.status[ketList[i]] =''
                 else:
-                    self.status[ketList[i]] =toked[ketList[i]]
+                    self.status[ketList[i]] =self.toked[ketList[i]]
             else:
                 self.status[ketList[i]] ='0'
+    
+    def change_status(self,key1='',key2='',value=''):
+        if key1 != '':
+            self.toked[key1][key2] = value
+        with open(self.status_path,'w') as status:
+            json.dump(self.toked,status)

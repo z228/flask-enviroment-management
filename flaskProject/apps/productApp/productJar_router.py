@@ -71,7 +71,7 @@ def get_141_jar():
     # v = {}
     #productAction = ProductAction()
     v = productAction.jar_list
-    return productAction.succ(v)
+    return productAction.succ(productAction.get_jar_list())
 
 # 更换环境bihome
 @productJar_operate.route('/changeBihome', methods=['POST'])
@@ -160,6 +160,9 @@ def update_linux_jar():
     data = json.loads(request.get_data())
     src_path = productAction.get_recent_jar(data['version'])
     src_path = src_path.replace(productAction.ip,productAction.ip_134)
+    key2 = "v9.4" if data['version'] == "v9.4.1"else data['version']
+    if key2 in  ['v8.6','v9.0','v9.2.1','v9.4','develop']:
+        src_path = src_path.replace(productAction.ip_134,productAction.ip_187)
     dirs = os.listdir(src_path)
     for dir in dirs:
         src_file = os.path.join(src_path, dir)  
@@ -183,6 +186,15 @@ def update_and_reload_product():
     #productAction = ProductAction()
     data = json.loads(request.get_data())
     return productAction.succ(productAction.copy_and_reload(data['version'], data['date']))
+
+# 获取当前bihome
+@productJar_operate.route('/url', methods=['GET'])
+def get_url():
+    v = {}
+    productAction = ProductAction()
+    for key in productAction.config.keys():
+        v[key] = productAction.config[key][3]
+    return productAction.succ(v)
 
 # 更换jar功能页面
 @productJar_operate.route('/exchange', methods=['POST', 'GET'])
