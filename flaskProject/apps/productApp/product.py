@@ -378,6 +378,10 @@ class ProductAction:
                     # if os.path.exists(from_134_file):
                     #     if not filecmp.cmp(from_file, from_134_file):
                     #         from_file = from_134_file
+                    if not os.path.exists(to_file):
+                        copy2(from_file, to_file)
+                        current_app.logger.info(f"{file_name}更新完毕,时间：{self.current_time()}")
+                        continue
                     if not filecmp.cmp(from_file, to_file):
                         # copy2(to_file, backup_file)
                         copy2(from_file, to_file)
