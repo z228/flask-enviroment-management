@@ -65,6 +65,15 @@ def get_all_bihome():
         v[key] = productAction.config[key][2].split(' ')
     return productAction.succ(v)
 
+# 获取所有bihome
+@productJar_operate.route('/jarInfo', methods=['GET'])
+def get_product_jar_info():
+    v = {}
+    #productAction = ProductAction()
+    for key in productAction.config.keys():
+        v[key] = productAction.get_jar_info(key)
+    return productAction.succ(v)
+
 # 获取141备份的jar包列表
 @productJar_operate.route('/141jar', methods=['GET'])
 def get_141_jar():
