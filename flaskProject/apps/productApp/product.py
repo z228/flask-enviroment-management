@@ -227,7 +227,7 @@ class ProductAction:
     def restart_tomcat(self,v,user=''):
         self.shut_tomcat(v)
         self.start_tomcat(v,user)
-        current_app.logger.info(f'{v} tomcat重启成功')
+        current_app.logger.info(f'[{user}] {v} tomcat重启成功')
         return f'{v} tomcat重启成功！'
 
     def get_pid_by_port(self,port):
@@ -282,10 +282,10 @@ class ProductAction:
         for scape in range(100):
             if self.is_port_used(self.host_ip, host_port):
                 if toked[v]!='':
-                    current_app.logger.info(f'{toked[v]}已启动{v} tomcat服务')
+                    current_app.logger.info(f'[{user}] {toked[v]}已启动{v} tomcat服务')
                     return f'{toked[v]}已启动{v} tomcat服务'
                 elif toked[v]=='':
-                    current_app.logger.info('tomcat正在停止中')
+                    current_app.logger.info('[{user}] tomcat正在停止中')
                     time.sleep(10)
             else:
                 if(self.current_system == "Windows"):
@@ -293,7 +293,7 @@ class ProductAction:
                 else:
                     os.system('sh catalina.sh jpda start > caches.txt')
                 break
-        current_app.logger.info(f'启动{v} tomcat服务成功')
+        current_app.logger.info(f'[{user}] 启动{v} tomcat服务成功')
         if user!='':
             toked[v]=user
         return f'启动{v} tomcat服务成功'
@@ -344,7 +344,7 @@ class ProductAction:
         current_app.logger.info(f'最新的是{path0}的包')
         return os.path.join(from_path_in, path0)
 
-    def copy_Jar(self,to_path_in, version, date=''):
+    def copy_Jar(self,to_path_in, version, date='',user=''):
         """
         :param
         from_path_in:源路径
@@ -380,18 +380,18 @@ class ProductAction:
                     #         from_file = from_134_file
                     if not os.path.exists(to_file):
                         copy2(from_file, to_file)
-                        current_app.logger.info(f"{file_name}更新完毕,时间：{self.current_time()}")
+                        current_app.logger.info(f"[{user}] {file_name}更新完毕,时间：{self.current_time()}")
                         continue
                     if not filecmp.cmp(from_file, to_file):
                         # copy2(to_file, backup_file)
                         copy2(from_file, to_file)
                         # copy2(from_file, ubuntu_file)
-                        current_app.logger.info(f"{file_name}更新完毕,时间：{self.current_time()}")
+                        current_app.logger.info(f"[{user}] {file_name}更新完毕,时间：{self.current_time()}")
                 except PermissionError:
-                    current_app.logger.info(f"{path}下{file_name}正在被占用，请稍等...time{self.current_time()}")
+                    current_app.logger.info(f"[{user}] {path}下{file_name}正在被占用，请稍等...time{self.current_time()}")
         except FileNotFoundError as err:
-            current_app.logger.info(f'file error:{err}')
-        current_app.logger.info(f'{version}-{self.formatDateStr(date)} Jar包更新完成')
+            current_app.logger.info(f'[{user}] file error:{err}')
+        current_app.logger.info(f'[{user}] {version}-{self.formatDateStr(date)} Jar包更新完成')
         return f'{version}-{self.formatDateStr(date)} Jar包更新完成'
 
     def copy_and_reload(self,v,date='',user=''):
@@ -401,7 +401,7 @@ class ProductAction:
         """
         # 先关闭tomcat，然后换JAR，再启动tomcat
         self.shut_tomcat(v)
-        self.copy_Jar(self.config[v][0] + self.YongHong_path, v,date)
+        self.copy_Jar(self.config[v][0] + self.YongHong_path, v,date,user)
         self.start_tomcat(v,user)
         return f'{v}已更换{self.formatDateStr(date)} jar包并重启Tomcat成功'
 
