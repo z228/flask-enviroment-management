@@ -74,7 +74,7 @@ def get_current_bihome():
 @productJar_operate.route('/jarInfo', methods=['GET'])
 def get_product_jar_info():
     v = {}
-    #productAction = ProductAction()
+    productAction = ProductAction()
     for key in productAction.config.keys():
         v[key] = productAction.get_jar_info(key)
     return productAction.succ(v)
