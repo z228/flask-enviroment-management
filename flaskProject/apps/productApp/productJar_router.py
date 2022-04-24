@@ -70,6 +70,15 @@ def get_current_bihome():
         v[key] = productAction.config[key][3]
     return productAction.succ(v)
 
+# 获取所有jar包信息
+@productJar_operate.route('/jarInfo', methods=['GET'])
+def get_product_jar_info():
+    v = {}
+    #productAction = ProductAction()
+    for key in productAction.config.keys():
+        v[key] = productAction.get_jar_info(key)
+    return productAction.succ(v)
+
 # 获取当前url
 @productJar_operate.route('/url', methods=['GET'])
 def get_url():

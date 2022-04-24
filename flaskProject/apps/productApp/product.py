@@ -413,3 +413,11 @@ class ProductAction:
         self.copy_Jar(self.config[v][0] + self.YongHong_path, v,date)
         current_app.logger.info(f'{v}-{self.formatDateStr(date)} jar包检查完毕')
         return f'{v}已更换{self.formatDateStr(date)} jar包'
+    
+    def get_jar_info(self,v):
+        product_paht = os.path.join(self.config[v][0],self.YongHong_path,'product')
+        info_list = []
+        for i in os.listdir(product_paht):
+            change_time = time.strftime("日期:%Y%m%d 时间:%H:%M:%S",time.localtime(os.stat(os.path.join(product_paht,i)).st_mtime))
+            info_list.append(f"{i}:{change_time}")
+        return info_list
