@@ -423,7 +423,7 @@ class ProductAction:
         return info_list
 
     def get_bi_properties(self,v):
-        bipro_path = os.path.join(self.config[v][0]+self.YongHong_path,self.config[v][3])
+        bipro_path = os.path.join(self.config[v][0]+self.YongHong_path,self.config[v][3],'bi.properties')
         bi_pro = ''
         with open(bipro_path,'r',encoding='utf-8') as biPro:
             bi_pro +=biPro.read()
