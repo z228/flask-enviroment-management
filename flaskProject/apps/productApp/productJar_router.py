@@ -79,6 +79,15 @@ def get_product_jar_info():
         v[key] = productAction.get_jar_info(key)
     return productAction.succ(v)
 
+# 获取bi.properties内容
+@productJar_operate.route('/biPro', methods=['GET'])
+def get_product_bi_properties():
+    v = {}
+    productAction = ProductAction()
+    for key in productAction.config.keys():
+        v[key] = productAction.get_bi_properties(key)
+    return productAction.succ(v)
+
 # 获取当前url
 @productJar_operate.route('/url', methods=['GET'])
 def get_url():

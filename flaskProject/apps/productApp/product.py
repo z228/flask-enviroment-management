@@ -421,3 +421,10 @@ class ProductAction:
             change_time = time.strftime("日期:%Y%m%d 时间:%H:%M:%S",time.localtime(os.stat(os.path.join(product_path,i)).st_mtime))
             info_list.append(f"{i}:{change_time}")
         return info_list
+
+    def get_bi_properties(self,v):
+        bipro_path = os.path.join(self.config[v][0]+self.YongHong_path,self.config[v][3])
+        bi_pro = ''
+        with open(bipro_path,'r',encoding='utf-8') as biPro:
+            bi_pro +=biPro.read()
+        return bi_pro
