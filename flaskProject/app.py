@@ -1,6 +1,5 @@
-from flask import Flask, send_from_directory,jsonify
+from flask import Flask, send_from_directory, jsonify
 from flask_cors import CORS
-import os
 from datetime import timedelta
 from config import APSchedulerJobConfig
 from flask_apscheduler import APScheduler
@@ -36,6 +35,7 @@ def favicon():
 def hello_world():
     return render_template('index.html')
 
+
 @app.errorhandler(BaseError)
 def custom_error_handler(e):
     if e.level in [BaseError.LEVEL_WARN, BaseError.LEVEL_ERROR]:
@@ -48,12 +48,11 @@ def custom_error_handler(e):
     return response
 
 
-
 if __name__ == '__main__':
     log_path = './logs/flask.log'
     log_path_today = f'./logs/flask.log'
-    handler = MidnightRotatingFileHandler(log_path)   # 设置日志字符集和存储路径名字
-    logging_format = logging.Formatter(                            # 设置日志格式
+    handler = MidnightRotatingFileHandler(log_path)  # 设置日志字符集和存储路径名字
+    logging_format = logging.Formatter(  # 设置日志格式
         '%(asctime)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s - %(message)s')
     handler.setFormatter(logging_format)
     app.logger.addHandler(handler)
