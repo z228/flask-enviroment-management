@@ -8,7 +8,6 @@ import socket
 import json
 from flask import current_app
 import xml.dom.minidom
-from .status import toked
 import platform
 
 if platform.system() == "Windows":
@@ -38,6 +37,7 @@ class ProductAction:
     YongHong_path = ''
     tomcat_path = ''
     bi_xml_path = ''
+    server_xml_path = ''
     config = {}
 
     # current_system="linux"
@@ -152,6 +152,15 @@ class ProductAction:
             else:
                 self.config[key]["url"] = self.config[key]["port"] + '/bi'
             self.config[key]["debug"] = self.get_debug_port(key)
+            self.config[key]["startup"] = False
+            self.config[key]["shutdown"] = False
+            self.config[key]["update"] = False
+            self.config[key]["reload"] = False
+            self.config[key]["updateAndReload"] = False
+            self.config[key]["changeBihome"] = False
+            self.config[key]["opUser"] = ''
+            self.config[key]["startUser"] = ''
+        self.update_product_status()
 
     def get_debug_port(self, version):
         if self.current_system == "Windows":
@@ -164,7 +173,7 @@ class ProductAction:
                     return i.split('=')[1].split(':')[1][0:-1]
         return "未配置"
 
-    def change_bi_home(self, version, bihome):
+    def change_bi_home(self, version, bihome, user=''):
         if self.current_system == "Windows":
             split_str = '\\'
         else:
@@ -184,7 +193,7 @@ class ProductAction:
         param_value[-1] = bihome
         entry_value[-1] = bihome
         self.config[version]["bihome"] = bihome
-        current_app.logger.info(f'bihome修改为{bihome}')
+        current_app.logger.info(f'[{user}] bihome修改为{bihome}')
         param[0].firstChild.data = split_str.join(param_value)
         entry[0].firstChild.data = split_str.join(entry_value)
         with open(file_path, 'w') as f:
@@ -240,9 +249,20 @@ class ProductAction:
         return time.strftime("%H:%M:%S", time.localtime())
 
     def restart_tomcat(self, v, user=''):
-        self.shut_tomcat(v)
+        if self.config[v]['reload']:
+            res = f'{self.config[v]["opUser"]} 正在重启{v}环境，请稍等'
+            current_app.logger.info(f'[{user}] {res}')
+            return res
+        if self.config[v]['updateAndReload']:
+            res = f'{self.config[v]["opUser"]} 正在重启{v}环境并更换jar包，请稍等'
+            current_app.logger.info(f'[{user}] {res}')
+            return res
+        self.change_status(v, "reload", True, user)
+        self.shut_tomcat(v, user)
         self.start_tomcat(v, user)
-        current_app.logger.info(f'[{user}] {v} tomcat重启成功')
+        current_app.logger.info(f'[{user}]{v} tomcat重启成功')
+        self.change_status(v, "reload")
+        self.config[v]["startUser"] = user
         return f'{v} tomcat重启成功！'
 
     @staticmethod
@@ -255,11 +275,15 @@ class ProductAction:
         return ','.join(list(set(pid)))
 
     # 停止tomcat
-    def shut_tomcat(self, v):
+    def shut_tomcat(self, v, user=''):
+        check_res = self.check_status(v, user)
+        if check_res != '0':
+            return check_res
+        self.change_status(v, "shutdown", True, user)
         host_port = eval(self.config[v]["port"])
         if self.is_port_used(self.host_ip, host_port):
             if self.current_system == "Windows":
-                current_app.logger.info('停止trunk tomcat进程')
+                current_app.logger.info(f'[{user}]停止trunk tomcat进程')
                 os.system(f'python {self.script_path}/stopTrunk.py {host_port} > stopTomcat.txt')
             else:
                 work_dir = self.config[v]["path"] + self.tomcat_path
@@ -270,27 +294,34 @@ class ProductAction:
                     os.system(f'kill -9 {self.get_pid_by_port(str(host_port))}')
             while 1:
                 if self.is_port_used(self.host_ip, host_port):
-                    current_app.logger.info(f'{v} tomcat服务停止中')
+                    current_app.logger.info(f'[{user}]{v} tomcat服务停止中')
                 else:
-                    current_app.logger.info(f'{v} tomcat服务停止成功')
+                    current_app.logger.info(f'[{user}]{v} tomcat服务停止成功')
                     break
                 time.sleep(2)
-            toked[v] = ''
+            self.change_status(v, "shutdown")
+            self.config[v]["startUser"] = ''
             return f'{v} tomcat服务停止成功'
         else:
-            current_app.logger.info(f'{v} tomcat服务未启动')
+            self.change_status(v, "shutdown")
+            current_app.logger.info(f'[{user}]{v} tomcat服务未启动')
             return f'{v} tomcat服务未启动'
 
     def start_tomcat(self, v, user=''):
+        check_res = self.check_status(v, user)
+        if check_res != '0':
+            return check_res
+        self.change_status(v, "startup", True, user)
         host_port = eval(self.config[v]["port"])
         work_dir = self.config[v]["path"] + self.tomcat_path
         os.chdir(work_dir)
         for scape in range(100):
             if self.is_port_used(self.host_ip, host_port):
-                if toked[v] != '':
-                    current_app.logger.info(f'[{user}] {toked[v]}已启动{v} tomcat服务')
-                    return f'{toked[v]}已启动{v} tomcat服务'
-                elif toked[v] == '':
+                if self.config[v]["startUser"] != '':
+                    self.change_status(v, "startup")
+                    current_app.logger.info(f'[{user}] {self.config[v]["startUser"]}已启动{v} tomcat服务')
+                    return f'{self.config[v]["startUser"]}已启动{v} tomcat服务'
+                else:
                     current_app.logger.info('[{user}] tomcat正在停止中')
                     time.sleep(10)
             else:
@@ -300,8 +331,8 @@ class ProductAction:
                     os.system('sh catalina.sh jpda start > caches.txt')
                 break
         current_app.logger.info(f'[{user}] 启动{v} tomcat服务成功')
-        if user != '':
-            toked[v] = user
+        self.change_status(v, "startup")
+        self.config[v]["startUser"] = user
         return f'启动{v} tomcat服务成功'
 
     @staticmethod
@@ -351,7 +382,7 @@ class ProductAction:
         current_app.logger.info(f'最新的是{path0}的包')
         return os.path.join(from_path_in, path0)
 
-    def copy_jar(self, to_path_in, version, date='', user=''):
+    def copy_jar(self, version, date='', user=''):
         """
         :param
         from_path_in:源路径
@@ -360,6 +391,11 @@ class ProductAction:
         index：列表中下标
         """
         try:
+            to_path_in = self.config[version]["path"] + self.YongHong_path
+            check_res = self.check_status(version, user)
+            if check_res != '0':
+                return check_res
+            self.change_status(version, "update", True, user)
             if version == 'v9.4.1':
                 version = 'v9.4'
             backup_path = to_path_in + '/backup_product'
@@ -367,6 +403,7 @@ class ProductAction:
                 if os.path.exists(f'{self.ip}{version}/{date}'):
                     path = f'{self.ip}{version}/{date}'
                 else:
+                    self.change_status(version, "update")
                     return f'{self.format_date_str(date)}的包不存在'
             else:
                 path = self.get_recent_jar(version)
@@ -393,10 +430,13 @@ class ProductAction:
                         copy2(from_file, to_file)
                         current_app.logger.info(f"[{user}] {file_name}更新完毕,时间：{self.current_time()}")
                 except PermissionError:
+                    self.change_status(version, "update")
                     current_app.logger.info(f"[{user}] {path}下{file_name}正在被占用，请稍等...time{self.current_time()}")
         except FileNotFoundError as err:
+            self.change_status(version, "update")
             current_app.logger.info(f'[{user}] file error:{err}')
         current_app.logger.info(f'[{user}] {version}-{self.format_date_str(date)} Jar包更新完成')
+        self.change_status(version, "update")
         return f'{version}-{self.format_date_str(date)} Jar包更新完成'
 
     def copy_and_reload(self, v, date='', user=''):
@@ -407,20 +447,21 @@ class ProductAction:
         :return:
         """
         # 先关闭tomcat，然后换JAR，再启动tomcat
-        self.shut_tomcat(v)
-        self.copy_jar(self.config[v]["path"] + self.YongHong_path, v, date, user)
+        if self.config[v]['updateAndReload']:
+            res = f'{self.config[v]["opUser"]} 正在重启{v}环境并更换jar包，请稍等'
+            current_app.logger.info(f'[{user}] {res}')
+            return res
+        if self.config[v]['reload']:
+            res = f'{self.config[v]["opUser"]} 正在重启{v}环境，请稍等'
+            current_app.logger.info(f'[{user}] {res}')
+            return res
+        self.change_status(v, "updateAndReload", True, user)
+        self.shut_tomcat(v, user)
+        self.copy_jar(v, date, user)
         self.start_tomcat(v, user)
+        self.change_status(v, "updateAndReload")
+        self.config[v]["startUser"] = user
         return f'{v}已更换{self.format_date_str(date)} jar包并重启Tomcat成功'
-
-    def new_copy(self, v, date=''):
-        """
-        :param date:
-        :param v: 版本号 develop
-        :return:
-        """
-        self.copy_jar(self.config[v]["path"] + self.YongHong_path, v, date)
-        current_app.logger.info(f'{v}-{self.format_date_str(date)} jar包检查完毕')
-        return f'{v}已更换{self.format_date_str(date)} jar包'
 
     def get_jar_info(self, v):
         product_path = os.path.join(self.config[v]["path"] + self.YongHong_path, 'product')
@@ -432,8 +473,35 @@ class ProductAction:
         return info_list
 
     def get_bi_properties(self, v):
-        bi_pro_path = os.path.join(self.config[v]["path"] + self.YongHong_path, self.config[v]["bihome"], 'bi.properties')
+        bi_pro_path = os.path.join(self.config[v]["path"] + self.YongHong_path, self.config[v]["bihome"],
+                                   'bi.properties')
         bi_pro = ''
         with open(bi_pro_path, 'r', encoding='utf-8') as biPro:
             bi_pro += biPro.read()
         return bi_pro
+
+    def update_product_status(self):
+        with open('./status.json', 'w') as status:
+            json.dump(self.config, status)
+
+    def check_status(self, v, user=''):
+        status = self.config[v]
+        if status['startup']:
+            res = f'{status["opUser"]} 已启动{v}环境，请刷新'
+            current_app.logger.info(f'[{user}] {res}')
+        elif status['shutdown']:
+            res = f'{status["opUser"]} 正在关闭{v}环境，请稍等'
+            current_app.logger.info(f'[{user}] {res}')
+        elif status['update']:
+            res = f'{status["opUser"]} 正在更新{v}环境jar包，请稍等'
+            current_app.logger.info(f'[{user}] {res}')
+        elif status['changeBihome']:
+            res = f'{status["opUser"]} 正在更换{v}bihome路径，请稍等'
+            current_app.logger.info(f'[{user}] {res}')
+        else:
+            res = '0'
+        return res
+
+    def change_status(self, v, key, flag=False, op_user=''):
+        self.config[v][key] = flag
+        self.config[v]["opUser"] = op_user

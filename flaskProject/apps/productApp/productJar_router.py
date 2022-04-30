@@ -3,9 +3,7 @@ from flask import Blueprint, request, render_template, send_file
 from .product import ProductAction
 import json
 from . import test
-from .status import toked
 import os
-from apps.lib.FtpServer import MyFTP
 from werkzeug.utils import secure_filename
 
 ALLOWED_EXTENSIONS = {'jar'}
@@ -56,7 +54,8 @@ def get_all_version():
     #    productAction = ProductAction()
     v = {}
     for key in productAction.config.keys():
-        v[key] = productAction.config[key]["path"]
+        v[key] = {}
+        v[key]["path"] = productAction.config[key]["path"]
     return productAction.succ(v)
 
 
@@ -106,10 +105,11 @@ def get_url():
     v = {}
     #    productAction = ProductAction()
     for key in productAction.config.keys():
-        if 'dis' in key:
-            v[key] = productAction.config[key]["port"] + '/bi/?showOthers=true'
-        else:
-            v[key] = productAction.config[key]["port"] + '/bi'
+        v[key] = productAction.config[key]["url"]
+        # if 'dis' in key:
+        #     v[key] = productAction.config[key]["port"] + '/bi/?showOthers=true'
+        # else:
+        #     v[key] = productAction.config[key]["port"] + '/bi'
     return productAction.succ(v)
 
 
@@ -145,8 +145,11 @@ def shutdown_product():
     #    productAction = ProductAction()
     data = json.loads(request.get_data())
     print(data['version'])
-    # return succ('关闭成功')
-    return productAction.succ(productAction.shut_tomcat(data['version']))
+    res = productAction.shut_tomcat(data['version'], data['user'])
+    if '成功' not in res:
+        return productAction.info(res)
+    else:
+        return productAction.succ(res)
 
 
 # 启动产品
@@ -154,14 +157,11 @@ def shutdown_product():
 def start_product():
     #    productAction = ProductAction()
     data = json.loads(request.get_data())
-    if 'user' in data.keys():
-        res = productAction.start_tomcat(data['version'], data['user'])
-        if '成功' not in res:
-            return productAction.info(res)
-        else:
-            return productAction.succ(res)
+    res = productAction.start_tomcat(data['version'], data['user'])
+    if '成功' not in res:
+        return productAction.info(res)
     else:
-        return productAction.succ(productAction.start_tomcat(data['version']))
+        return productAction.succ(res)
 
 
 # 检测产品是否启动中
@@ -170,13 +170,14 @@ def check_product():
     v = {}
     #    productAction = ProductAction()
     for key in productAction.config.keys():
-        if productAction.is_port_used('localhost', eval(productAction.config[key]["port"])):
-            if key not in toked.keys():
-                v[key] = ''
-            else:
-                v[key] = toked[key]
-        else:
-            v[key] = '0'
+        v[key] = {}
+        v[key]["startUser"] = productAction.config[key]["startUser"] if productAction.is_port_used('localhost', eval(
+            productAction.config[key]["port"])) else '0'
+        v[key]["startup"] = productAction.config[key]["startup"]
+        v[key]["shutdown"] = productAction.config[key]["shutdown"]
+        v[key]["update"] = productAction.config[key]["update"]
+        v[key]["reload"] = productAction.config[key]["reload"]
+        v[key]["updateAndReload"] = productAction.config[key]["updateAndReload"]
     return productAction.succ(v)
 
 
@@ -186,7 +187,7 @@ def get_port():
     v = {}
     #    productAction = ProductAction()
     for key in productAction.config.keys():
-        v[key] = productAction.get_debug_port(key)
+        v[key] = productAction.config[key]["debug"]
     return productAction.succ(v)
 
 
@@ -205,7 +206,11 @@ def get_view_port():
 def update_jar():
     #    productAction = ProductAction()
     data = json.loads(request.get_data())
-    return productAction.succ(productAction.new_copy(data['version'], data['date']))
+    res = productAction.copy_jar(data['version'], data['date'], data['user'])
+    if '完成' not in res:
+        return productAction.info(res)
+    else:
+        return productAction.succ(res)
 
 
 # 更换指定日期Jar包
@@ -213,7 +218,11 @@ def update_jar():
 def update_jar_with_date():
     #    productAction = ProductAction()
     data = json.loads(request.get_data())
-    return productAction.succ(productAction.new_copy(data['version'], data['date']))
+    res = productAction.copy_jar(data['version'], data['date'], data['user'])
+    if '完成' not in res:
+        return productAction.info(res)
+    else:
+        return productAction.succ(res)
 
 
 def allowed_file(filename):
@@ -230,11 +239,18 @@ def allowed_file(filename):
 @productJar_operate.route('/uploadJar', methods=['POST'])
 def upload_jar():
     version = request.form.get('version')
+    user = request.form.get('user')
     #    productAction = ProductAction()
+    check_res = productAction.check_status(version)
+    if check_res != '0':
+        return productAction.info(check_res)
+    productAction.change_status(version, "update", True, user)
     file = request.files['file']
     if 'file' not in request.files:
+        productAction.change_status(version, "update")
         return productAction.error("No file part")
     if file.filename == '':
+        productAction.change_status(version, "update")
         return productAction.error('No selected file')
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
@@ -248,25 +264,10 @@ def upload_jar():
             filename = 'product-swf.jar'
         jar_path = productAction.config[version][0] + '/Yonghong/product'
         file.save(os.path.join(jar_path, filename))
+        productAction.change_status(version, "update")
         return productAction.succ(f'{file.filename} uploaded successfully')
+    productAction.change_status(version, "update")
     return productAction.error("file uploaded Fail")
-
-
-# 更换Linux服务器Jar包
-@productJar_operate.route('/updateLinuxJar', methods=['POST'])
-def update_linux_jar():
-    #    productAction = ProductAction()
-    ftpServer = MyFTP()
-    ftpServer.connect()
-    ftpServer.login()
-    data = json.loads(request.get_data())
-    src_path = productAction.get_recent_jar(data['version'])
-    dirs = os.listdir(src_path)
-    for dir in dirs:
-        src_file = os.path.join(src_path, dir)
-        ftpServer.upload_file(src_file, f'/{data["version"]}')
-    ftpServer.quit()
-    return productAction.succ(f'服务器{data["version"]}的Jar包更新成功')
 
 
 # 重启产品
@@ -274,11 +275,11 @@ def update_linux_jar():
 def reload_product():
     #    productAction = ProductAction()
     data = json.loads(request.get_data())
-    if 'user' in data.keys():
-        res = productAction.restart_tomcat(data['version'], data['user'])
-        return productAction.succ(res)
+    res = productAction.restart_tomcat(data['version'], data['user'])
+    if '成功' not in res:
+        return productAction.info(res)
     else:
-        return productAction.succ(productAction.restart_tomcat(data['version']))
+        return productAction.succ(res)
 
 
 # 更换Jar包并重启产品
@@ -286,11 +287,11 @@ def reload_product():
 def update_and_reload_product():
     #    productAction = ProductAction()
     data = json.loads(request.get_data())
-    if 'user' in data.keys():
-        res = productAction.copy_and_reload(data['version'], date=data['date'], user=data['user'])
-        return productAction.succ(res)
+    res = productAction.copy_and_reload(data['version'], data['date'], data['user'])
+    if '成功' not in res:
+        return productAction.info(res)
     else:
-        return productAction.succ(productAction.copy_and_reload(data['version'], date=data['date']))
+        return productAction.succ(res)
 
 
 # 更换jar功能页面
@@ -300,7 +301,7 @@ def exchange():
     if request.method == 'POST':
         aim = request.form['exchange']
         print(request.form['exchange'])
-        log = productAction.new_copy(aim)
+        log = productAction.copy_and_reload(aim)
         return '''<link rel="shortcut icon" href="{{ url_for('static', 
         filename='favicon.ico') }}">''' + log + '''<script type="text/javascript">setTimeout("history.go(-1)", 3000);  </script>
             <SCRIPT language=javascript>
