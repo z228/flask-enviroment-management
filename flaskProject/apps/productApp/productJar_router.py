@@ -20,28 +20,28 @@ def product():
 @productJar_operate.route('/allScript', methods=['GET'])
 def get_all_script():
     productAction = ProductAction()
-    return productAction.succ(productAction.getAllScript())
+    return productAction.succ(productAction.get_all_script())
 
 # 执行脚本
 @productJar_operate.route('/execute', methods=['post'])
 def execute_script():
     data = json.loads(request.get_data())
     productAction = ProductAction()
-    return productAction.succ(productAction.executeScript(data['name']))
+    return productAction.succ(productAction.execute_script(data['name']))
 
 # 删除脚本
 @productJar_operate.route('/delete', methods=['post'])
 def delete_script():
     data = json.loads(request.get_data())
     productAction = ProductAction()
-    return productAction.succ(productAction.deleteScript(data['name']))
+    return productAction.succ(productAction.delete_script(data['name']))
 
 # 保存脚本
 @productJar_operate.route('/saveScript', methods=['post'])
 def save_script():
     data = json.loads(request.get_data())
     productAction = ProductAction()
-    return productAction.succ(productAction.saveScript(data['content'], data['name'], data['type']))
+    return productAction.succ(productAction.save_script(data['content'], data['name'], data['type']))
 
 # 获取所有版本号
 @productJar_operate.route('/all', methods=['GET'])
