@@ -145,19 +145,19 @@ class ProductAction:
         self.bi_xml_path = f'{self.root_path}/tomcat/webapps/bi/WEB-INF/web.xml'
         self.server_xml_path = f'{self.root_path}/tomcat/conf/server.xml'
         for key in self.config.keys():
-            self.config[key][1] = self.get_bi_port(key)
-            self.config[key].append(self.get_bi_home(key))
+            self.config[key]["port"] = self.get_bi_port(key)
+            self.config[key]["bihome"] = self.get_bi_home(key)
             if 'dis' in key:
-                self.config[key].append(self.config[key][1] + '/bi/?showOthers=true')
+                self.config[key]["url"] = self.config[key]["port"] + '/bi/?showOthers=true'
             else:
-                self.config[key].append(self.config[key][1] + '/bi')
-            self.config[key].append(self.get_debug_port(key))
+                self.config[key]["url"] = self.config[key]["port"] + '/bi'
+            self.config[key]["debug"] = self.get_debug_port(key)
 
     def get_debug_port(self, version):
         if self.current_system == "Windows":
-            catalina_path = f'{self.config[version][0]}{self.tomcat_path}catalina.bat'
+            catalina_path = f'{self.config[version]["path"]}{self.tomcat_path}catalina.bat'
         else:
-            catalina_path = f'{self.config[version][0]}{self.tomcat_path}catalina.sh'
+            catalina_path = f'{self.config[version]["path"]}{self.tomcat_path}catalina.sh'
         with open(catalina_path, 'r', encoding='utf-8') as catalina:
             for i in catalina.readlines():
                 if 'JPDA_ADDRESS' in i:
@@ -174,7 +174,7 @@ class ProductAction:
             reload = True
         if reload:
             self.shut_tomcat(version)
-        file_path = f'{self.config[version][0]}{self.bi_xml_path}'
+        file_path = f'{self.config[version]["path"]}{self.bi_xml_path}'
         dom = xml.dom.minidom.parse(file_path)
         root = dom.documentElement
         param = root.getElementsByTagName('param-value')
@@ -183,7 +183,7 @@ class ProductAction:
         entry_value = entry[0].firstChild.data.split(split_str)
         param_value[-1] = bihome
         entry_value[-1] = bihome
-        self.config[version][3] = bihome
+        self.config[version]["bihome"] = bihome
         current_app.logger.info(f'bihome修改为{bihome}')
         param[0].firstChild.data = split_str.join(param_value)
         entry[0].firstChild.data = split_str.join(entry_value)
@@ -198,7 +198,7 @@ class ProductAction:
             split_str = '\\'
         else:
             split_str = '/'
-        file_path = f'{self.config[version][0]}{self.bi_xml_path}'
+        file_path = f'{self.config[version]["path"]}{self.bi_xml_path}'
         dom = xml.dom.minidom.parse(file_path)
         root = dom.documentElement
         param = root.getElementsByTagName('param-value')
@@ -210,7 +210,7 @@ class ProductAction:
         return "error bihome"
 
     def get_bi_port(self, version):
-        file_path = f'{self.config[version][0]}{self.server_xml_path}'
+        file_path = f'{self.config[version]["path"]}{self.server_xml_path}'
         dom = xml.dom.minidom.parse(file_path)
         root = dom.documentElement
         connect = root.getElementsByTagName('Connector')
@@ -256,23 +256,16 @@ class ProductAction:
 
     # 停止tomcat
     def shut_tomcat(self, v):
-        host_port = eval(self.config[v][1])
+        host_port = eval(self.config[v]["port"])
         if self.is_port_used(self.host_ip, host_port):
             if self.current_system == "Windows":
-                # if v == 'develop':
-                # print('停止trunk tomcat进程')
-                # print(os.getcwd())
                 current_app.logger.info('停止trunk tomcat进程')
                 os.system(f'python {self.script_path}/stopTrunk.py {host_port} > stopTomcat.txt')
-                # else:
-                #     work_dir = self.config[v][0] + self.tomcat_path
-                #     os.chdir(work_dir)
-                #     os.system(f'shutdown > caches.txt')
             else:
-                work_dir = self.config[v][0] + self.tomcat_path
+                work_dir = self.config[v]["path"] + self.tomcat_path
                 os.chdir(work_dir)
                 if v == "develop":
-                    os.system(f'sh  {self.config[v][0]}/tomcat/bin/shutdown.sh')
+                    os.system(f'sh  {self.config[v]["path"]}/tomcat/bin/shutdown.sh')
                 else:
                     os.system(f'kill -9 {self.get_pid_by_port(str(host_port))}')
             while 1:
@@ -289,10 +282,8 @@ class ProductAction:
             return f'{v} tomcat服务未启动'
 
     def start_tomcat(self, v, user=''):
-        # v = ip + v + '/'
-        # index = from_path.index(v)
-        host_port = eval(self.config[v][1])
-        work_dir = self.config[v][0] + self.tomcat_path
+        host_port = eval(self.config[v]["port"])
+        work_dir = self.config[v]["path"] + self.tomcat_path
         os.chdir(work_dir)
         for scape in range(100):
             if self.is_port_used(self.host_ip, host_port):
@@ -399,9 +390,7 @@ class ProductAction:
                         current_app.logger.info(f"[{user}] {file_name}更新完毕,时间：{self.current_time()}")
                         continue
                     if not filecmp.cmp(from_file, to_file):
-                        # copy2(to_file, backup_file)
                         copy2(from_file, to_file)
-                        # copy2(from_file, ubuntu_file)
                         current_app.logger.info(f"[{user}] {file_name}更新完毕,时间：{self.current_time()}")
                 except PermissionError:
                     current_app.logger.info(f"[{user}] {path}下{file_name}正在被占用，请稍等...time{self.current_time()}")
@@ -419,7 +408,7 @@ class ProductAction:
         """
         # 先关闭tomcat，然后换JAR，再启动tomcat
         self.shut_tomcat(v)
-        self.copy_jar(self.config[v][0] + self.YongHong_path, v, date, user)
+        self.copy_jar(self.config[v]["path"] + self.YongHong_path, v, date, user)
         self.start_tomcat(v, user)
         return f'{v}已更换{self.format_date_str(date)} jar包并重启Tomcat成功'
 
@@ -429,12 +418,12 @@ class ProductAction:
         :param v: 版本号 develop
         :return:
         """
-        self.copy_jar(self.config[v][0] + self.YongHong_path, v, date)
+        self.copy_jar(self.config[v]["path"] + self.YongHong_path, v, date)
         current_app.logger.info(f'{v}-{self.format_date_str(date)} jar包检查完毕')
         return f'{v}已更换{self.format_date_str(date)} jar包'
 
     def get_jar_info(self, v):
-        product_path = os.path.join(self.config[v][0] + self.YongHong_path, 'product')
+        product_path = os.path.join(self.config[v]["path"] + self.YongHong_path, 'product')
         info_list = []
         for i in os.listdir(product_path):
             change_time = time.strftime("日期:%Y%m%d 时间:%H:%M:%S",
@@ -443,7 +432,7 @@ class ProductAction:
         return info_list
 
     def get_bi_properties(self, v):
-        bi_pro_path = os.path.join(self.config[v][0] + self.YongHong_path, self.config[v][3], 'bi.properties')
+        bi_pro_path = os.path.join(self.config[v]["path"] + self.YongHong_path, self.config[v]["bihome"], 'bi.properties')
         bi_pro = ''
         with open(bi_pro_path, 'r', encoding='utf-8') as biPro:
             bi_pro += biPro.read()

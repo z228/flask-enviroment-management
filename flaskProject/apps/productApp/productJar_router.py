@@ -56,7 +56,7 @@ def get_all_version():
     #    productAction = ProductAction()
     v = {}
     for key in productAction.config.keys():
-        v[key] = productAction.config[key][0]
+        v[key] = productAction.config[key]["path"]
     return productAction.succ(v)
 
 
@@ -66,7 +66,7 @@ def get_all_bihome():
     v = {}
     #    productAction = ProductAction()
     for key in productAction.config.keys():
-        v[key] = productAction.config[key][2].split(' ')
+        v[key] = productAction.config[key]["bihomes"].split(' ')
     return productAction.succ(v)
 
 
@@ -76,7 +76,7 @@ def get_current_bihome():
     v = {}
     #    productAction = ProductAction()
     for key in productAction.config.keys():
-        v[key] = productAction.config[key][3]
+        v[key] = productAction.config[key]["bihome"]
     return productAction.succ(v)
 
 
@@ -107,9 +107,9 @@ def get_url():
     #    productAction = ProductAction()
     for key in productAction.config.keys():
         if 'dis' in key:
-            v[key] = productAction.config[key][1] + '/bi/?showOthers=true'
+            v[key] = productAction.config[key]["port"] + '/bi/?showOthers=true'
         else:
-            v[key] = productAction.config[key][1] + '/bi'
+            v[key] = productAction.config[key]["port"] + '/bi'
     return productAction.succ(v)
 
 
@@ -170,7 +170,7 @@ def check_product():
     v = {}
     #    productAction = ProductAction()
     for key in productAction.config.keys():
-        if productAction.is_port_used('localhost', eval(productAction.config[key][1])):
+        if productAction.is_port_used('localhost', eval(productAction.config[key]["port"])):
             if key not in toked.keys():
                 v[key] = ''
             else:
@@ -196,7 +196,7 @@ def get_view_port():
     v = {}
     #    productAction = ProductAction()
     for key in productAction.config.keys():
-        v[key] = productAction.config[key][1]
+        v[key] = productAction.config[key]["port"]
     return productAction.succ(v)
 
 
