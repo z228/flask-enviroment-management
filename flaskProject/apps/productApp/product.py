@@ -26,6 +26,7 @@ class ProductAction:
     ip = ip_134
     from_path = []
     script_path = f"{os.getcwd()}/static/job"
+    status_path = f"{os.getcwd()}/apps/productApp"
     to_path = []
     day_31 = ['02', '04', '06', '08', '09', '11']
     port = []
@@ -138,6 +139,9 @@ class ProductAction:
 
     # 读取配置文件
     def read_config(self):
+        status = {}
+        with open(f'{self.status_path}/status.json', 'r') as f_status:
+            status = json.load(f_status)
         self.config = properties.env_list['version']
         self.root_path = properties.env_list["mid_path"]
         self.YongHong_path = f'{self.root_path}/Yonghong'
@@ -159,7 +163,7 @@ class ProductAction:
             self.config[key]["updateAndReload"] = False
             self.config[key]["changeBihome"] = False
             self.config[key]["opUser"] = ''
-            self.config[key]["startUser"] = ''
+            self.config[key]["startUser"] = status[key]["startUser"]
         self.update_product_status()
 
     def get_debug_port(self, version):
@@ -481,7 +485,7 @@ class ProductAction:
         return bi_pro
 
     def update_product_status(self):
-        with open('./status.json', 'w') as status:
+        with open(f'{self.status_path}/status.json', 'w') as status:
             json.dump(self.config, status)
 
     def check_status(self, v, user=''):
@@ -505,3 +509,4 @@ class ProductAction:
     def change_status(self, v, key, flag=False, op_user=''):
         self.config[v][key] = flag
         self.config[v]["opUser"] = op_user
+        self.update_product_status()
