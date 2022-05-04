@@ -140,9 +140,10 @@ class ProductAction:
     # 读取配置文件
     def read_config(self):
         status = {}
-        with open(f'{self.status_path}/status.json', 'r', encoding='utf-8') as f_status:
-            str_status = f_status.read()
-            status = json.loads(str_status) if len(str_status) != 0 else {}
+        if os.path.exists(f'{self.status_path}/status.json'):
+            with open(f'{self.status_path}/status.json', 'r', encoding='utf-8') as f_status:
+                str_status = f_status.read()
+                status = json.loads(str_status) if len(str_status) != 0 else {}
         self.config = properties.env_list['version']
         self.root_path = properties.env_list["mid_path"]
         self.YongHong_path = f'{self.root_path}/Yonghong'
