@@ -140,8 +140,9 @@ class ProductAction:
     # 读取配置文件
     def read_config(self):
         status = {}
-        with open(f'{self.status_path}/status.json', 'r') as f_status:
-            status = json.load(f_status)
+        with open(f'{self.status_path}/status.json', 'r', encoding='utf-8') as f_status:
+            str_status = f_status.read()
+            status = json.loads(str_status) if len(str_status) != 0 else {}
         self.config = properties.env_list['version']
         self.root_path = properties.env_list["mid_path"]
         self.YongHong_path = f'{self.root_path}/Yonghong'
@@ -163,14 +164,11 @@ class ProductAction:
             self.config[key]["updateAndReload"] = False
             self.config[key]["changeBihome"] = False
             self.config[key]["opUser"] = ''
-            self.config[key]["startUser"] = status[key]["startUser"]
+            self.config[key]["startUser"] = status[key]["startUser"] if key in status.keys() else ''
         self.update_product_status()
 
     def get_debug_port(self, version):
-        if self.current_system == "Windows":
-            catalina_path = f'{self.config[version]["path"]}{self.tomcat_path}catalina.bat'
-        else:
-            catalina_path = f'{self.config[version]["path"]}{self.tomcat_path}catalina.sh'
+        catalina_path = f'{self.config[version]["path"]}{self.tomcat_path}catalina.bat' if self.current_system == "Windows" else f'{self.config[version]["path"]}{self.tomcat_path}catalina.sh'
         with open(catalina_path, 'r', encoding='utf-8') as catalina:
             for i in catalina.readlines():
                 if 'JPDA_ADDRESS' in i:
@@ -178,10 +176,7 @@ class ProductAction:
         return "未配置"
 
     def change_bi_home(self, version, bihome, user=''):
-        if self.current_system == "Windows":
-            split_str = '\\'
-        else:
-            split_str = '/'
+        split_str = '\\' if self.current_system == "Windows" else '/'
         reload = False
         if self.is_port_used('localhost', eval(self.config[version][1])):
             reload = True
@@ -207,10 +202,7 @@ class ProductAction:
         return "bihome修改成功"
 
     def get_bi_home(self, version):
-        if self.current_system == "Windows":
-            split_str = '\\'
-        else:
-            split_str = '/'
+        split_str = '\\' if self.current_system == "Windows" else '/'
         file_path = f'{self.config[version]["path"]}{self.bi_xml_path}'
         dom = xml.dom.minidom.parse(file_path)
         root = dom.documentElement
@@ -349,12 +341,8 @@ class ProductAction:
                 os.rename(f'{path}/{i}', f'{path}/{new_name}')
 
     def get_recent_jar(self, version):
-        if version == 'v9.4.1':
-            version = 'v9.4'
-        if version == 'develop':
-            from_path_in = f'{self.ip}{version}'
-        else:
-            from_path_in = f'{self.ip}{version}'
+        git_branch = self.config[version]["branch"]
+        from_path_in = f'{self.ip}{git_branch}'
         path0 = time.strftime("%Y%m%d", time.localtime())
         current_app.logger.info(f'当天的{version}jar包地址：{os.path.join(from_path_in, path0)}')
         # 检测是否有当天的新Jar，否则往前推一天
@@ -364,10 +352,7 @@ class ProductAction:
                 month = path0[4:6]
                 day = path0[-2:]
                 month_1 = int(month) - 1
-                if month_1 > 9:
-                    month_1 = str(month_1)
-                else:
-                    month_1 = f'0{str(month_1)}'
+                month_1 = str(month_1) if month_1 > 9 else f'0{str(month_1)}'
                 if day == '01':
                     if month in self.day_31:
                         path0 = f'{year}{month_1}31'
@@ -395,24 +380,23 @@ class ProductAction:
         index：列表中下标
         """
         try:
+            git_branch = self.config[version]["branch"]
             to_path_in = self.config[version]["path"] + self.YongHong_path
             check_res = self.check_status(version, user)
             if check_res != '0':
                 return check_res
             self.change_status(version, "update", True, user)
-            if version == 'v9.4.1':
-                version = 'v9.4'
             backup_path = to_path_in + '/backup_product'
             if date != '':
-                if os.path.exists(f'{self.ip}{version}/{date}'):
-                    path = f'{self.ip}{version}/{date}'
+                if os.path.exists(f'{self.ip}{git_branch}/{date}'):
+                    path = f'{self.ip}{git_branch}/{date}'
                 else:
                     self.change_status(version, "update")
                     return f'{self.format_date_str(date)}的包不存在'
             else:
                 path = self.get_recent_jar(version)
             dirs = os.listdir(path)
-            if version in ['v8.6', 'v9.0', 'v9.2.1', 'v9.4', 'develop']:
+            if git_branch in ['v8.6', 'v9.0', 'v9.2.1', 'v9.4', 'develop']:
                 path = path.replace(self.ip, self.ip_local)
             # 遍历目标地址中的项目jar
             for file_name in dirs:
@@ -485,7 +469,7 @@ class ProductAction:
         return bi_pro
 
     def update_product_status(self):
-        with open(f'{self.status_path}/status.json', 'w') as status:
+        with open(f'{self.status_path}/status.json', 'w', encoding='utf-8') as status:
             json.dump(self.config, status)
 
     def check_status(self, v, user=''):

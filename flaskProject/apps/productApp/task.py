@@ -2,7 +2,6 @@ import os
 from . import product
 import shutil
 import os
-from flask import current_app
 import time
 
 to_path = ['D:/old_version/8.6/', 'D:/old_version/8.8/', 'D:/old_version/9.0/', 'D:/old_version/9.1/',
@@ -18,7 +17,6 @@ def clean_backup_jar():
         for j in os.popen(f"ls {os.path.join(product_path, i)}").read().split():
             if diffDay(j, "%Y%m%d") > 5:
                 os.system(f"rm -R {os.path.join(product_path, i, j)}")
-                current_app.logger.info(f"rm -R {os.path.join(product_path, i, j)}")
 
 
 def clean_jar():
@@ -50,7 +48,7 @@ def Jacoco_change_Jar():
 
 def killall_java():
     os.system('killall -9 java')
-    current_app.logger.info(f'杀死所有java进程')
+    # current_app.logger.info(f'杀死所有java进程')
 
 
 def diffDay(ftime, fmt):

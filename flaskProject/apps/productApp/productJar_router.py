@@ -106,10 +106,6 @@ def get_url():
     #    productAction = ProductAction()
     for key in productAction.config.keys():
         v[key] = productAction.config[key]["url"]
-        # if 'dis' in key:
-        #     v[key] = productAction.config[key]["port"] + '/bi/?showOthers=true'
-        # else:
-        #     v[key] = productAction.config[key]["port"] + '/bi'
     return productAction.succ(v)
 
 
@@ -117,17 +113,18 @@ def get_url():
 @productJar_operate.route('/141jar', methods=['GET'])
 def get_141_jar():
     v = {}
+    pro_env = productAction.config
     #    productAction = ProductAction()
     # data = json.loads(request.get_data())
-    for key in productAction.config.keys():
-        key2 = "v9.4" if key == "v9.4.1" else key
-        if key2 in ['v8.6', 'v9.0', 'v9.2.1', 'v9.4', 'develop']:
-            v[key] = os.listdir(f'{ProductAction.ip_local}{key2}')
+    for version in productAction.config.keys():
+        branch = pro_env[version]["branch"]
+        if branch in ['v8.6', 'v9.0', 'v9.2.1', 'v9.4', 'develop']:
+            v[version] = os.listdir(f'{ProductAction.ip_local}{branch}')
         else:
-            v[key] = os.listdir(f'{ProductAction.ip_134}{key2}')
-        v[key] = productAction.clear_list_not_num(v[key])
-        v[key].sort()
-        v[key].reverse()
+            v[version] = os.listdir(f'{ProductAction.ip_134}{branch}')
+        v[version] = productAction.clear_list_not_num(v[version])
+        v[version].sort()
+        v[version].reverse()
     return productAction.succ(v)
 
 

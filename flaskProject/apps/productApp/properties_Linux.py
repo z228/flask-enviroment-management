@@ -3,47 +3,56 @@ env_list = {
         "v8.6": {
             "path": "/opt/86",
             "port": "8921",
-            "bihomes": "bihome"
+            "bihomes": "bihome",
+            "branch": "v8.6"
         },
         "v8.8": {
             "path": "/opt/88",
             "port": "8921",
-            "bihomes": "bihome"
+            "bihomes": "bihome",
+            "branch": "v8.8"
         },
         "v9.0": {
             "path": "/opt/90",
             "port": "8921",
-            "bihomes": "bihome"
+            "bihomes": "bihome",
+            "branch": "v9.0"
         },
         "v9.2.1": {
             "path": "/opt/921",
             "port": "8921",
-            "bihomes": "bihome"
+            "bihomes": "bihome",
+            "branch": "v9.2.1"
         },
         "v9.4": {
             "path": "/opt/94",
             "port": "8921",
-            "bihomes": "bihome Export UIauto"
+            "bihomes": "bihome Export UIauto",
+            "branch": "v9.4"
         },
-        "custom_v9.2.3_huawei_dis": {
+        "v9.2.3_huawei_dis": {
             "path": "/opt/Yonghong_Z-Suite_dis_923",
             "port": "8921",
-            "bihomes": "bihome Export"
+            "bihomes": "bihome Export",
+            "branch": "custom_v9.2.3_huawei_dis"
         },
-        "custom_v9.4.1_huawei_xian": {
+        "v9.4.1_huawei_xian": {
             "path": "/opt/Yonghong_Z-Suite_xian_941",
             "port": "8941",
-            "bihomes": "bihome Export UIauto"
+            "bihomes": "bihome Export UIauto",
+            "branch": "custom_v9.4.1_huawei_xian"
         },
-        "custom_v9.4_dis_M3": {
+        "v9.4_dis_M3": {
             "path": "/opt/custom_v9.4_dis_M3",
             "port": "8941",
-            "bihomes": "bihome Export"
+            "bihomes": "bihome Export",
+            "branch": "custom_v9.4_dis_M3"
         },
-        "develop": {
+        "trunk": {
             "path": "/opt/trunk",
             "port": "8080",
-            "bihomes": "bihome"
+            "bihomes": "bihome",
+            "branch": "develop"
         }
     },
     "mid_path": ""
