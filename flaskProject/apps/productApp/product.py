@@ -171,7 +171,8 @@ class ProductAction:
     def get_debug_port(self, version):
         catalina_path = f'{self.config[version]["path"]}{self.tomcat_path}catalina.bat' if self.current_system == "Windows" else f'{self.config[version]["path"]}{self.tomcat_path}catalina.sh'
         with open(catalina_path, 'r', encoding='utf-8') as catalina:
-            for i in catalina.readlines():
+            catalina_lines = catalina.readlines()
+            for i in catalina_lines:
                 if 'export JPDA_ADDRESS=' in i and 'if [ -z "$JPDA_ADDRESS" ]; then' not in \
                         catalina_lines[catalina_lines.index(i) - 1]:
                     return i.split('=')[1].split(':')[1][0:-1]
