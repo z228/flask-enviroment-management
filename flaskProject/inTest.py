@@ -61,6 +61,11 @@ def renameProductJar(newName,path):
 # entry[0].firstChild.data = '\\'.join(entry_value)
 
 res = os.popen('netstat -ano |findstr 8080').read()
-if "LISTENING" in res:
-  print(res)
+# if "LISTENING" in res:
+  # print(res)
 
+l2 = os.listdir('\\\\192.168.1.134\\git-package\V9.4')
+l2.reverse()
+print(l2)
+l2.sort()
+print(l2)
