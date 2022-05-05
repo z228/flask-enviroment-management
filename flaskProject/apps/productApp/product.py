@@ -163,6 +163,7 @@ class ProductAction:
             self.config[key]["reload"] = False
             self.config[key]["updateAndReload"] = False
             self.config[key]["changeBihome"] = False
+            self.config[key]["status"] = '1' if self.is_port_used_fast(self.config[key]["port"]) else '0'
         self.update_product_status()
 
     def get_debug_port(self, version):
@@ -171,8 +172,10 @@ class ProductAction:
         else:
             catalina_path = f'{self.config[version]["path"]}{self.tomcat_path}catalina.sh'
         with open(catalina_path, 'r', encoding='utf-8') as catalina:
-            for i in catalina.readlines():
-                if 'JPDA_ADDRESS' in i:
+            catalina_lines = catalina.readlines()
+            for i in catalina_lines:
+                if 'set JPDA_ADDRESS=' in i and 'if not "%JPDA_ADDRESS%" == "" goto gotJpdaAddress' not in \
+                        catalina_lines[catalina_lines.index(i) - 1]:
                     return i.split('=')[1].split(':')[1][0:-1]
         return "未配置"
 
@@ -184,7 +187,7 @@ class ProductAction:
         if reload:
             self.shut_tomcat(version)
         web_xml_file_path = f'{self.config[version]["path"]}{self.bi_xml_path}'
-        dom = xml.dom.minidom.parse(file_path)
+        dom = xml.dom.minidom.parse(web_xml_file_path)
         root = dom.documentElement
         param = root.getElementsByTagName('param-value')
         entry = root.getElementsByTagName('env-entry-value')
@@ -245,16 +248,11 @@ class ProductAction:
             s.close()
 
     def is_port_used_fast(self, c_port):
-        if self.current_system == "Windows":
-            res = os.popen(f'netstat -ano |findstr {c_port}').read()
-            if "LISTENING" in res:
-                return True
-            return False
-        else:
-            res = os.popen(f'lsof -i:{c_port}').read()
-            if "LISTEN" in res:
-                return True
-            return False
+        res = os.popen(f'netstat -ano |findstr {c_port}').read() if self.current_system == "Windows" else os.popen(
+            f'lsof -i:{c_port}').read()
+        if "LISTENING" in res or "LISTEN" in res:
+            return True
+        return False
 
     @staticmethod
     def current_time():
@@ -310,10 +308,12 @@ class ProductAction:
                     break
                 time.sleep(30)
             self.change_status(v, 'shutdown')
+            self.config[v]["status"] = '0'
             return f'{v} tomcat服务停止成功'
         else:
             self.change_status(v, 'shutdown')
             current_app.logger.info(f'{v} tomcat服务未启动')
+            self.config[v]["status"] = '0'
             return f'{v} tomcat服务未启动'
 
     def start_tomcat(self, v, user=''):
@@ -326,11 +326,12 @@ class ProductAction:
         os.chdir(work_dir)
         for scape in range(100):
             if self.is_port_used(self.host_ip, host_port):
-                if self.toked[v]['status'] != '0':
-                    current_app.logger.info(f'{self.toked[v]["status"]}已启动{v} tomcat服务')
+                if self.config[v]["status"] != '0':
+                    current_app.logger.info(f'已启动{v} tomcat服务')
                     self.change_status(v, 'start')
-                    return f'{self.toked[v]["status"]}已启动{v} tomcat服务'
-                elif self.toked[v]['status'] == '0':
+                    self.config[v]["status"] = '1'
+                    return f'已启动{v} tomcat服务'
+                else:
                     current_app.logger.info('tomcat正在停止中')
                     time.sleep(10)
             else:
@@ -341,6 +342,7 @@ class ProductAction:
                 break
         current_app.logger.info(f'启动{v} tomcat服务成功')
         self.change_status(v, 'start')
+        self.config[v]["status"] = '1'
         return f'启动{v} tomcat服务成功'
 
     @staticmethod
@@ -397,8 +399,8 @@ class ProductAction:
             check_res = self.check_status(version)
             if check_res != '0':
                 return check_res
-            to_path_in = self.config[v]["path"] + self.YongHong_path
-            branch = self.config[v]["branch"]
+            to_path_in = self.config[version]["path"] + self.YongHong_path
+            branch = self.config[version]["branch"]
             backup_path = to_path_in + '/backup_product'
             if date != '':
                 if os.path.exists(f'{self.ip}{branch}/{date}'):

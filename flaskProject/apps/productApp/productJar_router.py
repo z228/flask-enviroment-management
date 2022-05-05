@@ -145,6 +145,7 @@ def check_product():
         v[key]["update"] = productAction.config[key]["update"]
         v[key]["reload"] = productAction.config[key]["reload"]
         v[key]["updateAndReload"] = productAction.config[key]["updateAndReload"]
+        v[key]["status"] = productAction.config[key]["status"]
     return productAction.succ(v)
 
 
