@@ -487,7 +487,8 @@ class ProductAction:
             res = f'{status["opUser"]} 正在更换{v}bihome路径，请稍等'
         else:
             res = '0'
-        current_app.logger.info(f'[{user}] {res}')
+        if res!='0':
+            current_app.logger.info(f'[{user}] {res}')
         return res
 
     def change_status(self, v, key, flag=False, op_user=''):

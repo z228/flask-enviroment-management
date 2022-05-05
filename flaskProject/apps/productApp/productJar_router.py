@@ -259,7 +259,7 @@ def upload_jar():
             filename = 'thirds.jar'
         elif 'product-swf' in filename:
             filename = 'product-swf.jar'
-        jar_path = productAction.config[version][0] + '/Yonghong/product'
+        jar_path = productAction.config[version]["path"] + '/Yonghong/product'
         file.save(os.path.join(jar_path, filename))
         productAction.change_status(version, "update")
         return productAction.succ(f'{file.filename} uploaded successfully')
