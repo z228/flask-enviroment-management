@@ -1,6 +1,0 @@
-2022-01-19 17:30:38,655 - INFO - product.py - shut_tomcat - 204 - custom_v9.2.3_huawei_distomcat服务停止成功
-2022-01-19 17:30:41,025 - INFO - product.py - copy_Jar - 311 - api.jar更新完毕,时间：17:30:41
-2022-01-19 17:31:16,163 - INFO - product.py - copy_Jar - 311 - product.jar更新完毕,时间：17:31:16
-2022-01-19 17:31:37,140 - INFO - product.py - copy_Jar - 311 - thirds.jar更新完毕,时间：17:31:37
-2022-01-19 17:31:37,141 - INFO - product.py - copy_Jar - 316 - custom_v9.2.3_huawei_dis-2022-01-12 Jar包更新完成
-2022-01-19 17:31:37,204 - INFO - product.py - start_tomcat - 226 - 启动custom_v9.2.3_huawei_distomcat服务成功
