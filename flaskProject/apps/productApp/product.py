@@ -477,18 +477,15 @@ class ProductAction:
         status = self.config[v]
         if status['startup']:
             res = f'{status["opUser"]} 已启动{v}环境，请刷新'
-            current_app.logger.info(f'[{user}] {res}')
         elif status['shutdown']:
             res = f'{status["opUser"]} 正在关闭{v}环境，请稍等'
-            current_app.logger.info(f'[{user}] {res}')
         elif status['update']:
             res = f'{status["opUser"]} 正在更新{v}环境jar包，请稍等'
-            current_app.logger.info(f'[{user}] {res}')
         elif status['changeBihome']:
             res = f'{status["opUser"]} 正在更换{v}bihome路径，请稍等'
-            current_app.logger.info(f'[{user}] {res}')
         else:
             res = '0'
+        current_app.logger.info(f'[{user}] {res}')
         return res
 
     def change_status(self, v, key, flag=False, op_user=''):
