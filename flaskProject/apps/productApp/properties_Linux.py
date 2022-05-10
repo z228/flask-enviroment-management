@@ -15,7 +15,7 @@ env_list = {
         "v9.0": {
             "path": "/opt/90",
             "port": "8921",
-            "bihomes": "bihome",
+            "bihomes": "bihome Export",
             "branch": "v9.0"
         },
         "v9.2.1": {

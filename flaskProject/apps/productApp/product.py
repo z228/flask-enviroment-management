@@ -181,7 +181,7 @@ class ProductAction:
     def change_bi_home(self, version, bihome, user=''):
         split_str = '\\' if self.current_system == "Windows" else '/'
         reload = False
-        if self.is_port_used('localhost', eval(self.config[version][1])):
+        if self.is_port_used('localhost', eval(self.config[version]["port"])):
             reload = True
         if reload:
             self.shut_tomcat(version)
