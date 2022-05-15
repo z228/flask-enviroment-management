@@ -19,9 +19,6 @@ bootstrap = Bootstrap(app)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = timedelta(seconds=1)
 app.config.from_object(APSchedulerJobConfig())
 CORS(app, supports_credentials=True)
-scheduler = APScheduler(scheduler=BackgroundScheduler(timezone='Asia/Shanghai'))  # 实例化APScheduler
-scheduler.init_app(app)  # 把任务列表载入实例flask
-scheduler.start()  # 启动任务计划
 
 
 # 传递图标
@@ -59,3 +56,6 @@ if __name__ == '__main__':
     app.logger.addHandler(handler)
     # os.symlink(log_path, log_path_today)
     app.run(host='0.0.0.0')
+    scheduler = APScheduler(scheduler=BackgroundScheduler(timezone='Asia/Shanghai'))  # 实例化APScheduler
+    scheduler.init_app(app)  # 把任务列表载入实例flask
+    scheduler.start()  # 启动任务计划
