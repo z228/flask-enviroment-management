@@ -1,9 +1,9 @@
 import os
 from . import product
-import shutil
+from shutil import rmtree
+from time import strftime, strptime , localtime
 import logging
 from logging.handlers import TimedRotatingFileHandler
-from time import strftime, localtime
 
 to_path = ['D:/old_version/8.6/', 'D:/old_version/8.8/', 'D:/old_version/9.0/', 'D:/old_version/9.1/',
            'D:/old_version/9.2/', 'D:/old_version/9.2.1/', 'D:/old_version/9.3/', 'D:/old_version/trunk/']
@@ -22,7 +22,7 @@ def clean_jar():
     for i in to_path:
         back_path = i + path + '/backup_product'
         if os.path.exists(back_path):
-            shutil.rmtree(back_path)
+            rmtree(back_path)
         else:
             continue
             pass

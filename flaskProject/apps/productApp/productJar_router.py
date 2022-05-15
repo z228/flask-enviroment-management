@@ -1,11 +1,20 @@
 from time import perf_counter, sleep
 from flask import Blueprint, request, render_template
 from .product import ProductAction
-import json
 from . import test
 from .status import toked
-import os
 from apps.lib.FtpServer import MyFTP
+from json import loads
+from os import listdir
+from os.path import join
+
+from flask import Blueprint, request, render_template
+from werkzeug.utils import secure_filename
+
+from . import test
+from .product import ProductAction
+
+ALLOWED_EXTENSIONS = {'jar'}
 
 productJar_operate = Blueprint('productJar', __name__)
 
@@ -28,7 +37,7 @@ def get_all_script():
 # 执行脚本
 @productJar_operate.route('/execute', methods=['post'])
 def execute_script():
-    data = json.loads(request.get_data())
+    data = loads(request.get_data())
     # productAction = ProductAction()
     return productAction.succ(productAction.execute_script(data['name']))
 
@@ -36,23 +45,20 @@ def execute_script():
 # 删除脚本
 @productJar_operate.route('/delete', methods=['post'])
 def delete_script():
-    data = json.loads(request.get_data())
-    # productAction = ProductAction()
+    data = loads(request.get_data())
     return productAction.succ(productAction.delete_script(data['name']))
 
 
 # 保存脚本
 @productJar_operate.route('/saveScript', methods=['post'])
 def save_script():
-    data = json.loads(request.get_data())
-    # productAction = ProductAction()
+    data = loads(request.get_data())
     return productAction.succ(productAction.save_script(data['content'], data['name'], data['type']))
 
 
 # 获取所有版本号
 @productJar_operate.route('/all', methods=['GET'])
 def get_all_version():
-    # productAction = ProductAction()
     v = {}
     for key in productAction.config.keys():
         v[key] = {}
@@ -65,7 +71,6 @@ def get_all_version():
 @productJar_operate.route('/allBihome', methods=['GET'])
 def get_all_bihome():
     v = {}
-    # productAction = ProductAction()
     for key in productAction.config.keys():
         v[key] = productAction.config[key]["bihomes"].split(' ')
     return productAction.succ(v)
@@ -75,7 +80,6 @@ def get_all_bihome():
 @productJar_operate.route('/currentBihome', methods=['GET'])
 def get_current_bihome():
     v = {}
-    # productAction = ProductAction()
     for key in productAction.config.keys():
         v[key] = productAction.config[key]["bihome"]
     return productAction.succ(v)
@@ -85,7 +89,6 @@ def get_current_bihome():
 @productJar_operate.route('/jarInfo', methods=['GET'])
 def get_product_jar_info():
     v = {}
-    # productAction = ProductAction()
     for key in productAction.config.keys():
         v[key] = productAction.get_jar_info(key)
     return productAction.succ(v)
@@ -103,16 +106,14 @@ def get_141_jar():
 # 更换环境bihome
 @productJar_operate.route('/changeBihome', methods=['POST'])
 def change_bihome():
-    # productAction = ProductAction()
-    data = json.loads(request.get_data())
+    data = loads(request.get_data())
     return productAction.succ(productAction.change_bi_home(data['version'], data['bihome']))
 
 
 # 停止产品
 @productJar_operate.route('/shutdown', methods=['POST'])
 def shutdown_product():
-    # productAction = ProductAction()
-    data = json.loads(request.get_data())
+    data = loads(request.get_data())
     print(data['version'])
     # return succ('关闭成功')
     return productAction.succ(productAction.shut_tomcat(data['version']))
@@ -122,7 +123,7 @@ def shutdown_product():
 @productJar_operate.route('/startup', methods=['POST'])
 def start_product():
     # productAction = ProductAction()
-    data = json.loads(request.get_data())
+    data = loads(request.get_data())
     if 'user' in data.keys():
         res = productAction.start_tomcat(data['version'], data['user'])
         if '成功' not in res:
@@ -137,7 +138,6 @@ def start_product():
 @productJar_operate.route('/check', methods=['GET'])
 def check_product():
     v = {}
-    # productAction = ProductAction()
     for key in productAction.config.keys():
         v[key] = {}
         v[key]["startup"] = productAction.config[key]["startup"]
@@ -153,7 +153,6 @@ def check_product():
 @productJar_operate.route('/port', methods=['GET'])
 def get_port():
     v = {}
-    # productAction = ProductAction()
     for key in productAction.config.keys():
         v[key] = productAction.get_debug_port(key)
     return productAction.succ(v)
@@ -163,7 +162,6 @@ def get_port():
 @productJar_operate.route('/bi', methods=['GET'])
 def get_view_port():
     v = {}
-    # productAction = ProductAction()
     for key in productAction.config.keys():
         v[key] = productAction.get_bi_port(key)
     return productAction.succ(v)
@@ -173,7 +171,7 @@ def get_view_port():
 @productJar_operate.route('/update', methods=['POST'])
 def update_jar():
     # productAction = ProductAction()
-    data = json.loads(request.get_data())
+    data = loads(request.get_data())
     return productAction.succ(productAction.new_copy(data['version'], data['date']))
 
 
@@ -181,7 +179,7 @@ def update_jar():
 @productJar_operate.route('/updatewithDate', methods=['POST'])
 def update_jar_with_date():
     # productAction = ProductAction()
-    data = json.loads(request.get_data())
+    data = loads(request.get_data())
     return productAction.succ(productAction.new_copy(data['version'], data['date']))
 
 
@@ -192,18 +190,18 @@ def update_linux_jar():
     ftpServer = MyFTP()
     ftpServer.connect()
     ftpServer.login()
-    data = json.loads(request.get_data())
+    data = loads(request.get_data())
     src_path = productAction.get_recent_jar(data['version'])
     src_path = src_path.replace(productAction.ip, productAction.ip_134)
     key2 = "v9.4" if data['version'] == "v9.4.1" else data['version']
     if key2 in ['v8.6', 'v9.0', 'v9.2.1', 'v9.4', 'develop']:
         src_path = src_path.replace(productAction.ip_134, productAction.ip_187)
-    dirs = os.listdir(src_path)
+    dirs = listdir(src_path)
     for dir in dirs:
-        src_file = os.path.join(src_path, dir)
+        src_file = join(src_path, dir)
         if dir.split('\\')[-1] not in ['api.jar', 'product.jar', 'thirds.jar']:
             continue
-        src_file = os.path.join(src_path, dir)
+        src_file = join(src_path, dir)
         ftpServer.upload_file(src_file, f'/{data["version"]}')
     ftpServer.quit()
     return productAction.succ(f'服务器{data["version"]}的Jar包更新成功')
@@ -213,7 +211,7 @@ def update_linux_jar():
 @productJar_operate.route('/reload_product', methods=['POST'])
 def reload_product():
     # productAction = ProductAction()
-    data = json.loads(request.get_data())
+    data = loads(request.get_data())
     return productAction.succ(productAction.restart_tomcat(data['version']))
 
 
@@ -221,7 +219,7 @@ def reload_product():
 @productJar_operate.route('/updateReload', methods=['POST'])
 def update_and_reload_product():
     # productAction = ProductAction()
-    data = json.loads(request.get_data())
+    data = loads(request.get_data())
     return productAction.succ(productAction.copy_and_reload(data['version'], data['date']))
 
 
@@ -238,7 +236,6 @@ def get_url():
 # 更换jar功能页面
 @productJar_operate.route('/exchange', methods=['POST', 'GET'])
 def exchange():
-    # productAction = ProductAction()
     if request.method == 'POST':
         aim = request.form['exchange']
         print(request.form['exchange'])
@@ -259,7 +256,6 @@ def exchange():
 # 重启服务功能页面
 @productJar_operate.route('/reload', methods=['POST', 'GET'])
 def reload():
-    # productAction = ProductAction()
     if request.method == 'POST':
         aim = request.form['reload']
         print(request.form['reload'])
@@ -279,7 +275,6 @@ def reload():
 # 备份功能
 @productJar_operate.route('/backup', methods=['POST', 'GET'])
 def backup():
-    # productAction = ProductAction()
     if request.method == 'POST':
         aim = request.form['backup']
         # print(request.form['backup'])

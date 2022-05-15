@@ -1,20 +1,17 @@
-# from _typeshed import Self
-import imp
 import os
-import time
 from shutil import copy2, rmtree
-import filecmp
-import socket
-import json
+from filecmp import cmp
+from json import dump, loads, dumps
+from platform import system
+from socket import socket, AF_INET, SOCK_STREAM
+from time import sleep, localtime, strftime
+from xml.dom.minidom import parse
+
 from flask import current_app
-import xml.dom.minidom
-# from .status import toked
-import platform
-import _thread
 
-from apps.productApp import status
+from . import status
 
-if platform.system() == "Windows":
+if system() == "Windows":
     import win32api as api
     import win32console as con
     from . import properties
@@ -35,7 +32,7 @@ class ProductAction:
     day_31 = ['02', '04', '06', '08', '09', '11']
     port = []
     ubuntu_path = []
-    current_system = platform.system()
+    current_system = system()
     codeType = {"default": ".py", "application/json": ".json", "sql": ".sql", "javascript": ".js", "css": ".css",
                 "xml": ".xml", "html": ".html", "yaml": ".yml", "markdown": ".md", "python": ".py"}
     root_path = ''
@@ -99,11 +96,15 @@ class ProductAction:
 
     @staticmethod
     def succ(data):
-        return json.dumps({"code": 200, "data": data})
+        return dumps({"code": 200, "data": data})
+
+    @staticmethod
+    def error(data):
+        return dumps({"code": 500, "data": data})
 
     @staticmethod
     def info(data):
-        return json.dumps({"code": 205, "data": data})
+        return dumps({"code": 205, "data": data})
 
     # 获取脚本列表
     def get_all_script(self):
@@ -187,7 +188,7 @@ class ProductAction:
         if reload:
             self.shut_tomcat(version)
         web_xml_file_path = f'{self.config[version]["path"]}{self.bi_xml_path}'
-        dom = xml.dom.minidom.parse(web_xml_file_path)
+        dom = parse(web_xml_file_path)
         root = dom.documentElement
         param = root.getElementsByTagName('param-value')
         entry = root.getElementsByTagName('env-entry-value')
@@ -211,7 +212,7 @@ class ProductAction:
         else:
             split_str = '/'
         file_path = f'{self.config[version]["path"]}{self.bi_xml_path}'
-        dom = xml.dom.minidom.parse(file_path)
+        dom = parse(file_path)
         root = dom.documentElement
         param = root.getElementsByTagName('param-value')
         entry = root.getElementsByTagName('env-entry-value')
@@ -223,7 +224,7 @@ class ProductAction:
 
     def get_bi_port(self, version):
         file_path = f'{self.config[version]["path"]}{self.server_xml_path}'
-        dom = xml.dom.minidom.parse(file_path)
+        dom = parse(file_path)
         root = dom.documentElement
         connect = root.getElementsByTagName('Connector')
         port = connect[0].getAttribute('port')
@@ -238,7 +239,7 @@ class ProductAction:
         :param c_port:
         :return:
         """
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s = socket(AF_INET, SOCK_STREAM)
         try:
             s.connect((c_ip, c_port))
             return True
@@ -256,7 +257,7 @@ class ProductAction:
 
     @staticmethod
     def current_time():
-        return time.strftime("%H:%M:%S", time.localtime())
+        return strftime("%H:%M:%S", localtime())
 
     def restart_tomcat(self, v, user=''):
         if self.config[v]['reload']:
@@ -306,7 +307,7 @@ class ProductAction:
                 else:
                     current_app.logger.info(f'{v} tomcat服务停止成功')
                     break
-                time.sleep(30)
+                sleep(2)
             self.change_status(v, 'shutdown')
             self.config[v]["status"] = '0'
             return f'{v} tomcat服务停止成功'
@@ -332,8 +333,8 @@ class ProductAction:
                     self.config[v]["status"] = '1'
                     return f'已启动{v} tomcat服务'
                 else:
+                    sleep(10)
                     current_app.logger.info('tomcat正在停止中')
-                    time.sleep(10)
             else:
                 if self.current_system == "Windows":
                     os.system('startup > caches.txt')
@@ -357,7 +358,7 @@ class ProductAction:
     def get_recent_jar(self, version):
         branch = self.config[version]["branch"]
         from_path_in = f'{self.ip}{branch}'
-        path0 = time.strftime("%Y%m%d", time.localtime())
+        path0 = strftime("%Y%m%d", localtime())
         current_app.logger.info(f'当天的{version}jar包地址：{os.path.join(from_path_in, path0)}')
         # 检测是否有当天的新Jar，否则往前推一天
         while 1:
@@ -424,13 +425,13 @@ class ProductAction:
                 try:
                     from_134_file = from_file.replace(self.ip, self.ip_134)
                     if os.path.exists(from_134_file):
-                        if not filecmp.cmp(from_file, from_134_file):
+                        if not cmp(from_file, from_134_file):
                             from_file = from_134_file
                     if not os.path.exists(to_file):
                         copy2(from_file, to_file)
                         current_app.logger.info(f"{file_name}更新完毕,时间：{self.current_time()}")
                         continue
-                    if not filecmp.cmp(from_file, to_file):
+                    if not cmp(from_file, to_file):
                         copy2(from_file, to_file)
                         current_app.logger.info(f"{file_name}更新完毕,时间：{self.current_time()}")
                 except PermissionError:
@@ -466,19 +467,14 @@ class ProductAction:
         self.change_status(v, 'updateAndReload')
         return f'{v}已更换{self.format_date_str(date)} jar包并重启Tomcat成功'
 
-    def new_copy(self, v, date=''):
-        """
-        :param date:
-        :param v: 版本号 develop
-        :return:
-        """
-        # self.toked[v]['update']=True
-        self.change_status(v, 'update', True)
-        self.copy_jar(v, date)
-        current_app.logger.info(f'{v}-{self.format_date_str(date)} jar包检查完毕')
-        # self.toked[v]['update']=False
-        self.change_status(v, 'update')
-        return f'{v}已更换{self.format_date_str(date)} jar包'
+    def get_jar_info(self, v):
+        product_path = os.path.join(self.config[v]["path"] + self.YongHong_path, 'product')
+        info_list = []
+        for i in os.listdir(product_path):
+            change_time = strftime("日期:%Y%m%d 时间:%H:%M:%S",
+                                   localtime(os.stat(os.path.join(product_path, i)).st_mtime))
+            info_list.append(f"{i}:{change_time}")
+        return info_list
 
     def get_jar_list(self):
         jar_list = {}
@@ -493,7 +489,7 @@ class ProductAction:
             jar_list[key].reverse()
         return jar_list
 
-    def check_status(self, v):
+    def check_status(self, v, user=''):
         status = self.config[v]
         if status['startup']:
             res = f'已启动{v}环境，请刷新'
@@ -515,18 +511,5 @@ class ProductAction:
 
     def update_product_status(self):
         with open(self.status_path, 'w', encoding='utf-8') as status:
-            json.dump(self.config, status)
+            dump(self.config, status)
 
-    def get_jar_info(self, v):
-        product_path = os.path.join(self.config[v]["path"], self.YongHong_path, 'product')
-        info_list = []
-        for i in os.listdir(product_path):
-            change_time = time.strftime("日期:%Y%m%d 时间:%H:%M:%S",
-                                        time.localtime(os.stat(os.path.join(product_path, i)).st_mtime))
-            info_list.append(f"{i}:{change_time}")
-            # print(f"{i}:{change_time}")
-        return info_list
-
-    def test_task():
-        current_app.logger.info(f"测试定时任务的运行")
-        print(f"测试定时任务的运行")
