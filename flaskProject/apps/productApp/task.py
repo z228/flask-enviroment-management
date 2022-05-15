@@ -4,7 +4,6 @@ from shutil import rmtree, copytree
 from time import strftime, strptime, localtime
 
 from . import product
-from flask import current_app
 
 to_path = ['D:/old_version/8.6/', 'D:/old_version/8.8/', 'D:/old_version/9.0/', 'D:/old_version/9.1/',
            'D:/old_version/9.2/', 'D:/old_version/9.2.1/', 'D:/old_version/9.3/', 'D:/old_version/trunk/']
@@ -109,5 +108,4 @@ def copy_jar_to_local():
 
 
 def test_task():
-    current_app.logger.info("测试定时任务的运行")
-    print("测试定时任务的运行")
+    print(f"{get_now_format_time()}测试定时任务的运行")
