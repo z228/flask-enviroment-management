@@ -3,7 +3,7 @@ from flask_cors import CORS
 from datetime import timedelta
 from config import APSchedulerJobConfig
 from flask_apscheduler import APScheduler
-from apscheduler.schedulers.blocking import BlockingScheduler
+from apscheduler.schedulers.background import BackgroundScheduler
 from flask_bootstrap import Bootstrap
 import logging
 from logging.handlers import TimedRotatingFileHandler
