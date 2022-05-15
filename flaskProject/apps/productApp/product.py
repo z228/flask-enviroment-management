@@ -1,15 +1,13 @@
 import os
-from shutil import copy2, rmtree
 from filecmp import cmp
-from json import dump, loads, dumps
+from json import dump, dumps
 from platform import system
+from shutil import copy2
 from socket import socket, AF_INET, SOCK_STREAM
 from time import sleep, localtime, strftime
 from xml.dom.minidom import parse
 
 from flask import current_app
-
-from . import status
 
 if system() == "Windows":
     import win32api as api
@@ -68,11 +66,11 @@ class ProductAction:
         :return:清空非纯数字的子项
         """
         if array is None:
-            array = []
-        new_array = []
-        for i in array:
-            if i.isdigit():
-                new_array.append(i)
+            return []
+        new_array = [i for i in array if i.isdigit()]
+        # for i in array:
+        #     if i.isdigit():
+        #         new_array.append(i)
         return new_array
 
     @staticmethod
@@ -279,10 +277,10 @@ class ProductAction:
     def get_pid_by_port_linux(port):
         res = os.popen(f'lsof -i:{port}').readlines()
         res.pop(0)
-        pid = []
-        for i in res:
-            pid.append(i.split()[1])
-        return ','.join(list(set(pid)))
+        pid = [i.split()[1] for i in res]
+        # for i in res:
+        #     pid.append(i.split()[1])
+        return ','.join(set(pid))
 
     # 停止tomcat
     def shut_tomcat(self, v):
@@ -512,4 +510,3 @@ class ProductAction:
     def update_product_status(self):
         with open(self.status_path, 'w', encoding='utf-8') as status:
             dump(self.config, status)
-

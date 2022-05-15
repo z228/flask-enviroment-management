@@ -1,15 +1,9 @@
-from time import perf_counter, sleep
-from flask import Blueprint, request, render_template
-from .product import ProductAction
-from . import test
-from .status import toked
-from apps.lib.FtpServer import MyFTP
 from json import loads
 from os import listdir
 from os.path import join
 
+from apps.lib.FtpServer import MyFTP
 from flask import Blueprint, request, render_template
-from werkzeug.utils import secure_filename
 
 from . import test
 from .product import ProductAction
@@ -19,6 +13,7 @@ ALLOWED_EXTENSIONS = {'jar'}
 productJar_operate = Blueprint('productJar', __name__)
 
 productAction = ProductAction()
+VERSION = list(productAction.config.keys())
 
 
 # 产品jar功能页面
@@ -30,7 +25,6 @@ def product():
 # 获取脚本列表
 @productJar_operate.route('/allScript', methods=['GET'])
 def get_all_script():
-    # productAction = ProductAction()
     return productAction.succ(productAction.get_all_script())
 
 
@@ -38,7 +32,6 @@ def get_all_script():
 @productJar_operate.route('/execute', methods=['post'])
 def execute_script():
     data = loads(request.get_data())
-    # productAction = ProductAction()
     return productAction.succ(productAction.execute_script(data['name']))
 
 
@@ -60,37 +53,36 @@ def save_script():
 @productJar_operate.route('/all', methods=['GET'])
 def get_all_version():
     v = {}
-    for key in productAction.config.keys():
+    for key in VERSION:
         v[key] = {}
         v[key]['path'] = productAction.config[key]["path"]
         v[key]['branch'] = productAction.config[key]["branch"]
-    return productAction.succ(v)
-
+    return productAction.succ(productAction.config)
 
 # 获取所有bihome
 @productJar_operate.route('/allBihome', methods=['GET'])
 def get_all_bihome():
-    v = {}
-    for key in productAction.config.keys():
-        v[key] = productAction.config[key]["bihomes"].split(' ')
+    v = {key: productAction.config[key]["bihomes"].split(' ') for key in VERSION}
+    # for key in VERSION:
+    #     v[key] = productAction.config[key]["bihomes"].split(' ')
     return productAction.succ(v)
 
 
 # 获取当前bihome
 @productJar_operate.route('/currentBihome', methods=['GET'])
 def get_current_bihome():
-    v = {}
-    for key in productAction.config.keys():
-        v[key] = productAction.config[key]["bihome"]
+    v = {key: productAction.config[key]["bihome"] for key in VERSION}
+    # for key in VERSION:
+    #     v[key] = productAction.config[key]["bihome"]
     return productAction.succ(v)
 
 
 # 获取所有bihome
 @productJar_operate.route('/jarInfo', methods=['GET'])
 def get_product_jar_info():
-    v = {}
-    for key in productAction.config.keys():
-        v[key] = productAction.get_jar_info(key)
+    v = {key: productAction.get_jar_info(key) for key in VERSION}
+    # for key in VERSION:
+    #     v[key] = productAction.get_jar_info(key)
     return productAction.succ(v)
 
 
@@ -138,7 +130,7 @@ def start_product():
 @productJar_operate.route('/check', methods=['GET'])
 def check_product():
     v = {}
-    for key in productAction.config.keys():
+    for key in VERSION:
         v[key] = {}
         v[key]["startup"] = productAction.config[key]["startup"]
         v[key]["shutdown"] = productAction.config[key]["shutdown"]
@@ -152,18 +144,18 @@ def check_product():
 # 获取debug端口
 @productJar_operate.route('/port', methods=['GET'])
 def get_port():
-    v = {}
-    for key in productAction.config.keys():
-        v[key] = productAction.get_debug_port(key)
+    v = {key: productAction.config[key]["debug"] for key in VERSION}
+    # for key in VERSION:
+    #     v[key] = productAction.config[key]["debug"]
     return productAction.succ(v)
 
 
 # 获取产品端口
 @productJar_operate.route('/bi', methods=['GET'])
 def get_view_port():
-    v = {}
-    for key in productAction.config.keys():
-        v[key] = productAction.get_bi_port(key)
+    v = {key: productAction.config[key]["port"] for key in VERSION}
+    # for key in VERSION:
+    #     v[key] = productAction.config[key]["port"]
     return productAction.succ(v)
 
 
