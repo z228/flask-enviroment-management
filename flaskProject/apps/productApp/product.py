@@ -7,10 +7,10 @@ import filecmp
 import socket
 import json
 from flask import current_app
-import xml.dom.minidom
-import platform
+from xml.dom.minidom import parse
+from platform import system
 
-if platform.system() == "Windows":
+if system() == "Windows":
     import win32api as api
     import win32console as con
     from . import properties
@@ -31,7 +31,7 @@ class ProductAction:
     day_31 = ['02', '04', '06', '08', '09', '11']
     port = []
     ubuntu_path = []
-    current_system = platform.system()
+    current_system = system()
     codeType = {"default": ".py", "application/json": ".json", "sql": ".sql", "javascript": ".js", "css": ".css",
                 "xml": ".xml", "html": ".html", "yaml": ".yml", "markdown": ".md", "python": ".py"}
     root_path = ''
@@ -186,7 +186,7 @@ class ProductAction:
         if reload:
             self.shut_tomcat(version)
         file_path = f'{self.config[version]["path"]}{self.bi_xml_path}'
-        dom = xml.dom.minidom.parse(file_path)
+        dom = parse(file_path)
         root = dom.documentElement
         param = root.getElementsByTagName('param-value')
         entry = root.getElementsByTagName('env-entry-value')
@@ -207,7 +207,7 @@ class ProductAction:
     def get_bi_home(self, version):
         split_str = '\\' if self.current_system == "Windows" else '/'
         file_path = f'{self.config[version]["path"]}{self.bi_xml_path}'
-        dom = xml.dom.minidom.parse(file_path)
+        dom = parse(file_path)
         root = dom.documentElement
         param = root.getElementsByTagName('param-value')
         entry = root.getElementsByTagName('env-entry-value')
@@ -219,7 +219,7 @@ class ProductAction:
 
     def get_bi_port(self, version):
         file_path = f'{self.config[version]["path"]}{self.server_xml_path}'
-        dom = xml.dom.minidom.parse(file_path)
+        dom = parse(file_path)
         root = dom.documentElement
         connect = root.getElementsByTagName('Connector')
         port = connect[0].getAttribute('port')
