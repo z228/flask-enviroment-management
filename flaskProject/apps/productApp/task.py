@@ -105,3 +105,7 @@ def copy_jar_to_local():
                     except PermissionError:
                         os.system(
                             f"echo '{ip_134_today}/{v}be tied up,please wait...time{get_now_format_time()}\n'>> {cache_path}")
+
+
+def test_task():
+    print("测试定时任务的运行")
