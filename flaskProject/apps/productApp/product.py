@@ -63,11 +63,11 @@ class ProductAction:
         :return:清空非纯数字的子项
         """
         if array is None:
-            array = []
-        new_array = []
-        for i in array:
-            if i.isdigit():
-                new_array.append(i)
+            return []
+        new_array = [i for i in array if i.isdigit()]
+        # for i in array:
+        #     if i.isdigit():
+        #         new_array.append(i)
         return new_array
 
     @staticmethod
@@ -207,8 +207,9 @@ class ProductAction:
     def get_bi_home(self, version):
         split_str = '\\' if self.current_system == "Windows" else '/'
         file_path = f'{self.config[version]["path"]}{self.bi_xml_path}'
-        dom = parse(file_path)
-        root = dom.documentElement
+        # dom = parse(file_path)
+        # root = dom.documentElement
+        root = self.get_web_xml(file_path)
         param = root.getElementsByTagName('param-value')
         entry = root.getElementsByTagName('env-entry-value')
         param_value = param[0].firstChild.data.split(split_str)
@@ -216,6 +217,10 @@ class ProductAction:
         if param_value[-1] == entry_value[-1]:
             return param_value[-1]
         return "error bihome"
+
+    @staticmethod
+    def get_web_xml(path):
+        return parse(path).documentElement
 
     def get_bi_port(self, version):
         file_path = f'{self.config[version]["path"]}{self.server_xml_path}'
@@ -268,10 +273,10 @@ class ProductAction:
     def get_pid_by_port(port):
         res = os.popen(f'lsof -i:{port}').readlines()
         res.pop(0)
-        pid = []
-        for i in res:
-            pid.append(i.split()[1])
-        return ','.join(list(set(pid)))
+        pid = [i.split()[1] for i in res]
+        # for i in res:
+        #     pid.append(i.split()[1])
+        return ','.join(set(pid))
 
     # 停止tomcat
     def shut_tomcat(self, v, user=''):
@@ -426,9 +431,10 @@ class ProductAction:
         except FileNotFoundError as err:
             self.change_status(version, "update")
             current_app.logger.info(f'[{user}] file error:{err}')
-        current_app.logger.info(f'[{user}] {version}-{self.format_date_str(date)} Jar包更新完成')
+        date_format = self.format_date_str(date)
+        current_app.logger.info(f'[{user}] {version}-{date_format} Jar包更新完成')
         self.change_status(version, "update")
-        return f'{version}-{self.format_date_str(date)} Jar包更新完成'
+        return f'{version}-{date_format} Jar包更新完成'
 
     def copy_and_reload(self, v, date='', user=''):
         """
