@@ -3,6 +3,7 @@ from flask_cors import CORS
 from datetime import timedelta
 from config import APSchedulerJobConfig
 from flask_apscheduler import APScheduler
+from apscheduler.schedulers.blocking import BlockingScheduler
 from flask_bootstrap import Bootstrap
 import logging
 from logging.handlers import TimedRotatingFileHandler
@@ -18,7 +19,7 @@ bootstrap = Bootstrap(app)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = timedelta(seconds=1)
 app.config.from_object(APSchedulerJobConfig())
 CORS(app, supports_credentials=True)
-scheduler = APScheduler()  # 实例化APScheduler
+scheduler = APScheduler(scheduler=BackgroundScheduler(timezone='Asia/Shanghai'))  # 实例化APScheduler
 scheduler.init_app(app)  # 把任务列表载入实例flask
 scheduler.start()  # 启动任务计划
 
