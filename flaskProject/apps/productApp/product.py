@@ -1,14 +1,14 @@
 # from _typeshed import Self
-import imp
 import os
-import time
-from shutil import copy2, rmtree
-import filecmp
-import socket
-import json
-from flask import current_app
-from xml.dom.minidom import parse
+from filecmp import cmp
+from json import dump, loads, dumps
 from platform import system
+from shutil import copy2
+from socket import socket, AF_INET, SOCK_STREAM
+from time import sleep, localtime, strftime
+from xml.dom.minidom import parse
+
+from flask import current_app
 
 if system() == "Windows":
     import win32api as api
@@ -20,7 +20,7 @@ else:
 
 class ProductAction:
     host_ip = '127.0.0.1'
-    ip = '/mnt/141/productJar/'
+    # ip = '/mnt/141/productJar/'
     ip_134 = '/mnt/134/productJar/'
     ip_local = '/home/share/'
     ip = ip_134
@@ -91,15 +91,15 @@ class ProductAction:
 
     @staticmethod
     def succ(data):
-        return json.dumps({"code": 200, "data": data})
+        return dumps({"code": 200, "data": data})
 
     @staticmethod
     def error(data):
-        return json.dumps({"code": 500, "data": data})
+        return dumps({"code": 500, "data": data})
 
     @staticmethod
     def info(data):
-        return json.dumps({"code": 205, "data": data})
+        return dumps({"code": 205, "data": data})
 
     # 获取脚本列表
     def get_all_script(self):
@@ -143,7 +143,7 @@ class ProductAction:
         if os.path.exists(f'{self.status_path}/status.json'):
             with open(f'{self.status_path}/status.json', 'r', encoding='utf-8') as f_status:
                 str_status = f_status.read()
-                status = json.loads(str_status) if len(str_status) != 0 else {}
+                status = loads(str_status) if len(str_status) != 0 else {}
         self.config = properties.env_list['version']
         self.root_path = properties.env_list["mid_path"]
         self.YongHong_path = f'{self.root_path}/Yonghong'
@@ -234,7 +234,7 @@ class ProductAction:
         :param c_port:
         :return:
         """
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s = socket(AF_INET, SOCK_STREAM)
         try:
             s.connect((c_ip, c_port))
             return True
@@ -245,7 +245,7 @@ class ProductAction:
 
     @staticmethod
     def current_time():
-        return time.strftime("%H:%M:%S", time.localtime())
+        return strftime("%H:%M:%S", localtime())
 
     def restart_tomcat(self, v, user=''):
         if self.config[v]['reload']:
@@ -297,7 +297,7 @@ class ProductAction:
                 else:
                     current_app.logger.info(f'[{user}]{v} tomcat服务停止成功')
                     break
-                time.sleep(2)
+                sleep(2)
             self.change_status(v, "shutdown")
             self.config[v]["startUser"] = ''
             return f'{v} tomcat服务停止成功'
@@ -322,7 +322,7 @@ class ProductAction:
                     return f'{self.config[v]["startUser"]}已启动{v} tomcat服务'
                 else:
                     current_app.logger.info('[{user}] tomcat正在停止中')
-                    time.sleep(10)
+                    sleep(10)
             else:
                 if self.current_system == "Windows":
                     os.system('startup > caches.txt')
@@ -346,7 +346,7 @@ class ProductAction:
     def get_recent_jar(self, version):
         git_branch = self.config[version]["branch"]
         from_path_in = f'{self.ip}{git_branch}'
-        path0 = time.strftime("%Y%m%d", time.localtime())
+        path0 = strftime("%Y%m%d", localtime())
         current_app.logger.info(f'当天的{version}jar包地址：{os.path.join(from_path_in, path0)}')
         # 检测是否有当天的新Jar，否则往前推一天
         while 1:
@@ -411,13 +411,13 @@ class ProductAction:
                 try:
                     from_134_file = from_file.replace(self.ip, self.ip_134)
                     # if os.path.exists(from_134_file):
-                    #     if not filecmp.cmp(from_file, from_134_file):
+                    #     if not cmp(from_file, from_134_file):
                     #         from_file = from_134_file
                     if not os.path.exists(to_file):
                         copy2(from_file, to_file)
                         current_app.logger.info(f"[{user}] {file_name}更新完毕,时间：{self.current_time()}")
                         continue
-                    if not filecmp.cmp(from_file, to_file):
+                    if not cmp(from_file, to_file):
                         copy2(from_file, to_file)
                         current_app.logger.info(f"[{user}] {file_name}更新完毕,时间：{self.current_time()}")
                 except PermissionError:
@@ -458,8 +458,7 @@ class ProductAction:
         product_path = os.path.join(self.config[v]["path"] + self.YongHong_path, 'product')
         info_list = []
         for i in os.listdir(product_path):
-            change_time = time.strftime("日期:%Y%m%d 时间:%H:%M:%S",
-                                        time.localtime(os.stat(os.path.join(product_path, i)).st_mtime))
+            change_time = strftime("日期:%Y%m%d 时间:%H:%M:%S", localtime(os.stat(os.path.join(product_path, i)).st_mtime))
             info_list.append(f"{i}:{change_time}")
         return info_list
 
@@ -473,7 +472,7 @@ class ProductAction:
 
     def update_product_status(self):
         with open(f'{self.status_path}/status.json', 'w', encoding='utf-8') as status:
-            json.dump(self.config, status)
+            dump(self.config, status)
 
     def check_status(self, v, user=''):
         status = self.config[v]
@@ -487,7 +486,7 @@ class ProductAction:
             res = f'{status["opUser"]} 正在更换{v}bihome路径，请稍等'
         else:
             res = '0'
-        if res!='0':
+        if res != '0':
             current_app.logger.info(f'[{user}] {res}')
         return res
 

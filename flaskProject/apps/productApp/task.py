@@ -1,8 +1,8 @@
 import os
 from . import product
-import shutil
+from shutil import rmtree
 import os
-import time
+from time import strftime, strptime , localtime
 
 to_path = ['D:/old_version/8.6/', 'D:/old_version/8.8/', 'D:/old_version/9.0/', 'D:/old_version/9.1/',
            'D:/old_version/9.2/', 'D:/old_version/9.2.1/', 'D:/old_version/9.3/', 'D:/old_version/trunk/']
@@ -23,7 +23,7 @@ def clean_jar():
     for i in to_path:
         back_path = i + path + '/backup_product'
         if os.path.exists(back_path):
-            shutil.rmtree(back_path)
+            rmtree(back_path)
         else:
             continue
             pass
@@ -52,6 +52,6 @@ def killall_java():
 
 
 def diffDay(ftime, fmt):
-    nowDay = eval(time.strftime("%j", time.localtime()).lstrip("0"))
-    pDay = eval(time.strftime("%j", time.strptime(ftime, fmt)).lstrip("0"))
+    nowDay = eval(strftime("%j", localtime()).lstrip("0"))
+    pDay = eval(strftime("%j", strptime(ftime, fmt)).lstrip("0"))
     return nowDay - pDay
