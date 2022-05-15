@@ -55,7 +55,7 @@ if __name__ == '__main__':
     handler.setFormatter(logging_format)
     app.logger.addHandler(handler)
     # os.symlink(log_path, log_path_today)
-    app.run(host='0.0.0.0')
     scheduler = APScheduler(scheduler=BackgroundScheduler(timezone='Asia/Shanghai'))  # 实例化APScheduler
     scheduler.init_app(app)  # 把任务列表载入实例flask
     scheduler.start()  # 启动任务计划
+    app.run(host='0.0.0.0')
