@@ -1,14 +1,16 @@
-from flask import Flask, send_from_directory, jsonify
-from flask_cors import CORS
+import logging
 import os
 from datetime import timedelta
-from config import APSchedulerJobConfig
+from logging.handlers import TimedRotatingFileHandler
+
+from flask import Flask, send_from_directory, jsonify, has_request_context
 from flask_apscheduler import APScheduler
 from flask_bootstrap import Bootstrap
-import logging
-from logging.handlers import TimedRotatingFileHandler
+from flask_cors import CORS
+
 from apps.lib.BaseError import *
 from apps.productApp.productJar_router import *
+from config import APSchedulerJobConfig
 
 # clean.static_clean() #清理资源文件夹
 app = Flask(__name__)
@@ -45,10 +47,22 @@ def custom_error_handler(e):
     return response
 
 
+class RequestFormatter(logging.Formatter):
+    def format(self, record):
+        if has_request_context():
+            record.url = request.url
+            record.remote_addr = request.remote_addr
+        else:
+            record.url = None
+            record.remote_addr = None
+
+        return super().format(record)
+
+
 if __name__ == '__main__':
     log_path = './logs/flask.log'
     handler = TimedRotatingFileHandler(log_path, when="D", interval=1, backupCount=10)  # 设置日志字符集和存储路径名字
-    logging_format = logging.Formatter(  # 设置日志格式
+    logging_format = RequestFormatter(  # 设置日志格式
         '%(asctime)s - %(remote_addr)s - requested %(url)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s - %(message)s')
     handler.setFormatter(logging_format)
     app.logger.addHandler(handler)
