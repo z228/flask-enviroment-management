@@ -1,9 +1,7 @@
-import logging
 import os
 from datetime import timedelta
-from logging.handlers import TimedRotatingFileHandler
 
-from flask import Flask, send_from_directory, jsonify, has_request_context
+from flask import Flask, send_from_directory, jsonify
 from flask_apscheduler import APScheduler
 from flask_bootstrap import Bootstrap
 from flask_cors import CORS
@@ -47,26 +45,7 @@ def custom_error_handler(e):
     return response
 
 
-class RequestFormatter(logging.Formatter):
-    def format(self, record):
-        if has_request_context():
-            record.url = request.url
-            record.remote_addr = request.remote_addr
-        else:
-            record.url = None
-            record.remote_addr = None
-
-        return super().format(record)
-
-
 if __name__ == '__main__':
-    log_path = './logs/flask.log'
-    handler = TimedRotatingFileHandler(log_path, when="D", interval=1, backupCount=10,
-                                       encoding='utf-8')  # 设置日志字符集和存储路径名字
-    logging_format = RequestFormatter(  # 设置日志格式
-        '%(asctime)s - %(remote_addr)s - requested %(url)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s - %(message)s')
-    handler.setFormatter(logging_format)
-    app.logger.addHandler(handler)
     # os.symlink(log_path, log_path_today)
     scheduler = APScheduler()  # 实例化APScheduler
     scheduler.init_app(app)  # 把任务列表载入实例flask

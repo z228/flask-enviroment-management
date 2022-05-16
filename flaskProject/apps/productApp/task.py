@@ -1,6 +1,5 @@
 import logging
 import os
-from logging.handlers import TimedRotatingFileHandler
 from shutil import rmtree
 from time import strftime, localtime
 
@@ -12,12 +11,7 @@ path = 'Yonghong_Z-Suite/Yonghong'
 productAction = product.ProductAction()
 
 task_logger = logging.getLogger('task')
-log_path = f'{os.getcwd()}/logs/task.log'
-task_handler = TimedRotatingFileHandler(log_path, when="D", interval=1, backupCount=10, encoding='utf-8')  # 设置日志字符集和存储路径名字
-logging_format = logging.Formatter(  # 设置日志格式
-    '%(asctime)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s - %(message)s')
-task_handler.setFormatter(logging_format)
-task_logger.addHandler(task_handler)
+task_logger.info("这个是测试task log")
 
 
 def clean_jar():
