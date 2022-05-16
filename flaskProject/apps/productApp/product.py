@@ -387,7 +387,6 @@ class ProductAction:
 
     def copy_jar(self, version, date=''):
         # self.toked[v]['update']=True
-        self.change_status(version, 'update', True)
         """
         :param
         from_path_in:源路径
@@ -446,7 +445,6 @@ class ProductAction:
 
     def copy_and_reload(self, v, date='', user=''):
         # self.toked[v]['updateAndReload']=True
-        self.change_status(v, 'updateAndReload', True)
         """
         :param v: 版本号 develop
         :return:
@@ -507,7 +505,8 @@ class ProductAction:
             res = f'正在更换{v}bihome路径，请稍等'
         else:
             res = '0'
-        current_app.logger.info(res)
+        if res != '0':
+            current_app.logger.info(res)
         return res
 
     def change_status(self, v, key, flag=False):
@@ -527,3 +526,7 @@ class ProductAction:
             info_list.append(f"{i}:{change_time}")
             # print(f"{i}:{change_time}")
         return info_list
+
+    def test_task():
+        current_app.logger.info(f"测试定时任务的运行")
+        print(f"测试定时任务的运行")

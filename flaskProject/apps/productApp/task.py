@@ -1,6 +1,8 @@
 import os
 from . import product
 import shutil
+from time import strftime, localtime
+from flask import current_app
 
 to_path = ['D:/old_version/8.6/', 'D:/old_version/8.8/', 'D:/old_version/9.0/', 'D:/old_version/9.1/',
            'D:/old_version/9.2/', 'D:/old_version/9.2.1/', 'D:/old_version/9.3/', 'D:/old_version/trunk/']
@@ -32,3 +34,9 @@ def Jacoco_change_Jar():
     work_dir = r'D:\SVN\trunk\test\assetExecute'
     os.chdir(work_dir)
     os.system('ant test report')
+
+def test_task():
+    print(f"{get_now_format_time()}测试定时任务的运行")
+
+def get_now_format_time():
+    return strftime('[%Y-%m-%d %H:%M:%S]', localtime())
