@@ -384,6 +384,20 @@ class ProductAction:
         current_app.logger.info(f'最新的是{path0}的包')
         return os.path.join(from_path_in, path0)
 
+    def new_copy(self, v, date=''):
+        """
+        :param date:
+        :param v: 版本号 develop
+        :return:
+        """
+        # self.toked[v]['update']=True
+        self.change_status(v, 'update', True)
+        self.copy_jar(v, date)
+        current_app.logger.info(f'{v}-{self.format_date_str(date)} jar包检查完毕')
+        # self.toked[v]['update']=False
+        self.change_status(v, 'update')
+        return f'{v}已更换{self.format_date_str(date)} jar包'
+
     def copy_jar(self, version, date=''):
         # self.toked[v]['update']=True
         """
