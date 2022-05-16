@@ -61,7 +61,8 @@ class RequestFormatter(logging.Formatter):
 
 if __name__ == '__main__':
     log_path = './logs/flask.log'
-    handler = TimedRotatingFileHandler(log_path, when="D", interval=1, backupCount=10)  # 设置日志字符集和存储路径名字
+    handler = TimedRotatingFileHandler(log_path, when="D", interval=1, backupCount=10,
+                                       encoding='utf-8')  # 设置日志字符集和存储路径名字
     logging_format = RequestFormatter(  # 设置日志格式
         '%(asctime)s - %(remote_addr)s - requested %(url)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s - %(message)s')
     handler.setFormatter(logging_format)

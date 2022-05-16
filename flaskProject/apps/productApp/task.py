@@ -13,11 +13,11 @@ productAction = product.ProductAction()
 
 task_logger = logging.getLogger('task')
 log_path = f'{os.getcwd()}/logs/task.log'
-handler = TimedRotatingFileHandler(log_path, when="D", interval=1, backupCount=10)  # 设置日志字符集和存储路径名字
+task_handler = TimedRotatingFileHandler(log_path, when="D", interval=1, backupCount=10, encoding='utf-8')  # 设置日志字符集和存储路径名字
 logging_format = logging.Formatter(  # 设置日志格式
     '%(asctime)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s - %(message)s')
-handler.setFormatter(logging_format)
-task_logger.addHandler(handler)
+task_handler.setFormatter(logging_format)
+task_logger.addHandler(task_handler)
 
 
 def clean_jar():
