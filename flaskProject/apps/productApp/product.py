@@ -411,6 +411,7 @@ class ProductAction:
             check_res = self.check_status(version)
             if check_res != '0':
                 return check_res
+            self.change_status(v, 'update', True)
             to_path_in = self.config[version]["path"] + self.YongHong_path
             branch = self.config[version]["branch"]
             backup_path = to_path_in + '/backup_product'

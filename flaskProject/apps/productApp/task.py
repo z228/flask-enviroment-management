@@ -48,6 +48,7 @@ def Jacoco_change_Jar():
 
 
 def test_task():
+    print("这个是测试task log")
     task_logger.info("这个是测试task log")
 
 
