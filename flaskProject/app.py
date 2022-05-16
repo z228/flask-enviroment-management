@@ -9,6 +9,7 @@ import logging
 from logging.handlers import TimedRotatingFileHandler
 from apps.lib.BaseError import *
 from apps.productApp.productJar_router import *
+from apps.lib.MyHandlers import *
 
 # clean.static_clean() #清理资源文件夹
 app = Flask(__name__)
@@ -18,9 +19,6 @@ bootstrap = Bootstrap(app)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = timedelta(seconds=1)
 app.config.from_object(APSchedulerJobConfig())
 CORS(app, supports_credentials=True)
-scheduler = APScheduler()  # 实例化APScheduler
-scheduler.init_app(app)  # 把任务列表载入实例flask
-scheduler.start()  # 启动任务计划
 
 
 # 传递图标
@@ -50,9 +48,14 @@ def custom_error_handler(e):
 
 if __name__ == '__main__':
     log_path = './logs/flask.log'
-    handler = TimedRotatingFileHandler(log_path, when="D", interval=1, backupCount=10)  # 设置日志字符集和存储路径名字
+    log_path_today = f'./logs/flask.log'
+    handler = MidnightRotatingFileHandler(log_path)  # 设置日志字符集和存储路径名字
     logging_format = logging.Formatter(  # 设置日志格式
-        '%(asctime)s - %(remote_addr)s - requested %(url)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s - %(message)s')
+        '%(asctime)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s - %(message)s')
     handler.setFormatter(logging_format)
     app.logger.addHandler(handler)
+    # os.symlink(log_path, log_path_today)
+    scheduler = APScheduler()  # 实例化APScheduler
+    scheduler.init_app(app)  # 把任务列表载入实例flask
+    scheduler.start()  # 启动任务计划
     app.run(host='0.0.0.0')
