@@ -9,7 +9,6 @@ import logging
 from logging.handlers import TimedRotatingFileHandler
 from apps.lib.BaseError import *
 from apps.productApp.productJar_router import *
-from apps.lib.MyHandlers import *
 
 # clean.static_clean() #清理资源文件夹
 app = Flask(__name__)
@@ -48,10 +47,9 @@ def custom_error_handler(e):
 
 if __name__ == '__main__':
     log_path = './logs/flask.log'
-    log_path_today = f'./logs/flask.log'
-    handler = MidnightRotatingFileHandler(log_path)  # 设置日志字符集和存储路径名字
+    handler = TimedRotatingFileHandler(log_path, when="D", interval=1, backupCount=10)  # 设置日志字符集和存储路径名字
     logging_format = logging.Formatter(  # 设置日志格式
-        '%(asctime)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s - %(message)s')
+        '%(asctime)s - %(remote_addr)s - requested %(url)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s - %(message)s')
     handler.setFormatter(logging_format)
     app.logger.addHandler(handler)
     # os.symlink(log_path, log_path_today)
