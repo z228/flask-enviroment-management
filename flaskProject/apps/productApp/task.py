@@ -80,7 +80,6 @@ def clean_backup_jar():
 
 
 def copy_jar_to_local():
-    print(f"{get_now_format_time()}检测134服务器最新jar包中")
     for v in version:
         today = strftime("%Y%m%d", localtime())
         ip_today = f"{ip_dist.replace('version', v)}{today}"
