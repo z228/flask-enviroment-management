@@ -8,7 +8,9 @@ from socket import socket, AF_INET, SOCK_STREAM
 from time import sleep, localtime, strftime
 from xml.dom.minidom import parse
 
-from flask import current_app
+from logging import getLogger
+
+product_logger = getLogger("product")
 
 if system() == "Windows":
     import win32api as api
@@ -86,7 +88,7 @@ class ProductAction:
         res = os.popen(f'netstat -ano |findstr "{port}"').readlines()
         for i in res:
             if i.split()[-2] == 'LISTENING':
-                current_app.logger.info(i)
+                product_logger.info(i)
                 return i.split()[-1]
 
     @staticmethod
@@ -108,24 +110,24 @@ class ProductAction:
         for job in os.listdir(self.script_path):
             job_list[index] = {'name': job}
             index += 1
-        current_app.logger.info(f'脚本列表：{job_list}')
+        product_logger.info(f'脚本列表：{job_list}')
         return job_list
 
     # 执行脚本
     def execute_script(self, task):
         if task.split('.')[1] != '.py':
-            current_app.logger.info(f'{task}不是python脚本，无法执行')
+            product_logger.info(f'{task}不是python脚本，无法执行')
             return f"非Python脚本无法执行"
         os.chdir(self.script_path)
         os.system(f'python {task}')
-        current_app.logger.info(f'{task}执行成功')
+        product_logger.info(f'{task}执行成功')
         return f'{task}执行成功'
 
     # 删除脚本
     def delete_script(self, task):
         os.chdir(self.script_path)
         os.system(f'del {task}')
-        current_app.logger.warning(f'{task}删除成功')
+        product_logger.warning(f'{task}删除成功')
         return f'{task}删除成功'
 
     # 保存脚本
@@ -134,7 +136,7 @@ class ProductAction:
         script = name + end
         with open(f'{self.script_path}/{script}', 'w', encoding='utf-8') as newScript:
             newScript.write(content)
-        current_app.logger.info(f'{script}保存成功')
+        product_logger.info(f'{script}保存成功')
         return f'{script}保存成功'
 
     # 读取配置文件
@@ -195,7 +197,7 @@ class ProductAction:
         param_value[-1] = bihome
         entry_value[-1] = bihome
         self.config[version]["bihome"] = bihome
-        current_app.logger.info(f'[{user}] bihome修改为{bihome}')
+        product_logger.info(f'[{user}] bihome修改为{bihome}')
         param[0].firstChild.data = split_str.join(param_value)
         entry[0].firstChild.data = split_str.join(entry_value)
         with open(file_path, 'w') as f:
@@ -255,16 +257,16 @@ class ProductAction:
     def restart_tomcat(self, v, user=''):
         if self.config[v]['reload']:
             res = f'{self.config[v]["opUser"]} 正在重启{v}环境，请稍等'
-            current_app.logger.info(f'[{user}] {res}')
+            product_logger.info(f'[{user}] {res}')
             return res
         if self.config[v]['updateAndReload']:
             res = f'{self.config[v]["opUser"]} 正在重启{v}环境并更换jar包，请稍等'
-            current_app.logger.info(f'[{user}] {res}')
+            product_logger.info(f'[{user}] {res}')
             return res
         self.change_status(v, "reload", True, user)
         self.shut_tomcat(v, user)
         self.start_tomcat(v, user)
-        current_app.logger.info(f'[{user}]{v} tomcat重启成功')
+        product_logger.info(f'[{user}]{v} tomcat重启成功')
         self.change_status(v, "reload")
         self.config[v]["startUser"] = user
         return f'{v} tomcat重启成功！'
@@ -287,7 +289,7 @@ class ProductAction:
         host_port = eval(self.config[v]["port"])
         if self.is_port_used(self.host_ip, host_port):
             if self.current_system == "Windows":
-                current_app.logger.info(f'[{user}]停止trunk tomcat进程')
+                product_logger.info(f'[{user}]停止trunk tomcat进程')
                 os.system(f'python {self.script_path}/stopTrunk.py {host_port} > stopTomcat.txt')
             else:
                 work_dir = self.config[v]["path"] + self.tomcat_path
@@ -298,9 +300,9 @@ class ProductAction:
                     os.system(f'kill -9 {self.get_pid_by_port(str(host_port))}')
             while 1:
                 if self.is_port_used(self.host_ip, host_port):
-                    current_app.logger.info(f'[{user}]{v} tomcat服务停止中')
+                    product_logger.info(f'[{user}]{v} tomcat服务停止中')
                 else:
-                    current_app.logger.info(f'[{user}]{v} tomcat服务停止成功')
+                    product_logger.info(f'[{user}]{v} tomcat服务停止成功')
                     break
                 sleep(2)
             self.change_status(v, "shutdown")
@@ -308,7 +310,7 @@ class ProductAction:
             return f'{v} tomcat服务停止成功'
         else:
             self.change_status(v, "shutdown")
-            current_app.logger.info(f'[{user}]{v} tomcat服务未启动')
+            product_logger.info(f'[{user}]{v} tomcat服务未启动')
             return f'{v} tomcat服务未启动'
 
     def start_tomcat(self, v, user=''):
@@ -323,10 +325,10 @@ class ProductAction:
             if self.is_port_used(self.host_ip, host_port):
                 if self.config[v]["startUser"] != '':
                     self.change_status(v, "startup")
-                    current_app.logger.info(f'[{user}] {self.config[v]["startUser"]}已启动{v} tomcat服务')
+                    product_logger.info(f'[{user}] {self.config[v]["startUser"]}已启动{v} tomcat服务')
                     return f'{self.config[v]["startUser"]}已启动{v} tomcat服务'
                 else:
-                    current_app.logger.info('[{user}] tomcat正在停止中')
+                    product_logger.info('[{user}] tomcat正在停止中')
                     sleep(10)
             else:
                 if self.current_system == "Windows":
@@ -334,7 +336,7 @@ class ProductAction:
                 else:
                     os.system('sh catalina.sh jpda start > caches.txt')
                 break
-        current_app.logger.info(f'[{user}] 启动{v} tomcat服务成功')
+        product_logger.info(f'[{user}] 启动{v} tomcat服务成功')
         self.change_status(v, "startup")
         self.config[v]["startUser"] = user
         return f'启动{v} tomcat服务成功'
@@ -352,7 +354,7 @@ class ProductAction:
         git_branch = self.config[version]["branch"]
         from_path_in = f'{self.ip}{git_branch}'
         path0 = strftime("%Y%m%d", localtime())
-        current_app.logger.info(f'当天的{version}jar包地址：{os.path.join(from_path_in, path0)}')
+        product_logger.info(f'当天的{version}jar包地址：{os.path.join(from_path_in, path0)}')
         # 检测是否有当天的新Jar，否则往前推一天
         while 1:
             if not os.path.exists(os.path.join(from_path_in, path0)):
@@ -376,7 +378,7 @@ class ProductAction:
                     path0 = str(eval(path0) - 1)
             else:
                 break
-        current_app.logger.info(f'最新的是{path0}的包')
+        product_logger.info(f'最新的是{path0}的包')
         return os.path.join(from_path_in, path0)
 
     def copy_jar(self, version, date='', user=''):
@@ -420,19 +422,19 @@ class ProductAction:
                     #         from_file = from_134_file
                     if not os.path.exists(to_file):
                         copy2(from_file, to_file)
-                        current_app.logger.info(f"[{user}] {file_name}更新完毕,时间：{self.current_time()}")
+                        product_logger.info(f"[{user}] {file_name}更新完毕,时间：{self.current_time()}")
                         continue
                     if not cmp(from_file, to_file):
                         copy2(from_file, to_file)
-                        current_app.logger.info(f"[{user}] {file_name}更新完毕,时间：{self.current_time()}")
+                        product_logger.info(f"[{user}] {file_name}更新完毕,时间：{self.current_time()}")
                 except PermissionError:
                     self.change_status(version, "update")
-                    current_app.logger.info(f"[{user}] {path}下{file_name}正在被占用，请稍等...time{self.current_time()}")
+                    product_logger.info(f"[{user}] {path}下{file_name}正在被占用，请稍等...time{self.current_time()}")
         except FileNotFoundError as err:
             self.change_status(version, "update")
-            current_app.logger.info(f'[{user}] file error:{err}')
+            product_logger.info(f'[{user}] file error:{err}')
         date_format = self.format_date_str(date)
-        current_app.logger.info(f'[{user}] {version}-{date_format} Jar包更新完成')
+        product_logger.info(f'[{user}] {version}-{date_format} Jar包更新完成')
         self.change_status(version, "update")
         return f'{version}-{date_format} Jar包更新完成'
 
@@ -446,11 +448,11 @@ class ProductAction:
         # 先关闭tomcat，然后换JAR，再启动tomcat
         if self.config[v]['updateAndReload']:
             res = f'{self.config[v]["opUser"]} 正在重启{v}环境并更换jar包，请稍等'
-            current_app.logger.info(f'[{user}] {res}')
+            product_logger.info(f'[{user}] {res}')
             return res
         if self.config[v]['reload']:
             res = f'{self.config[v]["opUser"]} 正在重启{v}环境，请稍等'
-            current_app.logger.info(f'[{user}] {res}')
+            product_logger.info(f'[{user}] {res}')
             return res
         self.change_status(v, "updateAndReload", True, user)
         self.shut_tomcat(v, user)
@@ -493,7 +495,7 @@ class ProductAction:
         else:
             res = '0'
         if res != '0':
-            current_app.logger.info(f'[{user}] {res}')
+            product_logger.info(f'[{user}] {res}')
         return res
 
     def change_status(self, v, key, flag=False, op_user=''):
