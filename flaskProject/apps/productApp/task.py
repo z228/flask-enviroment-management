@@ -1,17 +1,16 @@
-import logging
+from logging import getLogger
 import os
 from shutil import rmtree
 from time import strftime, localtime
-
 from . import product
+import logging_mgr
 
 to_path = ['D:/old_version/8.6/', 'D:/old_version/8.8/', 'D:/old_version/9.0/', 'D:/old_version/9.1/',
            'D:/old_version/9.2/', 'D:/old_version/9.2.1/', 'D:/old_version/9.3/', 'D:/old_version/trunk/']
 path = 'Yonghong_Z-Suite/Yonghong'
-productAction = product.ProductAction()
 
-task_logger = logging.getLogger('task')
-task_logger.info("这个是测试task log")
+productAction = product.ProductAction()
+task_logger = getLogger("task")
 
 
 def clean_jar():
@@ -42,7 +41,7 @@ def Jacoco_change_Jar():
 
 
 def test_task():
-    print("这个是测试task log")
+    # print("这个是测试task log")
     task_logger.info("这个是测试task log")
 
 

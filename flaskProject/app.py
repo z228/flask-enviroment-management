@@ -1,5 +1,7 @@
+import logging_mgr
 import os
 from datetime import timedelta
+from logging import getLogger
 
 from flask import Flask, send_from_directory, jsonify
 from flask_apscheduler import APScheduler
@@ -9,6 +11,8 @@ from flask_cors import CORS
 from apps.lib.BaseError import *
 from apps.productApp.productJar_router import *
 from config import APSchedulerJobConfig
+from flask.logging import default_handler
+
 
 # clean.static_clean() #清理资源文件夹
 app = Flask(__name__)
