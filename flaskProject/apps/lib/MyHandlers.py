@@ -7,9 +7,11 @@ from logging.handlers import BaseRotatingHandler
 
 
 class MidnightRotatingFileHandler(BaseRotatingHandler):
-    def __init__(self, filename):
+    def __init__(self, filename, maxBytes=0, backupCount=0):
         self.suffix = "%Y-%m-%d.log"
         self.date = datetime.date.today()
+        self.maxBytes = maxBytes
+        self.backupCount = backupCount
         super(BaseRotatingHandler, self).__init__(filename, mode='a', encoding='utf-8', delay=0)
 
     def shouldRollover(self, record):
@@ -37,4 +39,3 @@ class MidnightRotatingFileHandler(BaseRotatingHandler):
         except OSError:
             pass
         return stream
-

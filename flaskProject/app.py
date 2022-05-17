@@ -3,29 +3,28 @@ from flask_cors import CORS
 from datetime import timedelta
 from config import APSchedulerJobConfig
 from flask_apscheduler import APScheduler
+from apscheduler.schedulers.background import BackgroundScheduler
 from flask_bootstrap import Bootstrap
 from apps.lib.BaseError import *
 from apps.productApp.productJar_router import *
-from apps.lib.MyHandlers import *
 import logging_mgr
+from os.path import join
+
 
 # clean.static_clean() #清理资源文件夹
 app = Flask(__name__)
 app.register_blueprint(productJar_operate, url_prefix='/productJar')
-app.debug = True
+app.debug = False
 bootstrap = Bootstrap(app)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = timedelta(seconds=1)
 app.config.from_object(APSchedulerJobConfig())
 CORS(app, supports_credentials=True)
-scheduler = APScheduler()  # 实例化APScheduler
-scheduler.init_app(app)  # 把任务列表载入实例flask
-scheduler.start()  # 启动任务计划
 
 
 # 传递图标
 @app.route('/favicon.ico')
 def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'static'),
+    return send_from_directory(join(app.root_path, 'static'),
                                'static/favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 
@@ -49,4 +48,7 @@ def custom_error_handler(e):
 
 if __name__ == '__main__':
     # os.symlink(log_path, log_path_today)
+    scheduler = APScheduler(scheduler=BackgroundScheduler(timezone='Asia/Shanghai'))  # 实例化APScheduler
+    scheduler.init_app(app)  # 把任务列表载入实例flask
+    scheduler.start()  # 启动任务计划
     app.run(host='0.0.0.0')
