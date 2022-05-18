@@ -27,11 +27,11 @@ product_logging.setLevel(10)
 info_log_path = './logs/flask.log'
 debug_log_path = './logs/debug.log'
 task_log_path = './logs/task.log'
-info_handler = TimedRotatingFileHandler(info_log_path, when="D", interval=1, backupCount=7,
+info_handler = TimedRotatingFileHandler(info_log_path, when="MIDNIGHT", interval=1, backupCount=7,
                                         encoding='utf-8')  # 设置日志字符集和存储路径名字
-debug_handler = TimedRotatingFileHandler(debug_log_path, when="D", interval=1, backupCount=2,
+debug_handler = TimedRotatingFileHandler(debug_log_path, when="MIDNIGHT", interval=1, backupCount=2,
                                          encoding='utf-8')  # 设置日志字符集和存储路径名字
-task_handler = TimedRotatingFileHandler(task_log_path, when="D", interval=1, backupCount=5,
+task_handler = TimedRotatingFileHandler(task_log_path, when="MIDNIGHT", interval=1, backupCount=5,
                                         encoding='utf-8')  # 设置日志字符集和存储路径名字
 remote_ip_format = RequestFormatter(
     '%(asctime)s - %(remote_addr)s - requested %(url)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s - '
