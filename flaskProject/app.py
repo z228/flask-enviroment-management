@@ -40,9 +40,9 @@ def get_log_with_lines(module, lines):
         log_list = logs.readlines()
         if len(log_list) < lines:
             return ''.join(log_list)
-        log_list.reverse()
-        res_list = log_list[0:lines]
-        res_list.reverse()
+        # log_list.reverse()
+        res_list = log_list[-1 * ines:]
+        # res_list.reverse()
         return ''.join(res_list)
 
 
