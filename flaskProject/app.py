@@ -41,7 +41,7 @@ def get_log_with_lines(module, lines):
         if len(log_list) < lines:
             return ''.join(log_list)
         # log_list.reverse()
-        res_list = log_list[-1 * ines:]
+        res_list = log_list[-1 * lines:]
         # res_list.reverse()
         return ''.join(res_list)
 
