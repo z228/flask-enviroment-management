@@ -10,6 +10,7 @@ from flask_cors import CORS
 from apps.lib.BaseError import *
 from apps.productApp.productJar_router import *
 from config import APSchedulerJobConfig
+from logging_mgr import *
 
 # clean.static_clean() #清理资源文件夹
 app = Flask(__name__)
