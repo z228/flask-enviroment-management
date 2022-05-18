@@ -34,7 +34,7 @@ debug_handler = TimedRotatingFileHandler(debug_log_path, when="MIDNIGHT", interv
 task_handler = TimedRotatingFileHandler(task_log_path, when="MIDNIGHT", interval=1, backupCount=5,
                                         encoding='utf-8')  # 设置日志字符集和存储路径名字
 remote_ip_format = RequestFormatter(
-    '%(asctime)s - %(remote_addr)s - requested %(url)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s - '
+    '%(asctime)s - %(remote_addr)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s - '
     '%(message)s')
 debug_format = RequestFormatter(
     '%(asctime)s - %(remote_addr)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s - '
