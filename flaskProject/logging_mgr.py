@@ -36,10 +36,13 @@ task_handler = TimedRotatingFileHandler(task_log_path, when="MIDNIGHT", interval
 remote_ip_format = RequestFormatter(
     '%(asctime)s - %(remote_addr)s - requested %(url)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s - '
     '%(message)s')
+debug_format = RequestFormatter(
+    '%(asctime)s - %(remote_addr)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s - '
+    '%(message)s')
 task_log_format = Formatter(
     "%(asctime)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s - %(message)s")
 info_handler.setFormatter(remote_ip_format)
-debug_handler.setFormatter(remote_ip_format)
+debug_handler.setFormatter(debug_format)
 task_handler.setFormatter(task_log_format)
 
 info_handler.setLevel(20)
