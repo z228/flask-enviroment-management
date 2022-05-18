@@ -33,6 +33,45 @@ def favicon():
 def hello_world():
     return render_template('index.html')
 
+def get_log_with_lines(module, lines):
+    res = ''
+    lines = lines if isinstance(lines, int) else  eval(lines)
+    with open(f'./logs/{module}.log', 'r', encoding='utf-8') as logs:
+        log_list = logs.readlines()
+        if len(log_list) < lines:
+            return ''.join(log_list)
+        log_list.reverse()
+        res_list = log_list[0:lines]
+        res_list.reverse()
+        return ''.join(res_list)
+
+
+@app.route('/flasklog', methods=['POST'])
+def get_flask_log():
+    req = loads(request.get_data())
+    rep = {"code": 200}
+    lines = req['lines']
+    rep['log'] = get_log_with_lines('flask',lines)
+    return rep
+
+
+@app.route('/debuglog', methods=['POST'])
+def get_debug_log():
+    req = loads(request.get_data())
+    rep = {"code": 200}
+    lines = req['lines']
+    rep['log'] = get_log_with_lines('debug',lines)
+    return rep
+
+
+@app.route('/tasklog', methods=['POST'])
+def get_task_log():
+    req = loads(request.get_data())
+    rep = {"code": 200}
+    lines = req['lines']
+    rep['log'] = get_log_with_lines('task',lines)
+    return rep
+
 
 @app.errorhandler(BaseError)
 def custom_error_handler(e):
