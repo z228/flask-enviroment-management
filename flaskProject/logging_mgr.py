@@ -1,5 +1,6 @@
 from logging import getLogger, Formatter
 from logging.handlers import TimedRotatingFileHandler
+from os import getcwd
 
 from flask import has_request_context, request
 
@@ -16,6 +17,8 @@ class RequestFormatter(Formatter):
         return super().format(record)
 
 
+root_path = getcwd()
+
 task_logging = getLogger("task")
 root_logging = getLogger("werkzeug")
 product_logging = getLogger("product")
@@ -24,9 +27,9 @@ task_logging.setLevel(10)
 root_logging.setLevel(10)
 product_logging.setLevel(10)
 
-info_log_path = './logs/flask.log'
-debug_log_path = './logs/debug.log'
-task_log_path = './logs/task.log'
+info_log_path = f'{root_path}/logs/flask.log'
+debug_log_path = f'{root_path}/logs/debug.log'
+task_log_path = f'{root_path}/logs/task.log'
 info_handler = TimedRotatingFileHandler(info_log_path, when="MIDNIGHT", interval=1, backupCount=7,
                                         encoding='utf-8')  # 设置日志字符集和存储路径名字
 debug_handler = TimedRotatingFileHandler(debug_log_path, when="MIDNIGHT", interval=1, backupCount=2,
