@@ -20,6 +20,7 @@ bootstrap = Bootstrap(app)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = timedelta(seconds=1)
 app.config.from_object(APSchedulerJobConfig())
 CORS(app, supports_credentials=True)
+root_path = getcwd()
 
 
 # 传递图标
@@ -37,7 +38,7 @@ def hello_world():
 def get_log_with_lines(module, lines):
     res = ''
     lines = lines if isinstance(lines, int) else  eval(lines)
-    with open(f'{getcwd()}/logs/{module}.log', 'r', encoding='utf-8') as logs:
+    with open(f'{app.root_path}/logs/{module}.log', 'r', encoding='utf-8') as logs:
         log_list = logs.readlines()
         if len(log_list) < lines:
             return ''.join(log_list)
