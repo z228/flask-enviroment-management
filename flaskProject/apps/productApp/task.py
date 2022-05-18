@@ -45,7 +45,13 @@ def Jacoco_change_Jar():
     os.system('ant test report')
 
 
+def kill_trunk_tomcat():
+    productAction.shut_tomcat('trunk','system')
+    task_logger.info(f'杀死trunk tomcat进程')
+
+
 def killall_java():
+    kill_trunk_tomcat()
     os.system('killall -9 java')
     task_logger.info(f'杀死所有java进程')
 
