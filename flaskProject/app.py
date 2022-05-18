@@ -9,6 +9,7 @@ from apps.lib.BaseError import *
 from apps.productApp.productJar_router import *
 import logging_mgr
 from os.path import join
+from os import getcwd
 
 
 # clean.static_clean() #清理资源文件夹
@@ -36,7 +37,7 @@ def hello_world():
 def get_log_with_lines(module, lines):
     res = ''
     lines = lines if isinstance(lines, int) else  eval(lines)
-    with open(f'./logs/{module}.log', 'r', encoding='utf-8') as logs:
+    with open(f'{getcwd()}/logs/{module}.log', 'r', encoding='utf-8') as logs:
         log_list = logs.readlines()
         if len(log_list) < lines:
             return ''.join(log_list)
