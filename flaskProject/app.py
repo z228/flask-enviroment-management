@@ -15,7 +15,7 @@ from logging_mgr import *
 # clean.static_clean() #清理资源文件夹
 app = Flask(__name__)
 app.register_blueprint(productJar_operate, url_prefix='/productJar')
-app.debug = True
+app.debug = False
 bootstrap = Bootstrap(app)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = timedelta(seconds=1)
 app.config.from_object(APSchedulerJobConfig())
