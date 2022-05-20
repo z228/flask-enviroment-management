@@ -480,7 +480,7 @@ class ProductAction:
 
     def update_product_status(self):
         with open(f'{self.status_path}/status.json', 'w', encoding='utf-8') as status:
-            dump(self.config, status, indeent=4)
+            dump(self.config, status, indent=4)
 
     def check_status(self, v, user=''):
         status = self.config[v]
