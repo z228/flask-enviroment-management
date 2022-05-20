@@ -11,8 +11,6 @@ import logging_mgr
 from os.path import join
 from os import getcwd
 
-
-# clean.static_clean() #清理资源文件夹
 app = Flask(__name__)
 app.register_blueprint(productJar_operate, url_prefix='/productJar')
 app.debug = False
@@ -35,9 +33,10 @@ def favicon():
 def hello_world():
     return render_template('index.html')
 
+
 def get_log_with_lines(module, lines):
     res = ''
-    lines = lines if isinstance(lines, int) else  eval(lines)
+    lines = lines if isinstance(lines, int) else eval(lines)
     with open(f'{app.root_path}/logs/{module}.log', 'r', encoding='utf-8') as logs:
         log_list = logs.readlines()
         if len(log_list) < lines:
@@ -53,7 +52,7 @@ def get_flask_log():
     req = loads(request.get_data())
     rep = {"code": 200}
     lines = req['lines']
-    rep['log'] = get_log_with_lines('flask',lines)
+    rep['log'] = get_log_with_lines('flask', lines)
     return rep
 
 
@@ -62,7 +61,7 @@ def get_debug_log():
     req = loads(request.get_data())
     rep = {"code": 200}
     lines = req['lines']
-    rep['log'] = get_log_with_lines('debug',lines)
+    rep['log'] = get_log_with_lines('debug', lines)
     return rep
 
 
@@ -71,7 +70,7 @@ def get_task_log():
     req = loads(request.get_data())
     rep = {"code": 200}
     lines = req['lines']
-    rep['log'] = get_log_with_lines('task',lines)
+    rep['log'] = get_log_with_lines('task', lines)
     return rep
 
 

@@ -2,7 +2,6 @@ import os
 from filecmp import cmpfiles
 from shutil import rmtree, copytree
 from time import strftime, strptime, localtime
-import logging_mgr
 from . import product
 from logging import getLogger
 
@@ -17,6 +16,7 @@ ip_dist = r'/home/share/version/'
 ip_source = r'/mnt/134/productJar/version/'
 file_list = ['api.jar', 'product.jar', 'thirds.jar']
 task_logger = getLogger("task")
+
 
 def clean_jar():
     for i in to_path:
@@ -38,7 +38,7 @@ def static_clean():
         os.remove('../../static/uploads/' + f)
 
 
-def Jacoco_change_Jar():
+def jacoco_change_jar():
     productAction.restart_tomcat('develop')
     work_dir = r'D:\SVN\trunk\test\assetExecute'
     os.chdir(work_dir)
@@ -46,7 +46,7 @@ def Jacoco_change_Jar():
 
 
 def kill_trunk_tomcat():
-    productAction.shut_tomcat('trunk','system')
+    productAction.shut_tomcat('trunk', 'system')
     task_logger.info(f'杀死trunk tomcat进程')
 
 
@@ -95,26 +95,28 @@ def copy_jar_to_local():
                 bash = f"mkdir {ip_today}"
                 os.system(bash)
                 task_logger.info(bash)
-                try:
-                    copytree(ip_134_today, ip_today)
-                    bash = f"echo '{ip_134_today} update time{get_now_format_time()}\n'>> {cache_path}"
-                    os.system(bash)
-                    task_logger.info(bash)
-                except PermissionError:
-                    bash = f"echo '{ip_134_today}/{v}be tied up,please wait...time{get_now_format_time()}\n'>> {cache_path}"
-                    os.system(bash)
-                    task_logger.info(bash)
+                try_copy(v, ip_today, ip_134_today)
+
             else:
                 if not bool_cmp(ip_today, ip_134_today, file_list):
-                    try:
-                        copytree(ip_134_today, ip_today)
-                        bash = f"echo '{ip_134_today} update time{get_now_format_time()}\n'>> {cache_path}"
-                        os.system(bash)
-                        task_logger.info(bash)
-                    except PermissionError:
-                        bash = f"echo '{ip_134_today}/{v}be tied up,please wait...time{get_now_format_time()}\n'>> {cache_path}"
-                        os.system(bash)
-                        task_logger.info(bash)
+                    try_copy(v, ip_today, ip_134_today)
+
+
+def try_copy(v, ip_today, ip_134_today):
+    try:
+        copytree(ip_134_today, ip_today)
+        bash = f"echo '{ip_134_today} update time{get_now_format_time()}\n'>> {cache_path}"
+        os.system(bash)
+        task_logger.info(f"{ip_134_today} update")
+    except PermissionError:
+        bash = f"echo '{ip_134_today}/{v}be tied up,please wait...time{get_now_format_time()}\n'>> {cache_path}"
+        os.system(bash)
+        task_logger.info(f"{ip_134_today}/{v}be tied up,please wait...")
+
 
 def test_task():
     print(f"{get_now_format_time()}测试定时任务的运行")
+
+
+def get_now_format_time():
+    return strftime('[%Y-%m-%d %H:%M:%S]', localtime())

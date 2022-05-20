@@ -4,6 +4,7 @@ from logging.handlers import TimedRotatingFileHandler
 from flask import has_request_context, request
 from os import getcwd
 
+
 class RequestFormatter(Formatter):
     def format(self, record):
         if has_request_context():
@@ -14,6 +15,7 @@ class RequestFormatter(Formatter):
             record.remote_addr = None
 
         return super().format(record)
+
 
 log_path = getcwd()
 task_logging = getLogger("task")

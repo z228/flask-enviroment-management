@@ -22,7 +22,7 @@ else:
 
 class ProductAction:
     host_ip = '127.0.0.1'
-    # ip = '/mnt/141/productJar/'
+    ip_141 = '/mnt/141/productJar/'
     ip_134 = '/mnt/134/productJar/'
     ip_local = '/home/share/'
     ip = ip_134
@@ -480,7 +480,7 @@ class ProductAction:
 
     def update_product_status(self):
         with open(f'{self.status_path}/status.json', 'w', encoding='utf-8') as status:
-            dump(self.config, status)
+            dump(self.config, status, indeent=4)
 
     def check_status(self, v, user=''):
         status = self.config[v]
