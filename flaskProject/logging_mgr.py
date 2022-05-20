@@ -19,7 +19,7 @@ class RequestFormatter(Formatter):
 
 log_path = getcwd()
 task_logging = getLogger("task")
-root_logging = getLogger("werkzeug")
+root_logging = getLogger("")
 product_logging = getLogger("product")
 
 task_logging.setLevel(10)
