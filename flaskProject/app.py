@@ -59,7 +59,7 @@ def get_log():
 @app.route('/loglist', methods=['GET'])
 def get_log_list():
     rep = {"code": 200}
-    log_list = os.listdir(f'{{app.root_path}}/logs')
+    log_list = os.listdir(f'{app.root_path}/logs')
     rep['logList'] = log_list
     return rep
 
