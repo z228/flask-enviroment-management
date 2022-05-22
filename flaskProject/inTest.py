@@ -29,43 +29,27 @@ date_img = ['trunk/test/DBPainter/exp/Tab/properties/padding__日期过滤1__RT.
             ]
 
 time_str = '20210819'
-# print(time_str[0:4])
-# print(time_str[4:6])
-# print(time_str[-2:])
-# print(os.listdir(r"D:\old_version\9.0\Yonghong_Z-Suite\Yonghong\product"))
-def renameProductJar(newName,path):
-    jar_list=os.listdir(path)
-    for i in jar_list:
-        if newName.split('.')[0] in i.split('.')[0]:
-            pass
-            # os.rename(f'{path}/{i}',f'{path}/{newName}')
-# os.path.exists()
 
-# renameProductJar('product.jar','D:\old_version\9.0\Yonghong_Z-Suite\Yonghong\product')
-# print(os.listdir(r"D:\old_version\9.0\Yonghong_Z-Suite\Yonghong\product"))
-# import  xml.dom.minidom
-
-# file_path = r'D:\old_version\8.7\Yonghong_Z-Suite\tomcat\conf\server.xml'
-# dom  = xml.dom.minidom.parse(file_path)
-# root = dom.documentElement
-# param = root.getElementsByTagName('Connector')
-# # print(param)
-# # entry = root.getElementsByTagName('env-entry-value')
-# param_value = param[0].getAttribute('port')
-
-# print(param_value)
-# entry_value = entry[0].firstChild.data.split('\\')
-# param_value[-1] = "bihome"
-# entry_value[-1] = "bihome"
-# param[0].firstChild.data = '\\'.join(param_value)
-# entry[0].firstChild.data = '\\'.join(entry_value)
-
-res = os.popen('netstat -ano |findstr 8080').read()
+# res = os.popen('netstat -ano |findstr 8080').read()
 # if "LISTENING" in res:
   # print(res)
 
-l2 = os.listdir('\\\\192.168.1.134\\git-package\V9.4')
-l2.reverse()
-print(l2)
-l2.sort()
-print(l2)
+jacoco_199_path = r'\\192.168.1.199\jacoco\trunk\manual'
+
+jacoco_path = r'D:\jacoco'
+os.chdir(jacoco_path)
+jacoco_backup_files = [i.replace('\n','') for i in os.popen(f'dir /b {jacoco_199_path}\\backup').readlines() if "." in i]
+jacoco_files = [i.replace('\n','') for i in os.popen(f'dir /b {jacoco_199_path}').readlines() if "." in i]
+jacoco_files.extend(jacoco_backup_files)
+
+
+def get_jacoco_files_list(path):
+    jacoco_files = [i.replace('\n','') for i in os.popen(f'dir /b {path}').readlines() if ".exec" in i]
+    return jacoco_files
+
+jacoco_local_files= get_jacoco_files_list(r'D:\jacoco\trunk')
+
+for jacoco in jacoco_local_files:
+  if jacoco =="jacoco_${DATE}_all.exec":
+    continue
+  print(jacoco)

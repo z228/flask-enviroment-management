@@ -59,6 +59,7 @@ def get_all_version():
         v[key]['branch'] = productAction.config[key]["branch"]
     return productAction.succ(productAction.config)
 
+
 # 获取所有bihome
 @productJar_operate.route('/allBihome', methods=['GET'])
 def get_all_bihome():
@@ -77,7 +78,7 @@ def get_current_bihome():
     return productAction.succ(v)
 
 
-# 获取所有bihome
+# jar包信息
 @productJar_operate.route('/jarInfo', methods=['GET'])
 def get_product_jar_info():
     v = {key: productAction.get_jar_info(key) for key in VERSION}
@@ -223,6 +224,31 @@ def get_url():
     for key in productAction.config.keys():
         v[key] = productAction.config[key]["url"]
     return productAction.succ(v)
+
+
+# 登录系统校验
+@productJar_operate.route('/login', methods=['POST'])
+def login():
+    data = loads(request.get_data())
+    return productAction.succ("校验成功") if productAction.users[data["username"]]["password"] == data[
+        ["password"]] else productAction.info("校验失败")
+
+
+# 获取当前bihome
+@productJar_operate.route('/updateuserinfo', methods=['POST'])
+def update_userinfo():
+    data = loads(request.get_data())
+    username = data["username"]
+    # for key in data[]
+    return productAction.succ("校验成功") if productAction.users[data["username"]]["password"] == data[
+        ["password"]] else productAction.info("校验失败")
+
+
+# 获取当前bihome
+@productJar_operate.route('/getuserinfo', methods=['POST'])
+def get_userinfo():
+    data = loads(request.get_data())
+    return productAction.succ(productAction.users[data["username"]])
 
 
 # 更换jar功能页面
