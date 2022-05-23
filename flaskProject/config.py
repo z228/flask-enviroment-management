@@ -17,7 +17,7 @@ class APSchedulerJobConfig(object):
             'func': 'apps.productApp.task:killall_java',
             'args': None,  # 如果function需要参数，就在这里添加
             'trigger': 'cron',
-            'hour': 2,
+            'hour': 23,
             'minute': 0,
             'second': 0
         },
