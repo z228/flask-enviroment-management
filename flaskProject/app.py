@@ -57,7 +57,8 @@ def get_log():
 @app.route('/loglist', methods=['GET'])
 def get_log_list():
     rep = {"code": 200}
-    log_list = listdir(f'{app.root_path}/logs')
+    # log_list = os.listdir(f'{app.root_path}/logs')
+    log_list = [i for i in os.listdir(f'{app.root_path}/logs') if '.log' in i]
     rep['logList'] = log_list
     return rep
 
