@@ -294,7 +294,7 @@ class ProductAction:
             else:
                 work_dir = self.config[v]["path"] + self.tomcat_path
                 os.chdir(work_dir)
-                if v == "develop":
+                if v == "trunk":
                     os.system(f'sh  {self.config[v]["path"]}/tomcat/bin/shutdown.sh')
                 else:
                     os.system(f'kill -9 {self.get_pid_by_port(str(host_port))}')
