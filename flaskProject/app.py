@@ -1,5 +1,6 @@
 from datetime import timedelta
 from os.path import join
+from os import listdir
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask, send_from_directory, jsonify
@@ -57,8 +58,8 @@ def get_log():
 @app.route('/loglist', methods=['GET'])
 def get_log_list():
     rep = {"code": 200}
-    # log_list = os.listdir(f'{app.root_path}/logs')
-    log_list = [i for i in os.listdir(f'{app.root_path}/logs') if '.log' in i]
+    # log_list = listdir(f'{app.root_path}/logs')
+    log_list = [i for i in listdir(f'{app.root_path}/logs') if '.log' in i]
     rep['logList'] = log_list
     return rep
 

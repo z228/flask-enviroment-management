@@ -396,17 +396,17 @@ class ProductAction:
                 return check_res
             self.change_status(version, "update", True, user)
             backup_path = to_path_in + '/backup_product'
+            if git_branch in ['v8.6', 'v9.0', 'v9.2.1', 'v9.4', 'develop']:
+                path = f'{self.ip_local}{git_branch}/{date}'
+            else:
+                path = f'{self.ip}{git_branch}/{date}'
             if date != '':
-                if os.path.exists(f'{self.ip}{git_branch}/{date}'):
-                    path = f'{self.ip}{git_branch}/{date}'
-                else:
+                if not os.path.exists(path):
                     self.change_status(version, "update")
                     return f'{self.format_date_str(date)}的包不存在'
             else:
                 path = self.get_recent_jar(version)
             dirs = os.listdir(path)
-            if git_branch in ['v8.6', 'v9.0', 'v9.2.1', 'v9.4', 'develop']:
-                path = path.replace(self.ip, self.ip_local)
             # 遍历目标地址中的项目jar
             for file_name in dirs:
                 from_file = os.path.join(path, file_name)
