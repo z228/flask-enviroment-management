@@ -12,6 +12,13 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# log files
+*.log
+*.log.*
+run.log
+stopTomcat.txt
+*Commit.txt
+
 # C extensions
 *.so
 
