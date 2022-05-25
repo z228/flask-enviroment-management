@@ -25,7 +25,7 @@ class APSchedulerJobConfig(object):
             'func': 'apps.productApp.task:upload_jacoco_file',
             'args': None,  # 如果function需要参数，就在这里添加
             'trigger': 'cron',
-            'hour': 0,
+            'hour': 23,
             'minute': 30,
             'second': 0
         },

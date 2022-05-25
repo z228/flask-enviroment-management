@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="Generator" content="EditPlus&#174;">
+  <meta name="Author" content="">
+  <meta name="Keywords" content="">
+  <meta name="Description" content="">
+  <title>粒子</title>
+  <style>
+    html,body,canvas{margin: 0px;padding: 0px;}
+    html,body{
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+  </style>
+ </head>
+ <body>
+  <canvas id="canvas" style="width: 100%;height: 100%;background: transparent;"></canvas>
+ </body>
+ <script>
+    window.requestAnimationFrame=(function(){
+        return window.requestAnimationFrame||
+        window.webkitRequestAnimationFrame||
+        window.mozRequestAnimationFrame||
+        function (callback){
+            window.setTimeout(callback,1000/60);
+        };
+    })();//兼容setTimeout
+     
+    var can=document.getElementById("canvas");
+    var cxt=can.getContext("2d");//画布为2D
+    //画布大小
+    can.width=window.innerWidth;
+    can.height=window.innerHeight;
+    //圆形粒子统计
+    var attr={
+        num:300,//粒子个数
+        array:[]//保存N个粒子对象
+    }
+    //创建粒子存入数组
+    function cerateCircle(){
+        for(let i=0;i<attr.num;i++){
+            attr.array.push(new Circle());
+        }
+    }
+    //绘制一个圆,确定位置大小，速度
+    function Circle(){
+        this.x=Math.floor(Math.random()*can.width);
+        this.y=Math.floor(Math.random()*can.height);
+        this.r=Math.floor(Math.random()*5)<3?3:Math.floor(Math.random()*5);
+        this.vx=-0.5+Math.random();
+        this.vy=-0.5+Math.random();
+        this.color=createColor();
+    }
+    //绑定绘制粒子函数方法
+    Circle.prototype.draw=function(){
+        cxt.beginPath();
+        cxt.fillStyle=this.color;
+        cxt.arc(this.x,this.y,this.r,0,Math.PI*2);
+        cxt.fill();
+        cxt.closePath();
+    }
+    //颜色生成函数
+    function createColor(){
+        let r=Math.floor(Math.random()*255);
+        let g=Math.floor(Math.random()*255);
+        let b=Math.floor(Math.random()*255);
+        return "rgb(" + r + "," + g + "," + b + ")";
+    }
+    //页面开始绘制
+    function drawCircle(){
+        for(let i=0;i<attr.num;i++){
+            var dot=attr.array[i];
+            dot.draw();
+        }
+    }
+     
+    //以上内容实现粒子静态绘制
+    //粒子运动
+    function moveCircle(){
+        for(let i=0;i<attr.num;i++){
+            var dot=attr.array[i];
+            if(dot.y<0||dot.y>can.height){
+                dot.vx=dot.vx
+                dot.vy=-dot.vy
+            }else if(dot.x<0||dot.x>can.width){
+                dot.vx=-dot.vx;
+                dot.vy=dot.vy;
+            }
+            dot.x+=dot.vx;
+            dot.y+=dot.vy;
+        }
+    }
+    //粒子之间连线
+    function connectCircle(){
+        for(let i=0;i<attr.num;i++){
+            for(let j=0;j<attr.num;j++){
+                iCircle=attr.array[i];//两个圆
+                jCircle=attr.array[j];//两个园
+                if(Math.sqrt((Math.pow((iCircle.x-jCircle.x),2))+(Math.pow((iCircle.y-jCircle.y),2)))<=20){
+                    drawLine(iCircle.x,iCircle.y,jCircle.x,jCircle.y);
+                }
+            }
+        }
+    }
+    //画线函数
+    function drawLine(x1,y1,x2,y2){
+        cxt.beginPath();
+        cxt.moveTo(x1,y1);
+        cxt.lineTo(x2,y2);
+        cxt.strokeStyle=createColor();
+        cxt.stroke();
+        cxt.closePath();
+    }
+    //动起来，递归
+    function loop(){
+        requestAnimationFrame(loop);//递归
+        cxt.clearRect(0,0,can.width,can.height);
+        cerateCircle();//创建
+        drawCircle();//绘制
+        connectCircle();//连线
+        moveCircle();//移动
+        drawMouse();//鼠标连线
+         
+    }
+    //鼠标添加事件，连线
+    can.addEventListener('mousemove',function(e){
+        e=e||event;
+        mx=e.pageX-can.offsetLeft;
+        my=e.pageY-can.offsetTop;
+    });
+    function drawMouse(){
+            for(let i=0;i<attr.num;i++)
+            {
+                if (Math.sqrt((Math.pow((attr.array[i].x-mx),2))+(Math.pow((attr.array[i].y-my),2)))<=20){
+                    drawLine(attr.array[i].x,attr.array[i].y,mx,my);
+                }
+            }
+        }
+    loop();
+    cerateCircle();//创建
+    drawCircle();//绘制
+    connectCircle();//连线
+ </script>
+</html>

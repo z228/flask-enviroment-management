@@ -1,0 +1,63 @@
+@font-face {
+  font-family: "element-icons"; /* Project id 3146866 */
+  src: url('iconfont.woff2?t=1643021489174') format('woff2'),
+       url('iconfont.woff?t=1643021489174') format('woff'),
+       url('iconfont.ttf?t=1643021489174') format('truetype');
+}
+
+.element-icons {
+  font-family: "element-icons" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.el-icon-debug:before {
+  content: "\e606";
+}
+
+.el-icon-url:before {
+  content: "\e6a4";
+}
+
+.el-icon-jar:before {
+  content: "\e639";
+}
+
+.el-icon-weather-01:before {
+  content: "\e62a";
+}
+
+.el-icon-enviroment:before {
+  content: "\e6ae";
+}
+
+.el-icon-run:before {
+  content: "\e67e";
+}
+
+.el-icon-script:before {
+  content: "\e681";
+}
+
+.el-icon-save:before {
+  content: "\e604";
+}
+
+.el-icon-reload:before {
+  content: "\e62b";
+}
+
+.el-icon-windows:before {
+  content: "\e882";
+}
+
+.el-icon-ubuntu:before {
+  content: "\edd3";
+}
+
+.el-icon-centos:before {
+  content: "\e64b";
+}
+
