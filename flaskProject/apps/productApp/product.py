@@ -399,6 +399,10 @@ class ProductAction:
             backup_path = to_path_in + '/backup_product'
             jar_ip = self.ip_local if git_branch in ['v8.6', 'v9.0', 'v9.2.1', 'v9.4', 'develop'] else self.ip
             path = f'{jar_ip}{git_branch}/{date}'
+            if len(os.listdir(f'{jar_ip}{git_branch}')) ==0:
+                product_logger.info(f'[{user}]134上没有jar包')
+                self.change_status(version, "update")
+                return "134上没有jar包"
             if date != '':
                 if not os.path.exists(f'{path}'):
                     self.change_status(version, "update")
