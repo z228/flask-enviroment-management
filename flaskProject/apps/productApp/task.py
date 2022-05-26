@@ -10,7 +10,9 @@ to_path = ['D:/old_version/8.6/', 'D:/old_version/8.8/', 'D:/old_version/9.0/', 
            'D:/old_version/9.2/', 'D:/old_version/9.2.1/', 'D:/old_version/9.3/', 'D:/old_version/trunk/']
 path = 'Yonghong_Z-Suite/Yonghong'
 productAction = product.ProductAction()
-version = ['v8.6', 'v9.0', 'v9.2.1', 'v9.4', 'develop']
+config = productAction.config
+# version = ['v8.6', 'v9.0', 'v9.2.1', 'v9.4', 'develop']
+version = [config[i]['branch'] for i in config.keys()]
 product_path = r'/home/share'
 cache_path = r'/home/share/cache.txt'
 ip_dist = r'/home/share/version/'
