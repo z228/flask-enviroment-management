@@ -392,6 +392,22 @@ class ProductAction:
         product_logger.info(f'最新的是{path0}的包')
         return os.path.join(from_path_in, path0)
 
+    def get_fast_path(self, version, date):
+        git_branch = self.config[version]["branch"]
+        path_187 = f'{self.ip_187}{git_branch}/{git_branch}'
+        path_134 = f'{self.ip}{git_branch}/{git_branch}'
+        if not os.path.exists(path_187) and not os.path.exists(path_134):
+            product_logger.info(f'[system] {version}没有新的jar包')
+            return ''
+        common = ['api.jar','product.jar','thirds.jar']
+        if os.path.exists(path_187) and os.path.exists(path_134):
+            match, mismatch, errors = cmpfiles(path, path_187, common)
+            if not mismatch:
+                return path_187
+            return path_134
+        return path_187 if os.path.exists(path_187) else path_134
+
+
     def new_copy(self, v, date=''):
         """
         :param date:
@@ -411,7 +427,6 @@ class ProductAction:
         from_path_in:源路径
         to_path_in：目标路径
         version：版本号
-        index：列表中下标
         """
         try:
             check_res = self.check_status(version)
@@ -421,15 +436,20 @@ class ProductAction:
             to_path_in = self.config[version]["path"] + self.YongHong_path
             branch = self.config[version]["branch"]
             backup_path = to_path_in + '/backup_product'
-            if date != '':
-                if os.path.exists(f'{self.ip}{branch}/{date}'):
-                    path = f'{self.ip}{branch}/{date}'
-                else:
-                    # self.toked[v]['update']=False
-                    self.change_status(version, 'update')
-                    return f'{self.format_date_str(date)}的包不存在'
-            else:
-                path = self.get_recent_jar(version)
+            path = self.get_fast_path(version, date)
+            if path == "":
+                self.change_status(version, "update")
+                return f"{version}没有{date}的jar包"
+            # if date != '':
+            #     if not os.path.exists(f'{path}'):
+            #         self.change_status(version, "update")
+            #         product_logger.info(f'{self.format_date_str(date)}的包不存在')
+            #         return f'{self.format_date_str(date)}的包不存在'
+            # else:
+            #     path = self.get_recent_jar(version)
+            # if os.path.exists(path_187):
+            #     match, mismatch, errors = cmpfiles(path, path_187, common)
+            #     path = path_187 if not mismatch else path
             dirs = os.listdir(path)
             path_187 = path.replace(self.ip, self.ip_187)
             # if branch in ['v8.6', 'v9.0', 'v9.2.1', 'v9.4', 'develop']:
@@ -482,13 +502,16 @@ class ProductAction:
             product_logger.info(res)
             return res
         self.change_status(v, "updateAndReload", True)
-        # 先关闭tomcat，然后换JAR，再启动tomcat
         self.shut_tomcat(v)
-        self.copy_jar(v, date)
+        res = self.copy_jar(v, date)
+        self.change_status(v, "updateAndReload", True)
+        # 先关闭tomcat，然后换JAR，再启动tomcat
         self.start_tomcat(v, user)
-        # self.toked[v]['updateAndReload']=False
-        self.change_status(v, 'updateAndReload')
-        return f'{v}已更换{self.format_date_str(date)} jar包并重启Tomcat成功'
+        self.change_status(v, "updateAndReload")
+        self.config[v]["startUser"] = user
+        if "没有" not in res:
+            return f'{v}已更换{self.format_date_str(date)} jar包并重启Tomcat成功'
+        return res
 
     def get_jar_info(self, v):
         product_path = os.path.join(self.config[v]["path"] + self.YongHong_path, 'product')
@@ -510,6 +533,18 @@ class ProductAction:
             jar_list[key].sort()
             jar_list[key].reverse()
         return jar_list
+
+    def get_bi_properties(self, v):
+        bi_pro_path = os.path.join(self.config[v]["path"] + self.YongHong_path, self.config[v]["bihome"],
+                                   'bi.properties')
+        bi_pro = ''
+        with open(bi_pro_path, 'r', encoding='utf-8') as biPro:
+            bi_pro += biPro.read()
+        return bi_pro
+
+    def update_product_status(self):
+        with open(f'{self.status_path}/status.json', 'w', encoding='utf-8') as status:
+            dump(self.config, status, indent=4)
 
     def check_status(self, v, user=''):
         status = self.config[v]

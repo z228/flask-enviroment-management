@@ -34,22 +34,9 @@ time_str = '20210819'
 # if "LISTENING" in res:
   # print(res)
 
-jacoco_199_path = r'\\192.168.1.199\jacoco\trunk\manual'
-
-jacoco_path = r'D:\jacoco'
-os.chdir(jacoco_path)
-jacoco_backup_files = [i.replace('\n','') for i in os.popen(f'dir /b {jacoco_199_path}\\backup').readlines() if "." in i]
-jacoco_files = [i.replace('\n','') for i in os.popen(f'dir /b {jacoco_199_path}').readlines() if "." in i]
-jacoco_files.extend(jacoco_backup_files)
-
-
-def get_jacoco_files_list(path):
-    jacoco_files = [i.replace('\n','') for i in os.popen(f'dir /b {path}').readlines() if ".exec" in i]
-    return jacoco_files
-
-jacoco_local_files= get_jacoco_files_list(r'D:\jacoco\trunk')
-
-for jacoco in jacoco_local_files:
-  if jacoco =="jacoco_${DATE}_all.exec":
-    continue
-  print(jacoco)
+from filecmp import cmpfiles
+patha = r'\\192.168.0.187\share\develop\20220527'
+pathb = r'\\192.168.1.134\git-package\develop\20220527'
+common = ['api.jar','product.jar','thirds.jar']
+res = cmpfiles(patha, pathb, common)
+print(res)
