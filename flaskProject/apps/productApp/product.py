@@ -1,5 +1,5 @@
 import os
-from filecmp import cmp
+from filecmp import cmp,cmpfiles
 from json import dump, dumps, load
 from platform import system
 from shutil import copy2
@@ -404,6 +404,7 @@ class ProductAction:
         self.change_status(v, 'update')
         return f'{v}已更换{self.format_date_str(date)} jar包'
 
+    
     def copy_jar(self, version, date=''):
         # self.toked[v]['update']=True
         """
@@ -431,28 +432,32 @@ class ProductAction:
             else:
                 path = self.get_recent_jar(version)
             dirs = os.listdir(path)
-            if branch in ['v8.6', 'v9.0', 'v9.2.1', 'v9.4', 'develop']:
+            path_187 = path.replace(self.ip, self.ip_187)
+            # if branch in ['v8.6', 'v9.0', 'v9.2.1', 'v9.4', 'develop']:
+            common = ['api.jar', 'product.jar', 'thirds.jar']
+            match, mismatch, errors = cmpfiles(path, path_187, common)
+            if os.path.exists(path_187) and not mismatch:
                 path = path.replace(self.ip, self.ip_187)
             # 遍历目标地址中的项目jar
             for file_name in dirs:
-                if branch == 'develop' and file_name not in ['api.jar', 'product.jar', 'thirds.jar']:
+                if branch == 'develop' and file_name not in common:
                     continue
                 from_file = os.path.join(path, file_name)
                 to_file = os.path.join(to_path_in, "product", file_name)
                 if not os.path.exists(to_file):
                     self.rename_product_jar(file_name, os.path.join(to_path_in, "product"))
                 try:
-                    from_134_file = from_file.replace(self.ip, self.ip_134)
-                    if os.path.exists(from_134_file):
-                        if not cmp(from_file, from_134_file):
-                            from_file = from_134_file
-                    if not os.path.exists(to_file):
+                    # from_134_file = from_file.replace(self.ip, self.ip_134)
+                    # if os.path.exists(from_134_file):
+                    #     if not cmp(from_file, from_134_file):
+                    #         from_file = from_134_file
+                    if not os.path.exists(to_file) or not cmp(from_file, to_file):
                         copy2(from_file, to_file)
                         product_logger.info(f"{file_name}更新完毕,时间：{self.current_time()}")
                         continue
-                    if not cmp(from_file, to_file):
-                        copy2(from_file, to_file)
-                        product_logger.info(f"{file_name}更新完毕,时间：{self.current_time()}")
+                    # if not cmp(from_file, to_file):
+                    #     copy2(from_file, to_file)
+                    #     product_logger.info(f"{file_name}更新完毕,时间：{self.current_time()}")
                 except PermissionError:
                     self.change_status(version, 'update')
                     product_logger.info(f"{path}下{file_name}正在被占用，请稍等...time{self.current_time()}")
@@ -499,10 +504,7 @@ class ProductAction:
         jar_list = {}
         for key in self.config.keys():
             branch = self.config[key]["branch"]
-            if branch in ['v8.6', 'v9.0', 'v9.2.1', 'v9.4', 'develop']:
-                jar_list[key] = os.listdir(f'{self.ip_187}{branch}')
-            else:
-                jar_list[key] = os.listdir(f'{self.ip_134}{branch}')
+            jar_list[key] = os.listdir(f'{self.ip_134}{branch}')
             jar_list[key] = self.clear_list_not_num(jar_list[key])
             jar_list[key].sort()
             jar_list[key].reverse()
