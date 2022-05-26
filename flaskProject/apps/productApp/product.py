@@ -1,6 +1,6 @@
 # from _typeshed import Self
 import os
-from filecmp import cmp
+from filecmp import cmp, cmpfiles
 from json import dump, loads, dumps
 from platform import system
 from shutil import copy2
@@ -24,7 +24,7 @@ class ProductAction:
     host_ip = '127.0.0.1'
     ip_141 = '/mnt/141/productJar/'
     ip_134 = '/mnt/134/productJar/'
-    ip_local = '/home/share/'
+    ip_187 = '/home/share/'
     ip = ip_134
     from_path = []
     script_path = f"{os.getcwd()}/static/job"
@@ -381,13 +381,28 @@ class ProductAction:
         product_logger.info(f'最新的是{path0}的包')
         return os.path.join(from_path_in, path0)
 
+    def get_fast_path(self, version, date):
+        git_branch = self.config[version]["branch"]
+        path_187 = f'{self.ip_187}{git_branch}/{git_branch}'
+        path_134 = f'{self.ip}{git_branch}/{git_branch}'
+        if not os.path.exists(path_187) and not os.path.exists(path_134):
+            product_logger.info(f'[system] {version}没有新的jar包')
+            return ''
+        common = ['api.jar','product.jar','thirds.jar']
+        if os.path.exists(path_187) and os.path.exists(path_134):
+            match, mismatch, errors = cmpfiles(path, path_187, common)
+            if not mismatch:
+                return path_187
+            return path_134
+        return path_187 if os.path.exists(path_187) else path_134
+        
+
     def copy_jar(self, version, date='', user=''):
         """
         :param
         from_path_in:源路径
         to_path_in：目标路径
         version：版本号
-        index：列表中下标
         """
         try:
             git_branch = self.config[version]["branch"]
@@ -397,19 +412,20 @@ class ProductAction:
                 return check_res
             self.change_status(version, "update", True, user)
             backup_path = to_path_in + '/backup_product'
-            jar_ip = self.ip_local if git_branch in ['v8.6', 'v9.0', 'v9.2.1', 'v9.4', 'develop'] else self.ip
-            path = f'{jar_ip}{git_branch}/{date}'
-            if len(os.listdir(f'{jar_ip}{git_branch}')) ==0:
-                product_logger.info(f'[{user}]134上没有jar包')
+            path = self.get_fast_path(version,date)
+            if path == "":
                 self.change_status(version, "update")
-                return "134上没有jar包"
-            if date != '':
-                if not os.path.exists(f'{path}'):
-                    self.change_status(version, "update")
-                    product_logger.info(f'{self.format_date_str(date)}的包不存在')
-                    return f'{self.format_date_str(date)}的包不存在'
-            else:
-                path = self.get_recent_jar(version)
+                return f"{version}没有{date}的jar包"
+            # if date != '':
+            #     if not os.path.exists(f'{path}'):
+            #         self.change_status(version, "update")
+            #         product_logger.info(f'{self.format_date_str(date)}的包不存在')
+            #         return f'{self.format_date_str(date)}的包不存在'
+            # else:
+            #     path = self.get_recent_jar(version)
+            # if os.path.exists(path_187):
+            #     match, mismatch, errors = cmpfiles(path, path_187, common)
+            #     path = path_187 if not mismatch else path
             dirs = os.listdir(path)
             # 遍历目标地址中的项目jar
             for file_name in dirs:
@@ -417,19 +433,15 @@ class ProductAction:
                 to_file = os.path.join(to_path_in, "product", file_name)
                 if not os.path.exists(to_file):
                     self.rename_product_jar(file_name, os.path.join(to_path_in, "product"))
-                # backup_file = os.path.join(backup_path, file_name)
                 try:
-                    from_134_file = from_file.replace(self.ip, self.ip_134)
+                    # from_134_file = from_file.replace(self.ip, self.ip_134)
                     # if os.path.exists(from_134_file):
                     #     if not cmp(from_file, from_134_file):
                     #         from_file = from_134_file
-                    if not os.path.exists(to_file):
+                    if not os.path.exists(to_file) or not cmp(from_file, to_file):
                         copy2(from_file, to_file)
                         product_logger.info(f"[{user}] {file_name}更新完毕,时间：{self.current_time()}")
                         continue
-                    if not cmp(from_file, to_file):
-                        copy2(from_file, to_file)
-                        product_logger.info(f"[{user}] {file_name}更新完毕,时间：{self.current_time()}")
                 except PermissionError:
                     self.change_status(version, "update")
                     product_logger.info(f"[{user}] {path}下{file_name}正在被占用，请稍等...time{self.current_time()}")
@@ -459,11 +471,13 @@ class ProductAction:
             return res
         self.change_status(v, "updateAndReload", True, user)
         self.shut_tomcat(v, user)
-        self.copy_jar(v, date, user)
+        res = self.copy_jar(v, date, user)
         self.start_tomcat(v, user)
         self.change_status(v, "updateAndReload")
         self.config[v]["startUser"] = user
-        return f'{v}已更换{self.format_date_str(date)} jar包并重启Tomcat成功'
+        if "没有" not in res:
+            return f'{v}已更换{self.format_date_str(date)} jar包并重启Tomcat成功'
+        return res
 
     def get_jar_info(self, v):
         product_path = os.path.join(self.config[v]["path"] + self.YongHong_path, 'product')
@@ -472,6 +486,18 @@ class ProductAction:
             change_time = strftime("日期:%Y%m%d 时间:%H:%M:%S", localtime(os.stat(os.path.join(product_path, i)).st_mtime))
             info_list.append(f"{i}:{change_time}")
         return info_list
+
+    def get_jar_list(self):
+        jar_list = {}
+        for key in self.config.keys():
+            branch = self.config[key]["branch"]
+            dir_187 = os.listdir(f'{self.ip_187}{branch}')
+            dir_134 = os.listdir(f'{self.ip_134}{branch}')
+            jar_list[key] = dir_134 if len(dir_187) < len(dir_134) else dir_187
+            jar_list[key] = self.clear_list_not_num(jar_list[key])
+            jar_list[key].sort()
+            jar_list[key].reverse()
+        return jar_list
 
     def get_bi_properties(self, v):
         bi_pro_path = os.path.join(self.config[v]["path"] + self.YongHong_path, self.config[v]["bihome"],
