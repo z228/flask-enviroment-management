@@ -1,0 +1,93 @@
+{
+  "id": "3146866",
+  "name": "111",
+  "font_family": "element-icons",
+  "css_prefix_text": "el-icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "1115014",
+      "name": "debug",
+      "font_class": "debug",
+      "unicode": "e606",
+      "unicode_decimal": 58886
+    },
+    {
+      "icon_id": "13304115",
+      "name": "url",
+      "font_class": "url",
+      "unicode": "e6a4",
+      "unicode_decimal": 59044
+    },
+    {
+      "icon_id": "12600748",
+      "name": "jar",
+      "font_class": "jar",
+      "unicode": "e639",
+      "unicode_decimal": 58937
+    },
+    {
+      "icon_id": "27148897",
+      "name": "sun",
+      "font_class": "weather-01",
+      "unicode": "e62a",
+      "unicode_decimal": 58922
+    },
+    {
+      "icon_id": "3861064",
+      "name": "开发",
+      "font_class": "enviroment",
+      "unicode": "e6ae",
+      "unicode_decimal": 59054
+    },
+    {
+      "icon_id": "26345057",
+      "name": "运行，调试",
+      "font_class": "run",
+      "unicode": "e67e",
+      "unicode_decimal": 59006
+    },
+    {
+      "icon_id": "1059049",
+      "name": "脚本",
+      "font_class": "script",
+      "unicode": "e681",
+      "unicode_decimal": 59009
+    },
+    {
+      "icon_id": "4544043",
+      "name": "保存",
+      "font_class": "save",
+      "unicode": "e604",
+      "unicode_decimal": 58884
+    },
+    {
+      "icon_id": "21516783",
+      "name": "重启系统",
+      "font_class": "reload",
+      "unicode": "e62b",
+      "unicode_decimal": 58923
+    },
+    {
+      "icon_id": "4936983",
+      "name": "windows-fill",
+      "font_class": "windows",
+      "unicode": "e882",
+      "unicode_decimal": 59522
+    },
+    {
+      "icon_id": "6808499",
+      "name": "Ubuntu",
+      "font_class": "ubuntu",
+      "unicode": "edd3",
+      "unicode_decimal": 60883
+    },
+    {
+      "icon_id": "11992364",
+      "name": "centos",
+      "font_class": "centos",
+      "unicode": "e64b",
+      "unicode_decimal": 58955
+    }
+  ]
+}

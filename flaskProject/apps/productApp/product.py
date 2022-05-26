@@ -22,7 +22,7 @@ else:
 
 class ProductAction:
     host_ip = '127.0.0.1'
-    # ip = '/mnt/141/productJar/'
+    ip_141 = '/mnt/141/productJar/'
     ip_134 = '/mnt/134/productJar/'
     ip_local = '/home/share/'
     ip = ip_134
@@ -294,7 +294,7 @@ class ProductAction:
             else:
                 work_dir = self.config[v]["path"] + self.tomcat_path
                 os.chdir(work_dir)
-                if v == "develop":
+                if v == "trunk":
                     os.system(f'sh  {self.config[v]["path"]}/tomcat/bin/shutdown.sh')
                 else:
                     os.system(f'kill -9 {self.get_pid_by_port(str(host_port))}')
@@ -397,17 +397,20 @@ class ProductAction:
                 return check_res
             self.change_status(version, "update", True, user)
             backup_path = to_path_in + '/backup_product'
+            jar_ip = self.ip_local if git_branch in ['v8.6', 'v9.0', 'v9.2.1', 'v9.4', 'develop'] else self.ip
+            path = f'{jar_ip}{git_branch}/{date}'
+            if len(os.listdir(f'{jar_ip}{git_branch}')) ==0:
+                product_logger.info(f'[{user}]134上没有jar包')
+                self.change_status(version, "update")
+                return "134上没有jar包"
             if date != '':
-                if os.path.exists(f'{self.ip}{git_branch}/{date}'):
-                    path = f'{self.ip}{git_branch}/{date}'
-                else:
+                if not os.path.exists(f'{path}'):
                     self.change_status(version, "update")
+                    product_logger.info(f'{self.format_date_str(date)}的包不存在')
                     return f'{self.format_date_str(date)}的包不存在'
             else:
                 path = self.get_recent_jar(version)
             dirs = os.listdir(path)
-            if git_branch in ['v8.6', 'v9.0', 'v9.2.1', 'v9.4', 'develop']:
-                path = path.replace(self.ip, self.ip_local)
             # 遍历目标地址中的项目jar
             for file_name in dirs:
                 from_file = os.path.join(path, file_name)
@@ -480,7 +483,7 @@ class ProductAction:
 
     def update_product_status(self):
         with open(f'{self.status_path}/status.json', 'w', encoding='utf-8') as status:
-            dump(self.config, status)
+            dump(self.config, status, indent=4)
 
     def check_status(self, v, user=''):
         status = self.config[v]

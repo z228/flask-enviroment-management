@@ -9,10 +9,8 @@ from apps.lib.BaseError import *
 from apps.productApp.productJar_router import *
 import logging_mgr
 from os.path import join
-from os import getcwd
+from os import getcwd, listdir
 
-
-# clean.static_clean() #清理资源文件夹
 app = Flask(__name__)
 app.register_blueprint(productJar_operate, url_prefix='/productJar')
 app.debug = False
@@ -35,43 +33,32 @@ def favicon():
 def hello_world():
     return render_template('index.html')
 
-def get_log_with_lines(module, lines):
-    res = ''
-    lines = lines if isinstance(lines, int) else  eval(lines)
-    with open(f'{app.root_path}/logs/{module}.log', 'r', encoding='utf-8') as logs:
+
+def get_log_with_lines(log, lines):
+    lines = lines if isinstance(lines, int) else eval(lines)
+    with open(f'{app.root_path}/logs/{log}', 'r', encoding='utf-8') as logs:
         log_list = logs.readlines()
         if len(log_list) < lines:
             return ''.join(log_list)
-        # log_list.reverse()
         res_list = log_list[-1 * lines:]
-        # res_list.reverse()
         return ''.join(res_list)
 
 
-@app.route('/flasklog', methods=['POST'])
-def get_flask_log():
+@app.route('/log', methods=['POST'])
+def get_log():
     req = loads(request.get_data())
     rep = {"code": 200}
     lines = req['lines']
-    rep['log'] = get_log_with_lines('flask',lines)
+    rep['log'] = get_log_with_lines(req['log'], lines)
     return rep
 
 
-@app.route('/debuglog', methods=['POST'])
-def get_debug_log():
-    req = loads(request.get_data())
+@app.route('/loglist', methods=['GET'])
+def get_log_list():
     rep = {"code": 200}
-    lines = req['lines']
-    rep['log'] = get_log_with_lines('debug',lines)
-    return rep
-
-
-@app.route('/tasklog', methods=['POST'])
-def get_task_log():
-    req = loads(request.get_data())
-    rep = {"code": 200}
-    lines = req['lines']
-    rep['log'] = get_log_with_lines('task',lines)
+    # log_list = listdir(f'{app.root_path}/logs')
+    log_list = [i for i in listdir(f'{app.root_path}/logs') if '.log' in i]
+    rep['logList'] = log_list
     return rep
 
 
