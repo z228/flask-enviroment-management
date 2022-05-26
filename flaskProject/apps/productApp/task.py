@@ -94,14 +94,12 @@ def copy_jar_to_local():
         ip_134_today = f"{ip_source.replace('version', v)}{today}"
         if os.path.exists(ip_134_today):
             if not os.path.exists(ip_today):
-                bash = f"mkdir {ip_today}"
+                bash = f"mkdir -p {ip_today}"
                 os.system(bash)
                 task_logger.info(bash)
                 try_copy(v, ip_today, ip_134_today)
-
-            else:
-                if not bool_cmp(ip_today, ip_134_today, file_list):
-                    try_copy(v, ip_today, ip_134_today)
+            if not bool_cmp(ip_today, ip_134_today, file_list):
+                try_copy(v, ip_today, ip_134_today)
 
 
 def try_copy(v, ip_today, ip_134_today):
