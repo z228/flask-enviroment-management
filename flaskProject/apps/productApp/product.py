@@ -437,24 +437,8 @@ class ProductAction:
             if path == "" or date == "":
                 self.change_status(version, "update")
                 return f"{version}没有{'新' if date == '' else date}的jar包"
-            # if date != '':
-            #     if not os.path.exists(f'{path}'):
-            #         self.change_status(version, "update")
-            #         product_logger.info(f'{self.format_date_str(date)}的包不存在')
-            #         return f'{self.format_date_str(date)}的包不存在'
-            # else:
-            #     path = self.get_recent_jar(version)
-            # if os.path.exists(path_187):
-            #     match, mismatch, errors = cmpfiles(path, path_187, common)
-            #     path = path_187 if not mismatch else path
             dirs = os.listdir(path)
-            # path_187 = path.replace(self.ip, self.ip_187)
-            # # if branch in ['v8.6', 'v9.0', 'v9.2.1', 'v9.4', 'develop']:
             common = ['api.jar', 'product.jar', 'thirds.jar']
-            # match, mismatch, errors = cmpfiles(path, path_187, common)
-            # if os.path.exists(path_187) and not mismatch:
-            #     path = path.replace(self.ip, self.ip_187)
-            # 遍历目标地址中的项目jar
             for file_name in dirs:
                 if branch == 'develop' and file_name not in common:
                     continue
@@ -561,7 +545,3 @@ class ProductAction:
     def update_product_status(self):
         with open(self.status_path, 'w', encoding='utf-8') as status:
             dump(self.config, status, indent=4)
-
-    def update_user_info(self):
-        with open(self.user_info_path, 'w', encoding='utf-8') as user_info:
-            dump(self.users, user_info, indent=4)
