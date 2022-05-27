@@ -404,7 +404,6 @@ class ProductAction:
         self.change_status(v, 'update')
         return f'{v}已更换{self.format_date_str(date)} jar包'
 
-    
     def copy_jar(self, version, date=''):
         # self.toked[v]['update']=True
         """
@@ -504,7 +503,9 @@ class ProductAction:
         jar_list = {}
         for key in self.config.keys():
             branch = self.config[key]["branch"]
-            jar_list[key] = os.listdir(f'{self.ip_134}{branch}')
+            dir_187 = os.listdir(f'{self.ip_187}{branch}')
+            dir_134 = os.listdir(f'{self.ip_134}{branch}')
+            jar_list[key] = dir_134 if len(dir_187) < len(dir_134) else dir_187
             jar_list[key] = self.clear_list_not_num(jar_list[key])
             jar_list[key].sort()
             jar_list[key].reverse()
