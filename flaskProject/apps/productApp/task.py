@@ -10,7 +10,6 @@ to_path = ['D:/old_version/8.6/', 'D:/old_version/8.8/', 'D:/old_version/9.0/', 
 path = 'Yonghong_Z-Suite/Yonghong'
 productAction = product.ProductAction()
 config = productAction.config
-# version = ['v8.6', 'v9.0', 'v9.2.1', 'v9.4', 'develop']
 version = [config[i]['branch'] for i in config.keys()]
 product_path = r'/home/share'
 cache_path = r'/home/share/cache.txt'
@@ -70,6 +69,12 @@ def bool_cmp(a, b, common):
 
 
 def diff_day(ftime, fmt):
+    """
+    calculate days with input and today
+    :param ftime:
+    :param fmt: format
+    :return:
+    """
     now_day = eval(strftime("%j", localtime()).lstrip("0"))
     p_day = eval(strftime("%j", strptime(ftime, fmt)).lstrip("0"))
     return now_day - p_day
@@ -90,6 +95,10 @@ def clean_backup_jar():
 
 
 def copy_jar_to_local():
+    """
+    copy jar to local
+    :return:
+    """
     for v in version:
         today = strftime("%Y%m%d", localtime())
         ip_today = f"{ip_dist.replace('version', v)}{today}"
