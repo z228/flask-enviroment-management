@@ -1,5 +1,5 @@
 import os
-from filecmp import cmp,cmpfiles
+from filecmp import cmp, cmpfiles
 from json import dump, dumps, load
 from platform import system
 from shutil import copy2
@@ -10,7 +10,6 @@ from xml.dom.minidom import parse
 from logging import getLogger
 
 product_logger = getLogger("product")
-
 
 if system() == "Windows":
     import win32api as api
@@ -399,14 +398,13 @@ class ProductAction:
         if not os.path.exists(path_187) and not os.path.exists(path_134):
             product_logger.info(f'[system] {version}没有新的jar包')
             return ''
-        common = ['api.jar','product.jar','thirds.jar']
+        common = ['api.jar', 'product.jar', 'thirds.jar']
         if os.path.exists(path_187) and os.path.exists(path_134):
             match, mismatch, errors = cmpfiles(path, path_187, common)
             if not mismatch:
                 return path_187
             return path_134
         return path_187 if os.path.exists(path_187) else path_134
-
 
     def new_copy(self, v, date=''):
         """
