@@ -1,14 +1,14 @@
 # from _typeshed import Self
-import os
 from filecmp import cmp, cmpfiles
 from json import dump, loads, dumps
+from logging import getLogger
+from os import rename, listdir, system, popen, chdir, stat, getcwd
+from os.path import exists, join
 from platform import system
 from shutil import copy2
 from socket import socket, AF_INET, SOCK_STREAM
 from time import sleep, localtime, strftime
 from xml.dom.minidom import parse
-
-from logging import getLogger
 
 product_logger = getLogger("product")
 
@@ -27,8 +27,8 @@ class ProductAction:
     ip_187 = '/home/share/'
     ip = ip_134
     from_path = []
-    script_path = f"{os.getcwd()}/static/job"
-    status_path = f"{os.getcwd()}/apps/productApp"
+    script_path = f"{getcwd()}/static/job"
+    status_path = f"{getcwd()}/apps/productApp"
     to_path = []
     day_31 = ['02', '04', '06', '08', '09', '11']
     port = []
@@ -85,7 +85,7 @@ class ProductAction:
     # 通过host+port获取进程pid
     @staticmethod
     def get_pid_from_port(port):
-        res = os.popen(f'netstat -ano |findstr "{port}"').readlines()
+        res = popen(f'netstat -ano |findstr "{port}"').readlines()
         for i in res:
             if i.split()[-2] == 'LISTENING':
                 product_logger.info(i)
@@ -107,7 +107,7 @@ class ProductAction:
     def get_all_script(self):
         job_list = {}
         index = 1
-        for job in os.listdir(self.script_path):
+        for job in listdir(self.script_path):
             job_list[index] = {'name': job}
             index += 1
         product_logger.info(f'脚本列表：{job_list}')
@@ -118,15 +118,15 @@ class ProductAction:
         if task.split('.')[1] != '.py':
             product_logger.info(f'{task}不是python脚本，无法执行')
             return f"非Python脚本无法执行"
-        os.chdir(self.script_path)
-        os.system(f'python {task}')
+        chdir(self.script_path)
+        system(f'python {task}')
         product_logger.info(f'{task}执行成功')
         return f'{task}执行成功'
 
     # 删除脚本
     def delete_script(self, task):
-        os.chdir(self.script_path)
-        os.system(f'del {task}')
+        chdir(self.script_path)
+        system(f'del {task}')
         product_logger.warning(f'{task}删除成功')
         return f'{task}删除成功'
 
@@ -142,7 +142,7 @@ class ProductAction:
     # 读取配置文件
     def read_config(self):
         status = {}
-        if os.path.exists(f'{self.status_path}/status.json'):
+        if exists(f'{self.status_path}/status.json'):
             with open(f'{self.status_path}/status.json', 'r', encoding='utf-8') as f_status:
                 str_status = f_status.read()
                 status = loads(str_status) if len(str_status) != 0 else {}
@@ -273,7 +273,7 @@ class ProductAction:
 
     @staticmethod
     def get_pid_by_port(port):
-        res = os.popen(f'lsof -i:{port}').readlines()
+        res = popen(f'lsof -i:{port}').readlines()
         res.pop(0)
         pid = [i.split()[1] for i in res]
         # for i in res:
@@ -290,14 +290,14 @@ class ProductAction:
         if self.is_port_used(self.host_ip, host_port):
             if self.current_system == "Windows":
                 product_logger.info(f'[{user}]停止trunk tomcat进程')
-                os.system(f'python {self.script_path}/stopTrunk.py {host_port} > stopTomcat.txt')
+                system(f'python {self.script_path}/stopTrunk.py {host_port} > stopTomcat.txt')
             else:
                 work_dir = self.config[v]["path"] + self.tomcat_path
-                os.chdir(work_dir)
+                chdir(work_dir)
                 if v == "trunk":
-                    os.system(f'sh  {self.config[v]["path"]}/tomcat/bin/shutdown.sh')
+                    system(f'sh  {self.config[v]["path"]}/tomcat/bin/shutdown.sh')
                 else:
-                    os.system(f'kill -9 {self.get_pid_by_port(str(host_port))}')
+                    system(f'kill -9 {self.get_pid_by_port(str(host_port))}')
             while 1:
                 if self.is_port_used(self.host_ip, host_port):
                     product_logger.info(f'[{user}]{v} tomcat服务停止中')
@@ -320,7 +320,7 @@ class ProductAction:
         self.change_status(v, "startup", True, user)
         host_port = eval(self.config[v]["port"])
         work_dir = self.config[v]["path"] + self.tomcat_path
-        os.chdir(work_dir)
+        chdir(work_dir)
         for scape in range(100):
             if self.is_port_used(self.host_ip, host_port):
                 if self.config[v]["startUser"] != '':
@@ -332,9 +332,9 @@ class ProductAction:
                     sleep(10)
             else:
                 if self.current_system == "Windows":
-                    os.system('startup > caches.txt')
+                    system('startup > caches.txt')
                 else:
-                    os.system('sh catalina.sh jpda start > caches.txt')
+                    system('sh catalina.sh jpda start > caches.txt')
                 break
         product_logger.info(f'[{user}] 启动{v} tomcat服务成功')
         self.change_status(v, "startup")
@@ -343,21 +343,21 @@ class ProductAction:
 
     @staticmethod
     def rename_product_jar(new_name, path):
-        jar_list = os.listdir(path)
+        jar_list = listdir(path)
         for i in jar_list:
             if i.split('.')[0] == 'product-swf':
-                os.rename(f'{path}/{i}', f'{path}/product-swf.jar')
+                rename(f'{path}/{i}', f'{path}/product-swf.jar')
             elif new_name.split('.')[0] in i.split('.')[0]:
-                os.rename(f'{path}/{i}', f'{path}/{new_name}')
+                rename(f'{path}/{i}', f'{path}/{new_name}')
 
     def get_recent_jar(self, version):
         git_branch = self.config[version]["branch"]
         from_path_in = f'{self.ip}{git_branch}'
         path0 = strftime("%Y%m%d", localtime())
-        product_logger.info(f'当天的{version}jar包地址：{os.path.join(from_path_in, path0)}')
+        product_logger.info(f'当天的{version}jar包地址：{join(from_path_in, path0)}')
         # 检测是否有当天的新Jar，否则往前推一天
         while 1:
-            if not os.path.exists(os.path.join(from_path_in, path0)):
+            if not exists(join(from_path_in, path0)):
                 year = path0[0:4]
                 month = path0[4:6]
                 day = path0[-2:]
@@ -379,22 +379,22 @@ class ProductAction:
             else:
                 break
         product_logger.info(f'最新的是{path0}的包')
-        return os.path.join(from_path_in, path0)
+        return join(from_path_in, path0)
 
     def get_fast_path(self, version, date):
         git_branch = self.config[version]["branch"]
-        path_187 = f'{self.ip_187}{git_branch}/{git_branch}/{date}'
-        path_134 = f'{self.ip}{git_branch}/{git_branch}/{date}'
-        if not os.path.exists(path_187) and not os.path.exists(path_134):
+        path_187 = f'{self.ip_187}{git_branch}/{date}'
+        path_134 = f'{self.ip}{git_branch}/{date}'
+        if not exists(path_187) and not exists(path_134):
             product_logger.info(f'[system] {version}没有新的jar包')
             return ''
         common = ['api.jar', 'product.jar', 'thirds.jar']
-        if os.path.exists(path_187) and os.path.exists(path_134):
+        if exists(path_187) and exists(path_134):
             mismatch = cmpfiles(path_134, path_187, common)[1]
             if not mismatch:
                 return path_187
             return path_134
-        return path_187 if os.path.exists(path_187) else path_134
+        return path_187 if exists(path_187) else path_134
 
     def copy_jar(self, version, date, user=''):
         """
@@ -416,28 +416,28 @@ class ProductAction:
                 self.change_status(version, "update")
                 return f"{version}没有{'新' if date == '' else date}的jar包"
             # if date != '':
-            #     if not os.path.exists(f'{path}'):
+            #     if not exists(f'{path}'):
             #         self.change_status(version, "update")
             #         product_logger.info(f'{self.format_date_str(date)}的包不存在')
             #         return f'{self.format_date_str(date)}的包不存在'
             # else:
             #     path = self.get_recent_jar(version)
-            # if os.path.exists(path_187):
+            # if exists(path_187):
             #     match, mismatch, errors = cmpfiles(path, path_187, common)
             #     path = path_187 if not mismatch else path
-            dirs = os.listdir(path)
+            dirs = listdir(path)
             # 遍历目标地址中的项目jar
             for file_name in dirs:
-                from_file = os.path.join(path, file_name)
-                to_file = os.path.join(to_path_in, "product", file_name)
-                if not os.path.exists(to_file):
-                    self.rename_product_jar(file_name, os.path.join(to_path_in, "product"))
+                from_file = join(path, file_name)
+                to_file = join(to_path_in, "product", file_name)
+                if not exists(to_file):
+                    self.rename_product_jar(file_name, join(to_path_in, "product"))
                 try:
                     # from_134_file = from_file.replace(self.ip, self.ip_134)
-                    # if os.path.exists(from_134_file):
+                    # if exists(from_134_file):
                     #     if not cmp(from_file, from_134_file):
                     #         from_file = from_134_file
-                    if not os.path.exists(to_file) or not cmp(from_file, to_file):
+                    if not exists(to_file) or not cmp(from_file, to_file):
                         copy2(from_file, to_file)
                         product_logger.info(f"[{user}] {file_name}更新完毕,时间：{self.current_time()}")
                         continue
@@ -479,10 +479,10 @@ class ProductAction:
         return res
 
     def get_jar_info(self, v):
-        product_path = os.path.join(self.config[v]["path"] + self.YongHong_path, 'product')
+        product_path = join(self.config[v]["path"] + self.YongHong_path, 'product')
         info_list = []
-        for i in os.listdir(product_path):
-            change_time = strftime("日期:%Y%m%d 时间:%H:%M:%S", localtime(os.stat(os.path.join(product_path, i)).st_mtime))
+        for i in listdir(product_path):
+            change_time = strftime("日期:%Y%m%d 时间:%H:%M:%S", localtime(stat(join(product_path, i)).st_mtime))
             info_list.append(f"{i}:{change_time}")
         return info_list
 
@@ -490,8 +490,8 @@ class ProductAction:
         jar_list = {}
         for key in self.config.keys():
             branch = self.config[key]["branch"]
-            dir_187 = os.listdir(f'{self.ip_187}{branch}')
-            dir_134 = os.listdir(f'{self.ip_134}{branch}')
+            dir_187 = listdir(f'{self.ip_187}{branch}') if exists(f'{self.ip_187}{branch}') else []
+            dir_134 = listdir(f'{self.ip_134}{branch}')
             jar_list[key] = dir_134 if len(dir_187) < len(dir_134) else dir_187
             jar_list[key] = self.clear_list_not_num(jar_list[key])
             jar_list[key].sort()
@@ -499,8 +499,8 @@ class ProductAction:
         return jar_list
 
     def get_bi_properties(self, v):
-        bi_pro_path = os.path.join(self.config[v]["path"] + self.YongHong_path, self.config[v]["bihome"],
-                                   'bi.properties')
+        bi_pro_path = join(self.config[v]["path"] + self.YongHong_path, self.config[v]["bihome"],
+                           'bi.properties')
         bi_pro = ''
         with open(bi_pro_path, 'r', encoding='utf-8') as biPro:
             bi_pro += biPro.read()

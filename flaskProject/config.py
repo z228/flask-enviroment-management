@@ -36,5 +36,14 @@ class APSchedulerJobConfig(object):
             'hour': 0,
             'minute': 30,
             'second': 0
+        },
+        {
+            'id': 'No6',  # 任务唯一ID
+            'func': 'apps.productApp.task:copy_jacoco_to_192',
+            'args': None,  # 如果function需要参数，就在这里添加
+            'trigger': 'cron',
+            'hour': 23,
+            'minute': 10,
+            'second': 0
         }
     ]

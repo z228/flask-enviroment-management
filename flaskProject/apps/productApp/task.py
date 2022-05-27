@@ -16,6 +16,8 @@ product_path = r'/home/share'
 cache_path = r'/home/share/cache.txt'
 ip_dist = r'/home/share/version/'
 ip_source = r'/mnt/134/productJar/version/'
+jacoco_192_path = r'/mnt/192/jacoco/trunk'
+jacoco_local_path = r'/opt/jacoco/trunk'
 file_list = ['api.jar', 'product.jar', 'thirds.jar']
 task_logger = getLogger("task")
 
@@ -120,3 +122,7 @@ def test_task():
 
 def get_now_format_time():
     return strftime('[%Y-%m-%d %H:%M:%S]', localtime())
+
+
+def copy_jacoco_to_192():
+    os.popen(f'/mv -f {jacoco_local_path}/*.exec {jacoco_192_path}')
