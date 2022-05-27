@@ -77,7 +77,7 @@ def clean_backup_jar():
     os.system(f"rm {os.path.join(product_path, 'cache.txt')}")
     for i in version:
         backup_folders = os.popen(f"ls {os.path.join(product_path, i)}").read().split()
-        if len(backup_folders) < 5:
+        if len(backup_folders) <= 5:
             continue
         for j in backup_folders:
             if diff_day(j, "%Y%m%d") > 5:
