@@ -393,8 +393,8 @@ class ProductAction:
 
     def get_fast_path(self, version, date):
         git_branch = self.config[version]["branch"]
-        path_187 = f'{self.ip_187}{git_branch}/{git_branch}/{date}'
-        path_134 = f'{self.ip}{git_branch}/{git_branch}/{date}'
+        path_187 = f'{self.ip_187}{git_branch}/{date}'
+        path_134 = f'{self.ip}{git_branch}/{date}'
         if not os.path.exists(path_187) and not os.path.exists(path_134):
             product_logger.info(f'[system] {version}没有新的jar包')
             return ''
@@ -448,12 +448,12 @@ class ProductAction:
             #     match, mismatch, errors = cmpfiles(path, path_187, common)
             #     path = path_187 if not mismatch else path
             dirs = os.listdir(path)
-            path_187 = path.replace(self.ip, self.ip_187)
-            # if branch in ['v8.6', 'v9.0', 'v9.2.1', 'v9.4', 'develop']:
+            # path_187 = path.replace(self.ip, self.ip_187)
+            # # if branch in ['v8.6', 'v9.0', 'v9.2.1', 'v9.4', 'develop']:
             common = ['api.jar', 'product.jar', 'thirds.jar']
-            match, mismatch, errors = cmpfiles(path, path_187, common)
-            if os.path.exists(path_187) and not mismatch:
-                path = path.replace(self.ip, self.ip_187)
+            # match, mismatch, errors = cmpfiles(path, path_187, common)
+            # if os.path.exists(path_187) and not mismatch:
+            #     path = path.replace(self.ip, self.ip_187)
             # 遍历目标地址中的项目jar
             for file_name in dirs:
                 if branch == 'develop' and file_name not in common:
@@ -522,7 +522,7 @@ class ProductAction:
         jar_list = {}
         for key in self.config.keys():
             branch = self.config[key]["branch"]
-            dir_187 = os.listdir(f'{self.ip_187}{branch}')
+            dir_187 = os.listdir(f'{self.ip_187}{branch}') if os.path.exists(f'{self.ip_187}{branch}') else []
             dir_134 = os.listdir(f'{self.ip_134}{branch}')
             jar_list[key] = dir_134 if len(dir_187) < len(dir_134) else dir_187
             jar_list[key] = self.clear_list_not_num(jar_list[key])
@@ -537,10 +537,6 @@ class ProductAction:
         with open(bi_pro_path, 'r', encoding='utf-8') as biPro:
             bi_pro += biPro.read()
         return bi_pro
-
-    def update_product_status(self):
-        with open(f'{self.status_path}/status.json', 'w', encoding='utf-8') as status:
-            dump(self.config, status, indent=4)
 
     def check_status(self, v, user=''):
         status = self.config[v]

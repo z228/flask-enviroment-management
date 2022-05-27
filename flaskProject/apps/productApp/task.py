@@ -7,7 +7,7 @@ from . import product
 to_path = ['D:/old_version/8.6/', 'D:/old_version/8.8/', 'D:/old_version/9.0/', 'D:/old_version/9.1/',
            'D:/old_version/9.2/', 'D:/old_version/9.2.1/', 'D:/old_version/9.3/', 'D:/old_version/trunk/']
 path = 'Yonghong_Z-Suite/Yonghong'
-jacoco_root_path = r'D:/jacoco'
+jacoco_root_path = r'D:/share/jacoco'
 jacoco_199_path = r'\\192.168.1.199/jacoco/trunk/manual'
 
 productAction = product.ProductAction()
