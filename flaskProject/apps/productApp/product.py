@@ -2,7 +2,7 @@
 from filecmp import cmp, cmpfiles
 from json import dump, loads, dumps
 from logging import getLogger
-from os import rename, listdir, system, popen, chdir, stat, getcwd
+from os import rename, listdir, system as sys, popen, chdir, stat, getcwd
 from os.path import exists, join
 from platform import system
 from shutil import copy2
@@ -12,7 +12,7 @@ from xml.dom.minidom import parse
 
 product_logger = getLogger("product")
 
-if popen() == "Windows":
+if system() == "Windows":
     import win32api as api
     import win32console as con
     from . import properties
@@ -33,7 +33,7 @@ class ProductAction:
     day_31 = ['02', '04', '06', '08', '09', '11']
     port = []
     ubuntu_path = []
-    current_system = popen()
+    current_system = system()
     codeType = {"default": ".py", "application/json": ".json", "sql": ".sql", "javascript": ".js", "css": ".css",
                 "xml": ".xml", "html": ".html", "yaml": ".yml", "markdown": ".md", "python": ".py"}
     root_path = ''
@@ -119,14 +119,14 @@ class ProductAction:
             product_logger.info(f'{task}不是python脚本，无法执行')
             return f"非Python脚本无法执行"
         chdir(self.script_path)
-        popen(f'python {task}')
+        sys(f'python {task}')
         product_logger.info(f'{task}执行成功')
         return f'{task}执行成功'
 
     # 删除脚本
     def delete_script(self, task):
         chdir(self.script_path)
-        popen(f'del {task}')
+        sys(f'del {task}')
         product_logger.warning(f'{task}删除成功')
         return f'{task}删除成功'
 
@@ -290,14 +290,14 @@ class ProductAction:
         if self.is_port_used(self.host_ip, host_port):
             if self.current_system == "Windows":
                 product_logger.info(f'[{user}]停止trunk tomcat进程')
-                popen(f'python {self.script_path}/stopTrunk.py {host_port} > stopTomcat.txt')
+                sys(f'python {self.script_path}/stopTrunk.py {host_port} > stopTomcat.txt')
             else:
                 work_dir = self.config[v]["path"] + self.tomcat_path
                 chdir(work_dir)
                 if v == "trunk":
-                    popen(f'sh  {self.config[v]["path"]}/tomcat/bin/shutdown.sh')
+                    sys(f'sh  {self.config[v]["path"]}/tomcat/bin/shutdown.sh')
                 else:
-                    popen(f'kill -9 {self.get_pid_by_port(str(host_port))}')
+                    sys(f'kill -9 {self.get_pid_by_port(str(host_port))}')
             while 1:
                 if self.is_port_used(self.host_ip, host_port):
                     product_logger.info(f'[{user}]{v} tomcat服务停止中')
@@ -332,9 +332,9 @@ class ProductAction:
                     sleep(10)
             else:
                 if self.current_system == "Windows":
-                    popen('startup > caches.txt')
+                    sys('startup > caches.txt')
                 else:
-                    popen('sh catalina.sh jpda start > caches.txt')
+                    sys('sh catalina.sh jpda start > caches.txt')
                 break
         product_logger.info(f'[{user}] 启动{v} tomcat服务成功')
         self.change_status(v, "startup")
