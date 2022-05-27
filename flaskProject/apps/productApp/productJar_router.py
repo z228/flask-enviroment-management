@@ -107,18 +107,18 @@ def get_url():
 @productJar_operate.route('/141jar', methods=['GET'])
 def get_141_jar():
     v = {}
-    pro_env = productAction.config
-    # data = loads(request.get_data())
-    for version in VERSION:
-        branch = pro_env[version]["branch"]
-        if branch in ['v8.6', 'v9.0', 'v9.2.1', 'v9.4', 'develop']:
-            v[version] = listdir(f'{ProductAction.ip_local}{branch}')
-        else:
-            v[version] = listdir(f'{ProductAction.ip_134}{branch}')
-        v[version] = productAction.clear_list_not_num(v[version])
-        v[version].sort()
-        v[version].reverse()
-    return productAction.succ(v)
+    # pro_env = productAction.config
+    # # data = loads(request.get_data())
+    # for version in VERSION:
+    #     branch = pro_env[version]["branch"]
+    #     if branch in ['v8.6', 'v9.0', 'v9.2.1', 'v9.4', 'develop']:
+    #         v[version] = listdir(f'{ProductAction.ip_local}{branch}')
+    #     else:
+    #         v[version] = listdir(f'{ProductAction.ip_134}{branch}')
+    #     v[version] = productAction.clear_list_not_num(v[version])
+    #     v[version].sort()
+    #     v[version].reverse()
+    return productAction.succ(productAction.get_jar_list())
 
 
 # 更换环境bihome
