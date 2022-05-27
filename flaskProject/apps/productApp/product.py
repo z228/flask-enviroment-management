@@ -393,14 +393,14 @@ class ProductAction:
 
     def get_fast_path(self, version, date):
         git_branch = self.config[version]["branch"]
-        path_187 = f'{self.ip_187}{git_branch}/{git_branch}'
-        path_134 = f'{self.ip}{git_branch}/{git_branch}'
+        path_187 = f'{self.ip_187}{git_branch}/{git_branch}/{date}'
+        path_134 = f'{self.ip}{git_branch}/{git_branch}/{date}'
         if not os.path.exists(path_187) and not os.path.exists(path_134):
             product_logger.info(f'[system] {version}没有新的jar包')
             return ''
         common = ['api.jar', 'product.jar', 'thirds.jar']
         if os.path.exists(path_187) and os.path.exists(path_134):
-            match, mismatch, errors = cmpfiles(path, path_187, common)
+            mismatch = cmpfiles(path_134, path_187, common)[1]
             if not mismatch:
                 return path_187
             return path_134
@@ -418,8 +418,7 @@ class ProductAction:
         self.change_status(v, 'update')
         return f'{v}已更换{self.format_date_str(date)} jar包'
 
-    def copy_jar(self, version, date=''):
-        # self.toked[v]['update']=True
+    def copy_jar(self, version, date):
         """
         :param
         from_path_in:源路径
@@ -435,9 +434,9 @@ class ProductAction:
             branch = self.config[version]["branch"]
             backup_path = to_path_in + '/backup_product'
             path = self.get_fast_path(version, date)
-            if path == "":
+            if path == "" or date == "":
                 self.change_status(version, "update")
-                return f"{version}没有{date}的jar包"
+                return f"{version}没有{'新' if date == '' else date}的jar包"
             # if date != '':
             #     if not os.path.exists(f'{path}'):
             #         self.change_status(version, "update")
@@ -485,8 +484,7 @@ class ProductAction:
         self.change_status(version, 'update')
         return f'{version}-{self.format_date_str(date)} Jar包更新完成'
 
-    def copy_and_reload(self, v, date='', user=''):
-        # self.toked[v]['updateAndReload']=True
+    def copy_and_reload(self, v, date, user=''):
         """
         :param v: 版本号 develop
         :return:
