@@ -134,4 +134,4 @@ def get_now_format_time():
 
 
 def copy_jacoco_to_192():
-    os.popen(f'/mv -f {jacoco_local_path}/*.exec {jacoco_192_path}')
+    os.popen(f'\mv -f {jacoco_local_path}/*zengchenglong3.exec {jacoco_192_path}')
