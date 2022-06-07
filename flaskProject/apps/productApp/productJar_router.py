@@ -7,6 +7,7 @@ from werkzeug.utils import secure_filename
 
 from . import test
 from .product import ProductAction
+from .junit import *
 
 ALLOWED_EXTENSIONS = {'jar'}
 
@@ -236,6 +237,13 @@ def update_and_reload_product():
     #     return productAction.info(res)
     # else:
     #     return productAction.succ(res)
+    
+# 获取junit失败case列表
+@productJar_operate.route('/junitfail', methods=['GET'])
+def get_junit_fail_list():
+    data = loads(request.get_data())
+    res = get_junit_res(data['version'])
+    return productAction.succ(res)
 
 
 # 更换jar功能页面
