@@ -85,15 +85,15 @@ class ProductAction:
 
     @staticmethod
     def succ(data):
-        return dumps({"code": 200, "data": data})
+        return dumps({"code": 200, "data": data}, ensure_ascii=False, separators=(',', ':'))
 
     @staticmethod
     def error(data):
-        return dumps({"code": 500, "data": data})
+        return dumps({"code": 500, "data": data}, ensure_ascii=False, separators=(',', ':'))
 
     @staticmethod
     def info(data):
-        return dumps({"code": 205, "data": data})
+        return dumps({"code": 205, "data": data}, ensure_ascii=False, separators=(',', ':'))
 
     # 获取脚本列表
     def get_all_script(self):
