@@ -1,6 +1,7 @@
 # from _typeshed import Self
 import os
-from filecmp import cmp
+from os.path import exists, join
+from filecmp import cmp, cmpfiles
 from json import dump, loads, dumps
 from logging import getLogger
 from platform import system
@@ -21,9 +22,9 @@ else:
 
 class ProductAction:
     host_ip = '127.0.0.1'
-    # ip = '/mnt/141/productJar/'
+    ip_141 = '/mnt/141/productJar/'
     ip_134 = '/mnt/134/productJar/'
-    ip_local = '/mnt/187/productJar/'
+    ip_187 = '/mnt/187/productJar/'
     ip = ip_134
     from_path = []
     script_path = f"{os.getcwd()}/static/job"
@@ -72,6 +73,11 @@ class ProductAction:
         return new_array
 
     @staticmethod
+    def clear_list_dumplicate(array=[]):
+        new_array = list(set(array))
+        return new_array
+
+    @staticmethod
     def format_date_str(date_str=''):
         """
         :param date_str: 日期字符串
@@ -92,15 +98,15 @@ class ProductAction:
 
     @staticmethod
     def succ(data):
-        return dumps({"code": 200, "data": data})
+        return dumps({"code": 200, "data": data}, ensure_ascii=False, separators=(',', ':'))
 
     @staticmethod
     def error(data):
-        return dumps({"code": 500, "data": data})
+        return dumps({"code": 500, "data": data}, ensure_ascii=False, separators=(',', ':'))
 
     @staticmethod
     def info(data):
-        return dumps({"code": 205, "data": data})
+        return dumps({"code": 205, "data": data}, ensure_ascii=False, separators=(',', ':'))
 
     # 获取脚本列表
     def get_all_script(self):
@@ -380,6 +386,27 @@ class ProductAction:
         product_logger.info(f'最新的是{path0}的包')
         return os.path.join(from_path_in, path0)
 
+    def get_fast_path(self, version, date):
+        """
+        compare ip_187's jar with ip_134's jar,ip_187 preference
+        :param version: 环境版本
+        :param date: jar包日期
+        :return:
+        """
+        git_branch = self.config[version]["branch"]
+        path_187 = f'{self.ip_187}{git_branch}/{date}'
+        path_134 = f'{self.ip}{git_branch}/{date}'
+        if not exists(path_187) and not exists(path_134):
+            product_logger.info(f'[system] {version}没有新的jar包')
+            return ''
+        common = ['api.jar', 'product.jar', 'thirds.jar']
+        if exists(path_187) and exists(path_134):
+            mismatch = cmpfiles(path_134, path_187, common)[1]
+            if not mismatch:
+                return path_187
+            return path_134
+        return path_187 if exists(path_187) else path_134
+
     def copy_jar(self, version, date='', user=''):
         """
         :param
@@ -396,16 +423,10 @@ class ProductAction:
                 return check_res
             self.change_status(version, "update", True, user)
             backup_path = to_path_in + '/backup_product'
-            if git_branch in ['v8.6', 'v9.0', 'v9.2.1', 'v9.4', 'develop']:
-                path = f'{self.ip_local}{git_branch}/{date}'
-            else:
-                path = f'{self.ip}{git_branch}/{date}'
-            if date != '':
-                if not os.path.exists(path):
-                    self.change_status(version, "update")
-                    return f'{self.format_date_str(date)}的包不存在'
-            else:
-                path = self.get_recent_jar(version)
+            path = self.get_fast_path(version, date)
+            if path == "" or date == "":
+                self.change_status(version, "update")
+                return f"{version}没有{'新' if date == '' else date}的jar包"
             dirs = os.listdir(path)
             # 遍历目标地址中的项目jar
             for file_name in dirs:
@@ -469,6 +490,24 @@ class ProductAction:
             info_list.append(f"{i}:{change_time}")
         return info_list
 
+    def get_jar_list(self):
+        """
+        get jar list from ip_187 and ip_134
+        :return:
+        """
+        jar_list = {}
+        for key in self.config.keys():
+            branch = self.config[key]["branch"]
+            dir_187 = os.listdir(f'{self.ip_187}{branch}') if os.path.exists(f'{self.ip_187}{branch}') else []
+            dir_134 = os.listdir(f'{self.ip_134}{branch}')
+            dir_134.extend(dir_187)
+            dir_list = self.clear_list_dumplicate(dir_134)
+            jar_list[key] = dir_list
+            jar_list[key] = self.clear_list_not_num(jar_list[key])
+            jar_list[key].sort()
+            jar_list[key].reverse()
+        return jar_list
+
     def get_bi_properties(self, v):
         bi_pro_path = os.path.join(self.config[v]["path"] + self.YongHong_path, self.config[v]["bihome"],
                                    'bi.properties')
@@ -479,7 +518,7 @@ class ProductAction:
 
     def update_product_status(self):
         with open(f'{self.status_path}/status.json', 'w', encoding='utf-8') as status:
-            dump(self.config, status, indent = 4)
+            dump(self.config, status, indent=4)
 
     def check_status(self, v, user=''):
         status = self.config[v]

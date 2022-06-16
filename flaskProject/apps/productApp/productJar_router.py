@@ -62,8 +62,6 @@ def get_all_version():
 @productJar_operate.route('/allBihome', methods=['GET'])
 def get_all_bihome():
     v = {key: productAction.config[key]["bihomes"].split(' ') for key in VERSION}
-    # for key in VERSION:
-    #     v[key] = productAction.config[key]["bihomes"].split(' ')
     return productAction.succ(v)
 
 
@@ -71,8 +69,6 @@ def get_all_bihome():
 @productJar_operate.route('/currentBihome', methods=['GET'])
 def get_current_bihome():
     v = {key: productAction.config[key]["bihome"] for key in VERSION}
-    # for key in VERSION:
-    #     v[key] = productAction.config[key]["bihome"]
     return productAction.succ(v)
 
 
@@ -80,8 +76,6 @@ def get_current_bihome():
 @productJar_operate.route('/jarInfo', methods=['GET'])
 def get_product_jar_info():
     v = {key: productAction.get_jar_info(key) for key in VERSION}
-    # for key in VERSION:
-    #     v[key] = productAction.get_jar_info(key)
     return productAction.succ(v)
 
 
@@ -89,8 +83,6 @@ def get_product_jar_info():
 @productJar_operate.route('/biPro', methods=['GET'])
 def get_product_bi_properties():
     v = {key: productAction.get_bi_properties(key) for key in VERSION}
-    # for key in VERSION:
-    #     v[key] = productAction.get_bi_properties(key)
     return productAction.succ(v)
 
 
@@ -98,8 +90,6 @@ def get_product_bi_properties():
 @productJar_operate.route('/url', methods=['GET'])
 def get_url():
     v = {key: productAction.config[key]["url"] for key in VERSION}
-    # for key in VERSION:
-    #     v[key] = productAction.config[key]["url"]
     return productAction.succ(v)
 
 
@@ -107,18 +97,7 @@ def get_url():
 @productJar_operate.route('/141jar', methods=['GET'])
 def get_141_jar():
     v = {}
-    pro_env = productAction.config
-    # data = loads(request.get_data())
-    for version in VERSION:
-        branch = pro_env[version]["branch"]
-        if branch in ['v8.6', 'v9.0', 'v9.2.1', 'v9.4', 'develop']:
-            v[version] = listdir(f'{ProductAction.ip_local}{branch}')
-        else:
-            v[version] = listdir(f'{ProductAction.ip_134}{branch}')
-        v[version] = productAction.clear_list_not_num(v[version])
-        v[version].sort()
-        v[version].reverse()
-    return productAction.succ(v)
+    return productAction.succ(productAction.get_jar_list())
 
 
 # 更换环境bihome
@@ -135,11 +114,6 @@ def shutdown_product():
     print(data['version'])
     res = productAction.shut_tomcat(data['version'], data['user'])
     return productAction.info(res) if '成功' not in res else productAction.succ(res)
-    # if '成功' not in res:
-    #     return productAction.info(res) if '成功' not in res else productAction.succ(res)
-    # else:
-    #     return productAction.succ(res)
-
 
 # 启动产品
 @productJar_operate.route('/startup', methods=['POST'])
@@ -147,10 +121,6 @@ def start_product():
     data = loads(request.get_data())
     res = productAction.start_tomcat(data['version'], data['user'])
     return productAction.succ(res) if '成功' in res else productAction.info(res)
-    # if '成功' not in res:
-    #     return productAction.info(res)
-    # else:
-    #     return productAction.succ(res)
 
 
 # 检测产品是否启动中
@@ -173,8 +143,6 @@ def check_product():
 @productJar_operate.route('/port', methods=['GET'])
 def get_port():
     v = {key: productAction.config[key]["debug"] for key in VERSION}
-    # for key in VERSION:
-    #     v[key] = productAction.config[key]["debug"]
     return productAction.succ(v)
 
 
@@ -182,8 +150,6 @@ def get_port():
 @productJar_operate.route('/bi', methods=['GET'])
 def get_view_port():
     v = {key: productAction.config[key]["port"] for key in VERSION}
-    # for key in VERSION:
-    #     v[key] = productAction.config[key]["port"]
     return productAction.succ(v)
 
 
@@ -193,10 +159,6 @@ def update_jar():
     data = loads(request.get_data())
     res = productAction.copy_jar(data['version'], data['date'], data['user'])
     return productAction.succ(res) if '完成' in res else productAction.info(res)
-    # if '完成' not in res:
-    #     return productAction.info(res)
-    # else:
-    #     return productAction.succ(res)
 
 
 # 更换指定日期Jar包
@@ -205,10 +167,6 @@ def update_jar_with_date():
     data = loads(request.get_data())
     res = productAction.copy_jar(data['version'], data['date'], data['user'])
     return productAction.succ(res) if '完成' in res else productAction.info(res)
-    # if '完成' not in res:
-    #     return productAction.info(res)
-    # else:
-    #     return productAction.succ(res)
 
 
 def allowed_file(filename):
@@ -261,10 +219,6 @@ def reload_product():
     data = loads(request.get_data())
     res = productAction.restart_tomcat(data['version'], data['user'])
     return productAction.succ(res) if '成功' in res else productAction.info(res)
-    # if '成功' not in res:
-    #     return productAction.info(res)
-    # else:
-    #     return productAction.succ(res)
 
 
 # 更换Jar包并重启产品
@@ -273,10 +227,6 @@ def update_and_reload_product():
     data = loads(request.get_data())
     res = productAction.copy_and_reload(data['version'], data['date'], data['user'])
     return productAction.succ(res) if '成功' in res else productAction.info(res)
-    # if '成功' not in res:
-    #     return productAction.info(res)
-    # else:
-    #     return productAction.succ(res)
 
 
 # 更换jar功能页面
