@@ -65,7 +65,7 @@ class ProductAction:
         return new_array
     
     @staticmethod
-    def clear_list_dumplicate(array=None):
+    def clear_list_dumplicate(array=[]):
         new_array = [i for i in array if i not in new_array]
         return new_array
 
