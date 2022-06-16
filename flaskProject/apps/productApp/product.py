@@ -63,6 +63,11 @@ class ProductAction:
             return []
         new_array = [i for i in array if i.isdigit()]
         return new_array
+    
+    @staticmethod
+    def clear_list_dumplicate(array=None):
+        new_array = [i for i in array if i not in new_array]
+        return new_array
 
     @staticmethod
     def format_date_str(date_str=''):
@@ -551,8 +556,9 @@ class ProductAction:
         for key in self.config.keys():
             branch = self.config[key]["branch"]
             dir_187 = listdir(f'{self.ip_187}{branch}') if exists(f'{self.ip_187}{branch}') else []
-            dir_134 = listdir(f'{self.ip_134}{branch}')
-            jar_list[key] = dir_134 if len(dir_187) < len(dir_134) else dir_187
+            dir_134 = listdir(f'{self.ip_134}{branch}').extend(dir_187)
+            dir_list = self.clear_list_dumplicate(dir_134)
+            jar_list[key] = dir_list
             jar_list[key] = self.clear_list_not_num(jar_list[key])
             jar_list[key].sort()
             jar_list[key].reverse()
