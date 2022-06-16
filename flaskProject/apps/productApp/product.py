@@ -66,7 +66,7 @@ class ProductAction:
     
     @staticmethod
     def clear_list_dumplicate(array=[]):
-        new_array = [i for i in array if i not in new_array]
+        new_array = list(set(array))
         return new_array
 
     @staticmethod
