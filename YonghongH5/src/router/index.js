@@ -3,6 +3,8 @@ import VueRouter from 'vue-router'
 import cent187 from '../views/cent187.vue'
 import Home from "../components/Home";
 import Login from '../views/Login.vue'
+import iframeTest from '../views/iframeTest.vue'
+import junitCase from '../views/junitCase.vue'
 
 Vue.use(VueRouter)
 
@@ -47,14 +49,22 @@ const routes = [
                 },
                 component: cent187
             },
-            // {
-            //     path: '/task',
-            //     name: 'task',
-            //     meta: {
-            //         title: 'Windows定时任务',
-            //     },
-            //     component: task
-            // },
+            {
+                path: '/junit',
+                name: 'junitCase',
+                meta: {
+                    title: 'junit',
+                },
+                component: junitCase
+            },
+            {
+                path: '/iframe',
+                name: 'iframeTest',
+                meta: {
+                    title: 'iframe',
+                },
+                component: iframeTest
+            },
         ]
     }
 

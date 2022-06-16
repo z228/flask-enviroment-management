@@ -74,11 +74,16 @@ export default {
           index: 'cent187',
           title: 'cent187环境'
         },
-        // {
-        //   icon: 'el-icon-script',
-        //   index: 'task',
-        //   title: 'Windows定时任务'
-        // },
+        {
+          icon: 'el-icon-script',
+          index: 'junit',
+          title: 'junit'
+        },
+        {
+          icon: 'el-icon-script',
+          index: 'iframe',
+          title: 'iframe'
+        },
       ]
     };
   },

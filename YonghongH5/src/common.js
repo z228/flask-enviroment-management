@@ -4,6 +4,9 @@ const globalObj = {};
 
 // 定义公共变量
 globalObj.name = '小明';
+globalObj.form= {
+    url: "http://192.168.0.187:8080/bi?proc=0&action=index",
+  };
 globalObj.college = [];
 globalObj.status = {
 
