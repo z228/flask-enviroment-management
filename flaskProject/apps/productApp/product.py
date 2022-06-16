@@ -556,7 +556,8 @@ class ProductAction:
         for key in self.config.keys():
             branch = self.config[key]["branch"]
             dir_187 = listdir(f'{self.ip_187}{branch}') if exists(f'{self.ip_187}{branch}') else []
-            dir_134 = listdir(f'{self.ip_134}{branch}').extend(dir_187)
+            dir_134 = listdir(f'{self.ip_134}{branch}')
+            dir_134.extend(dir_187)
             dir_list = self.clear_list_dumplicate(dir_134)
             jar_list[key] = dir_list
             jar_list[key] = self.clear_list_not_num(jar_list[key])
