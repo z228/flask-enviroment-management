@@ -1,13 +1,14 @@
-import os
+# from _typeshed import Self
 from filecmp import cmp, cmpfiles
-from json import dump, dumps, load
+from json import dump, loads, dumps
+from logging import getLogger
+from os import rename, listdir, system as sys, popen, chdir, stat, getcwd
+from os.path import exists, join
 from platform import system
 from shutil import copy2
 from socket import socket, AF_INET, SOCK_STREAM
 from time import sleep, localtime, strftime
 from xml.dom.minidom import parse
-
-from logging import getLogger
 
 product_logger = getLogger("product")
 
@@ -20,40 +21,29 @@ else:
 
 
 class ProductAction:
-    current_path = os.getcwd()
+    current_path = getcwd()
     host_ip = '127.0.0.1'
-    ip = '\\\\192.168.0.141/productJar/'
+    # ip = '\\\\192.168.0.141/productJar/'
     ip_134 = '\\\\192.168.1.134/git-package/'
-    ip_187 = '\\\\192.168.0.187/share/'
+    # ip_187 = '\\\\192.168.0.187/share/'
     ip = ip_134
-    from_path = []
     script_path = f"{current_path}/static/job"
-    status_path = f"{current_path}/apps/productApp/status.json"
-    user_info_path = f"{current_path}/apps/productApp/user.json"
-    to_path = []
+    status_path = f"{current_path}/apps/productApp"
     day_31 = ['02', '04', '06', '08', '09', '11']
-    port = []
-    ubuntu_path = []
-    current_system = system()
+    current_system = system()  # 获取当前系统是windows还是linux
     codeType = {"default": ".py", "application/json": ".json", "sql": ".sql", "javascript": ".js", "css": ".css",
                 "xml": ".xml", "html": ".html", "yaml": ".yml", "markdown": ".md", "python": ".py"}
     root_path = ''
-    YongHong_path = ''
-    tomcat_path = ''
-    bi_xml_path = ''
+    YongHong_path = ''  # Yonghong目录的路径
+    tomcat_path = ''  # tomcat的路径
+    bi_xml_path = ''  # tomcat下webapps/bi中bi.xml的路径
     server_xml_path = ''
-    config = {}
-    jar_list = {}
-    status = {}
-    users = {}
+    config = {}  # 所有环境的属性
 
-    # current_system="linux"
     def __init__(self) -> None:
         self.read_config()
-        if self.current_system == "Windows":
-            self.jar_list = self.get_jar_list()
 
-    # 向某个进程发送crtl+c指令
+    # 向某个进程发送ctrl+c指令
     @staticmethod
     def send_ctrl_c(pid):
         con.FreeConsole()
@@ -73,15 +63,17 @@ class ProductAction:
         if array is None:
             return []
         new_array = [i for i in array if i.isdigit()]
-        # for i in array:
-        #     if i.isdigit():
-        #         new_array.append(i)
+        return new_array
+
+    @staticmethod
+    def clear_list_dumplicate(array=[]):
+        new_array = list(set(array))
         return new_array
 
     @staticmethod
     def format_date_str(date_str=''):
         """
-        :param date_str:日期字符串
+        :param date_str: 日期字符串
         :return:返回格式化后的字符串
         """
         if date_str == '':
@@ -91,29 +83,29 @@ class ProductAction:
     # 通过host+port获取进程pid
     @staticmethod
     def get_pid_from_port(port):
-        res = os.popen(f'netstat -ano |findstr "{port}"').readlines()
+        res = popen(f'netstat -ano |findstr "{port}"').readlines()
         for i in res:
             if i.split()[-2] == 'LISTENING':
                 product_logger.info(i)
                 return i.split()[-1]
 
     @staticmethod
-    def succ(data=""):
-        return dumps({"code": 200, "data": data})
+    def succ(data):
+        return dumps({"code": 200, "data": data}, ensure_ascii=False, separators=(',', ':'))
 
     @staticmethod
-    def error(data=""):
-        return dumps({"code": 500, "data": data})
+    def error(data):
+        return dumps({"code": 500, "data": data}, ensure_ascii=False, separators=(',', ':'))
 
     @staticmethod
-    def info(data=""):
-        return dumps({"code": 205, "data": data})
+    def info(data):
+        return dumps({"code": 205, "data": data}, ensure_ascii=False, separators=(',', ':'))
 
     # 获取脚本列表
     def get_all_script(self):
         job_list = {}
         index = 1
-        for job in os.listdir(self.script_path):
+        for job in listdir(self.script_path):
             job_list[index] = {'name': job}
             index += 1
         product_logger.info(f'脚本列表：{job_list}')
@@ -124,15 +116,15 @@ class ProductAction:
         if task.split('.')[1] != '.py':
             product_logger.info(f'{task}不是python脚本，无法执行')
             return f"非Python脚本无法执行"
-        os.chdir(self.script_path)
-        os.system(f'python {task}')
+        chdir(self.script_path)
+        sys(f'python {task}')
         product_logger.info(f'{task}执行成功')
         return f'{task}执行成功'
 
     # 删除脚本
     def delete_script(self, task):
-        os.chdir(self.script_path)
-        os.system(f'del {task}')
+        chdir(self.script_path)
+        sys(f'del {task}')
         product_logger.warning(f'{task}删除成功')
         return f'{task}删除成功'
 
@@ -147,6 +139,11 @@ class ProductAction:
 
     # 读取配置文件
     def read_config(self):
+        status = {}
+        if exists(f'{self.status_path}/status.json'):
+            with open(f'{self.status_path}/status.json', 'r', encoding='utf-8') as f_status:
+                str_status = f_status.read()
+                status = loads(str_status) if len(str_status) != 0 else {}
         self.config = properties.env_list['version']
         self.root_path = properties.env_list["mid_path"]
         self.YongHong_path = f'{self.root_path}/Yonghong'
@@ -157,9 +154,9 @@ class ProductAction:
             self.config[key]["port"] = self.get_bi_port(key)
             self.config[key]["bihome"] = self.get_bi_home(key)
             if 'dis' in key:
-                self.config[key]['url'] = self.config[key]["port"] + '/bi/?showOthers=true'
+                self.config[key]["url"] = self.config[key]["port"] + '/bi/?showOthers=true'
             else:
-                self.config[key]['url'] = self.config[key]["port"] + '/bi'
+                self.config[key]["url"] = self.config[key]["port"] + '/bi'
             self.config[key]["debug"] = self.get_debug_port(key)
             self.config[key]["startup"] = False
             self.config[key]["shutdown"] = False
@@ -167,10 +164,9 @@ class ProductAction:
             self.config[key]["reload"] = False
             self.config[key]["updateAndReload"] = False
             self.config[key]["changeBihome"] = False
-            self.config[key]["status"] = '1' if self.is_port_used_fast(self.config[key]["port"]) else '0'
+            self.config[key]["opUser"] = ''
+            self.config[key]["startUser"] = status[key]["startUser"] if key in status.keys() else ''
         self.update_product_status()
-        with open(f'{self.current_path}/apps/productApp/user.json', 'r', encoding='utf-8') as user:
-            self.users = load(user)
 
     def get_debug_port(self, version):
         if self.current_system == "Windows":
@@ -185,15 +181,22 @@ class ProductAction:
                     return i.split('=')[1].split(':')[1][0:-1]
         return "未配置"
 
-    def change_bi_home(self, version, bihome):
+    def change_bi_home(self, version, bihome, user=''):
+        """
+        change current bihome
+        :param version: 环境版本
+        :param bihome: 要切换的bihome的值
+        :param user: 发送请求的用户
+        :return:
+        """
         split_str = '\\' if self.current_system == "Windows" else '/'
         reload = False
         if self.is_port_used('localhost', eval(self.config[version]["port"])):
             reload = True
         if reload:
             self.shut_tomcat(version)
-        web_xml_file_path = f'{self.config[version]["path"]}{self.bi_xml_path}'
-        dom = parse(web_xml_file_path)
+        file_path = f'{self.config[version]["path"]}{self.bi_xml_path}'
+        dom = parse(file_path)
         root = dom.documentElement
         param = root.getElementsByTagName('param-value')
         entry = root.getElementsByTagName('env-entry-value')
@@ -202,23 +205,26 @@ class ProductAction:
         param_value[-1] = bihome
         entry_value[-1] = bihome
         self.config[version]["bihome"] = bihome
-        product_logger.info(f'bihome修改为{bihome}')
+        product_logger.info(f'[{user}] bihome修改为{bihome}')
         param[0].firstChild.data = split_str.join(param_value)
         entry[0].firstChild.data = split_str.join(entry_value)
-        with open(web_xml_file_path, 'w') as f:
+        with open(file_path, 'w') as f:
             dom.writexml(f, encoding='utf-8')
         if reload:
             self.start_tomcat(version)
         return "bihome修改成功"
 
     def get_bi_home(self, version):
-        if self.current_system == "Windows":
-            split_str = '\\'
-        else:
-            split_str = '/'
+        """
+        get current bihome
+        :param version: 环境版本
+        :return:
+        """
+        split_str = '\\' if self.current_system == "Windows" else '/'
         file_path = f'{self.config[version]["path"]}{self.bi_xml_path}'
-        dom = parse(file_path)
-        root = dom.documentElement
+        # dom = parse(file_path)
+        # root = dom.documentElement
+        root = self.get_web_xml(file_path)
         param = root.getElementsByTagName('param-value')
         entry = root.getElementsByTagName('env-entry-value')
         param_value = param[0].firstChild.data.split(split_str)
@@ -227,7 +233,16 @@ class ProductAction:
             return param_value[-1]
         return "error bihome"
 
+    @staticmethod
+    def get_web_xml(path):
+        return parse(path).documentElement
+
     def get_bi_port(self, version):
+        """
+        get environment tomcat port
+        :param version: 环境版本
+        :return: 端口
+        """
         file_path = f'{self.config[version]["path"]}{self.server_xml_path}'
         dom = parse(file_path)
         root = dom.documentElement
@@ -239,9 +254,8 @@ class ProductAction:
     def is_port_used(c_ip, c_port):
         """
         check whether the port is used by other program
-        检测端口是否被占用
-        :param c_ip:
-        :param c_port:
+        :param c_ip: ip地址
+        :param c_port: 端口号
         :return:
         """
         s = socket(AF_INET, SOCK_STREAM)
@@ -254,7 +268,7 @@ class ProductAction:
             s.close()
 
     def is_port_used_fast(self, c_port):
-        res = os.popen(f'netstat -ano |findstr {c_port}').read() if self.current_system == "Windows" else os.popen(
+        res = popen(f'netstat -ano |findstr {c_port}').read() if self.current_system == "Windows" else popen(
             f'lsof -i:{c_port}').read()
         if "LISTENING" in res or "LISTEN" in res:
             return True
@@ -265,6 +279,12 @@ class ProductAction:
         return strftime("%H:%M:%S", localtime())
 
     def restart_tomcat(self, v, user=''):
+        """
+        reload the environment tomcat
+        :param v: 环境版本
+        :param user: 操作的用户
+        :return: message
+        """
         if self.config[v]['reload']:
             res = f'{self.config[v]["opUser"]} 正在重启{v}环境，请稍等'
             product_logger.info(f'[{user}] {res}')
@@ -273,16 +293,17 @@ class ProductAction:
             res = f'{self.config[v]["opUser"]} 正在重启{v}环境并更换jar包，请稍等'
             product_logger.info(f'[{user}] {res}')
             return res
-        self.change_status(v, 'reload', True)
-        self.shut_tomcat(v)
+        self.change_status(v, "reload", True, user)
+        self.shut_tomcat(v, user)
         self.start_tomcat(v, user)
-        product_logger.info(f'[user]-{v} tomcat重启成功')
-        self.change_status(v, 'reload')
+        product_logger.info(f'[{user}]{v} tomcat重启成功')
+        self.change_status(v, "reload")
+        self.config[v]["startUser"] = user
         return f'{v} tomcat重启成功！'
 
     @staticmethod
-    def get_pid_by_port_linux(port):
-        res = os.popen(f'lsof -i:{port}').readlines()
+    def get_pids_by_port_linux(port):
+        res = popen(f'lsof -i:{port}').readlines()
         res.pop(0)
         pid = [i.split()[1] for i in res]
         # for i in res:
@@ -290,84 +311,109 @@ class ProductAction:
         return ','.join(set(pid))
 
     # 停止tomcat
-    def shut_tomcat(self, v):
-        check_res = self.check_status(v)
+    def shut_tomcat(self, v, user=''):
+        """
+        shutdown environment tomcat
+        :param v: 环境版本
+        :param user: 操作的用户
+        :return: message
+        """
+        check_res = self.check_status(v, user)
         if check_res != '0':
             return check_res
-        self.change_status(v, 'shutdown', True)
+        self.change_status(v, "shutdown", True, user)
         host_port = eval(self.config[v]["port"])
         if self.is_port_used(self.host_ip, host_port):
             if self.current_system == "Windows":
-                product_logger.info(f'停止{v} tomcat进程')
-                os.system(f'python {self.script_path}/stopTrunk.py {host_port} > stopTomcat.txt')
+                product_logger.info(f'[{user}]停止{v} tomcat进程')
+                sys(f'python {self.script_path}/stopTrunk.py {host_port} > stopTomcat.txt')
             else:
                 work_dir = self.config[v]["path"] + self.tomcat_path
-                os.chdir(work_dir)
-                product_logger.info(f'进入目录{work_dir}')
-                product_logger.info(f'执行命令：sh {work_dir}shutdown.sh')
-                os.popen(f'sh {work_dir}shutdown.sh')
+                chdir(work_dir)
+                if v == "trunk":
+                    sys(f'sh  {self.config[v]["path"]}/tomcat/bin/shutdown.sh')
+                else:
+                    sys(f'kill -9 {self.get_pids_by_port_linux(str(host_port))}')
+            count = 1
             while 1:
                 if self.is_port_used(self.host_ip, host_port):
-                    product_logger.info(f'{v} tomcat服务停止中')
+                    product_logger.info(f'[{user}]{v} tomcat服务停止中')
                 else:
-                    product_logger.info(f'{v} tomcat服务停止成功')
+                    product_logger.info(f'[{user}]{v} tomcat服务停止成功')
                     break
+                count += 1
+                if count % 10 == 0:
+                    sys(f'python {self.script_path}/stopTrunk.py {host_port} > stopTomcat.txt')
+                    product_logger.info(f'[{user}]再次运行 停止{v} tomcat进程')
                 sleep(2)
-            self.change_status(v, 'shutdown')
-            self.config[v]["status"] = '0'
+            self.change_status(v, "shutdown")
+            self.config[v]["startUser"] = ''
             return f'{v} tomcat服务停止成功'
         else:
-            self.change_status(v, 'shutdown')
-            product_logger.info(f'{v} tomcat服务未启动')
-            self.config[v]["status"] = '0'
+            self.change_status(v, "shutdown")
+            product_logger.info(f'[{user}]{v} tomcat服务未启动')
             return f'{v} tomcat服务未启动'
 
     def start_tomcat(self, v, user=''):
-        check_res = self.check_status(v)
+        """
+        start environment tomcat
+        :param v: 环境版本
+        :param user: 操作的用户
+        :return: message
+        """
+        check_res = self.check_status(v, user)
         if check_res != '0':
             return check_res
-        self.change_status(v, 'start', True)
+        self.change_status(v, "startup", True, user)
         host_port = eval(self.config[v]["port"])
         work_dir = self.config[v]["path"] + self.tomcat_path
-        os.chdir(work_dir)
+        chdir(work_dir)
         for scape in range(100):
             if self.is_port_used(self.host_ip, host_port):
-                if self.config[v]["status"] != '0':
-                    product_logger.info(f'已启动{v} tomcat服务')
-                    self.change_status(v, 'start')
-                    self.config[v]["status"] = '1'
-                    return f'已启动{v} tomcat服务'
+                if self.config[v]["startUser"] != '':
+                    self.change_status(v, "startup")
+                    product_logger.info(f'[{user}] {self.config[v]["startUser"]}已启动{v} tomcat服务')
+                    return f'{self.config[v]["startUser"]}已启动{v} tomcat服务'
                 else:
+                    product_logger.info('[{user}] tomcat正在停止中')
                     sleep(10)
-                    product_logger.info('tomcat正在停止中')
             else:
                 if self.current_system == "Windows":
-                    os.system('startup > caches.txt')
+                    if self.config[v]["debug"] != '未配置':
+                        sys('catalina.bat jpda start > caches.txt')
+                    else:
+                        sys('startup > caches.txt')
                 else:
-                    os.system('sh startup.sh > caches.txt')
+                    sys('sh catalina.sh jpda start > caches.txt')
                 break
-        product_logger.info(f'启动{v} tomcat服务成功')
-        self.change_status(v, 'start')
-        self.config[v]["status"] = '1'
+        product_logger.info(f'[{user}] 启动{v} tomcat服务成功')
+        self.change_status(v, "startup")
+        self.config[v]["startUser"] = user
         return f'启动{v} tomcat服务成功'
 
     @staticmethod
     def rename_product_jar(new_name, path):
-        jar_list = os.listdir(path)
+        """
+        rename jar
+        :param new_name: jar的新名
+        :param path: jar包路径
+        :return:
+        """
+        jar_list = listdir(path)
         for i in jar_list:
             if i.split('.')[0] == 'product-swf':
-                os.rename(f'{path}/{i}', f'{path}/product-swf.jar')
+                rename(f'{path}/{i}', f'{path}/product-swf.jar')
             elif new_name.split('.')[0] in i.split('.')[0]:
-                os.rename(f'{path}/{i}', f'{path}/{new_name}')
+                rename(f'{path}/{i}', f'{path}/{new_name}')
 
     def get_recent_jar(self, version):
-        branch = self.config[version]["branch"]
-        from_path_in = f'{self.ip}{branch}'
+        git_branch = self.config[version]["branch"]
+        from_path_in = f'{self.ip}{git_branch}'
         path0 = strftime("%Y%m%d", localtime())
-        product_logger.info(f'当天的{version}jar包地址：{os.path.join(from_path_in, path0)}')
+        product_logger.info(f'当天的{version}jar包地址：{join(from_path_in, path0)}')
         # 检测是否有当天的新Jar，否则往前推一天
         while 1:
-            if not os.path.exists(os.path.join(from_path_in, path0)):
+            if not exists(join(from_path_in, path0)):
                 year = path0[0:4]
                 month = path0[4:6]
                 day = path0[-2:]
@@ -389,103 +435,79 @@ class ProductAction:
             else:
                 break
         product_logger.info(f'最新的是{path0}的包')
-        return os.path.join(from_path_in, path0)
+        return join(from_path_in, path0)
 
     def get_fast_path(self, version, date):
         git_branch = self.config[version]["branch"]
-        path_187 = f'{self.ip_187}{git_branch}/{date}'
         path_134 = f'{self.ip}{git_branch}/{date}'
-        if not os.path.exists(path_187) and not os.path.exists(path_134):
-            product_logger.info(f'[system] {version}没有新的jar包')
+        if not exists(path_134):
+            product_logger.info(f'[system] {version}没有{date}的jar包')
             return ''
-        common = ['api.jar', 'product.jar', 'thirds.jar']
-        if os.path.exists(path_187) and os.path.exists(path_134):
-            mismatch = cmpfiles(path_134, path_187, common)[1]
-            if not mismatch:
-                return path_187
-            return path_134
-        return path_187 if os.path.exists(path_187) else path_134
+        return path_134
 
-    def new_copy(self, v, date=''):
+    def copy_jar(self, version, date, user=''):
         """
-        :param date:
-        :param v: 版本号 develop
-        :return:
-        """
-        self.copy_jar(v, date)
-        product_logger.info(f'{v}-{self.format_date_str(date)} jar包检查完毕')
-        # self.toked[v]['update']=False
-        self.change_status(v, 'update')
-        return f'{v}已更换{self.format_date_str(date)} jar包'
-
-    def copy_jar(self, version, date):
-        """
+        copy jar from ip_187 or ip_134 to local
         :param
         from_path_in:源路径
         to_path_in：目标路径
         version：版本号
         """
         try:
-            check_res = self.check_status(version)
+            git_branch = self.config[version]["branch"]
+            to_path_in = self.config[version]["path"] + self.YongHong_path
+            check_res = self.check_status(version, user)
             if check_res != '0':
                 return check_res
-            self.change_status(version, 'update', True)
-            to_path_in = self.config[version]["path"] + self.YongHong_path
-            branch = self.config[version]["branch"]
+            self.change_status(version, "update", True, user)
             backup_path = to_path_in + '/backup_product'
             path = self.get_fast_path(version, date)
             if path == "" or date == "":
                 self.change_status(version, "update")
                 return f"{version}没有{'新' if date == '' else date}的jar包"
-            dirs = os.listdir(path)
-            common = ['api.jar', 'product.jar', 'thirds.jar']
+            dirs = listdir(path)
+            # 遍历目标地址中的项目jar
             for file_name in dirs:
-                if branch == 'develop' and file_name not in common:
-                    continue
-                from_file = os.path.join(path, file_name)
-                to_file = os.path.join(to_path_in, "product", file_name)
-                if not os.path.exists(to_file):
-                    self.rename_product_jar(file_name, os.path.join(to_path_in, "product"))
+                from_file = join(path, file_name)
+                to_file = join(to_path_in, "product", file_name)
+                if not exists(to_file):
+                    self.rename_product_jar(file_name, join(to_path_in, "product"))
                 try:
-                    # from_134_file = from_file.replace(self.ip, self.ip_134)
-                    # if os.path.exists(from_134_file):
-                    #     if not cmp(from_file, from_134_file):
-                    #         from_file = from_134_file
-                    if not os.path.exists(to_file) or not cmp(from_file, to_file):
+                    if not exists(to_file) or not cmp(from_file, to_file):
                         copy2(from_file, to_file)
-                        product_logger.info(f"{file_name}更新完毕,时间：{self.current_time()}")
+                        product_logger.info(f"[{user}] {file_name}更新完毕,时间：{self.current_time()}")
                         continue
-                    # if not cmp(from_file, to_file):
-                    #     copy2(from_file, to_file)
-                    #     product_logger.info(f"{file_name}更新完毕,时间：{self.current_time()}")
                 except PermissionError:
-                    self.change_status(version, 'update')
-                    product_logger.info(f"{path}下{file_name}正在被占用，请稍等...time{self.current_time()}")
+                    self.change_status(version, "update")
+                    product_logger.info(f"[{user}] {path}下{file_name}正在被占用，请稍等...time{self.current_time()}")
         except FileNotFoundError as err:
-            self.change_status(version, 'update')
-            product_logger.info(f'file error:{err}')
-        product_logger.info(f'{version}-{self.format_date_str(date)} Jar包更新完成')
-        self.change_status(version, 'update')
-        return f'{version}-{self.format_date_str(date)} Jar包更新完成'
+            self.change_status(version, "update")
+            product_logger.info(f'[{user}] file error:{err}')
+        date_format = self.format_date_str(date)
+        product_logger.info(f'[{user}] {version}-{date_format} Jar包更新完成')
+        self.change_status(version, "update")
+        return f'{version}-{date_format} Jar包更新完成'
 
     def copy_and_reload(self, v, date, user=''):
         """
+        update new jar and reload environment
+        :param user: 操作的用户
+        :param date: jar包日期
         :param v: 版本号 develop
         :return:
         """
+        # 先关闭tomcat，然后换JAR，再启动tomcat
         if self.config[v]['updateAndReload']:
-            res = f'正在重启{v}环境并更换jar包，请稍等'
-            product_logger.info(res)
+            res = f'{self.config[v]["opUser"]} 正在重启{v}环境并更换jar包，请稍等'
+            product_logger.info(f'[{user}] {res}')
             return res
         if self.config[v]['reload']:
-            res = f'正在重启{v}环境，请稍等'
-            product_logger.info(res)
+            res = f'{self.config[v]["opUser"]} 正在重启{v}环境，请稍等'
+            product_logger.info(f'[{user}] {res}')
             return res
-        self.change_status(v, "updateAndReload", True)
-        self.shut_tomcat(v)
-        res = self.copy_jar(v, date)
-        self.change_status(v, "updateAndReload", True)
-        # 先关闭tomcat，然后换JAR，再启动tomcat
+        self.change_status(v, "updateAndReload", True, user)
+        self.shut_tomcat(v, user)
+        res = self.copy_jar(v, date, user)
         self.start_tomcat(v, user)
         self.change_status(v, "updateAndReload")
         self.config[v]["startUser"] = user
@@ -494,54 +516,86 @@ class ProductAction:
         return res
 
     def get_jar_info(self, v):
-        product_path = os.path.join(self.config[v]["path"] + self.YongHong_path, 'product')
+        """
+        get the jar dateTime
+        :param v: 环境版本
+        :return:
+        """
+        product_path = join(self.config[v]["path"] + self.YongHong_path, 'product')
         info_list = []
-        for i in os.listdir(product_path):
-            change_time = strftime("日期:%Y%m%d 时间:%H:%M:%S",
-                                   localtime(os.stat(os.path.join(product_path, i)).st_mtime))
+        for i in listdir(product_path):
+            change_time = strftime("{date}:%Y%m%d {time}:%H:%M:%S",
+                                   localtime(stat(join(product_path, i)).st_mtime)).format(date='日期', time='时间')
             info_list.append(f"{i}:{change_time}")
         return info_list
 
     def get_jar_list(self):
+        """
+        get jar list from ip_187 and ip_134
+        :return:
+        """
         jar_list = {}
         for key in self.config.keys():
             branch = self.config[key]["branch"]
-            dir_187 = os.listdir(f'{self.ip_187}{branch}') if os.path.exists(f'{self.ip_187}{branch}') else []
-            dir_134 = os.listdir(f'{self.ip_134}{branch}')
-            jar_list[key] = dir_134 if len(dir_187) < len(dir_134) else dir_187
+            dir_134 = listdir(f'{self.ip_134}{branch}')
+            jar_list[key] = dir_134
             jar_list[key] = self.clear_list_not_num(jar_list[key])
             jar_list[key].sort()
             jar_list[key].reverse()
         return jar_list
 
     def get_bi_properties(self, v):
-        bi_pro_path = os.path.join(self.config[v]["path"] + self.YongHong_path, self.config[v]["bihome"],
-                                   'bi.properties')
+        """
+        get key-value of environment bi.properties
+        :param v: 环境版本
+        :return:
+        """
+        bi_pro_path = join(self.config[v]["path"] + self.YongHong_path, self.config[v]["bihome"],
+                           'bi.properties')
         bi_pro = ''
         with open(bi_pro_path, 'r', encoding='utf-8') as biPro:
             bi_pro += biPro.read()
         return bi_pro
 
+    def update_product_status(self):
+        """
+        update all environments status and dump to status.json
+        :return:
+        """
+        with open(fr'{self.status_path}/status.json', mode='w', encoding='utf-8') as status:
+            dump(self.config, status, indent=4, ensure_ascii=False)
+
     def check_status(self, v, user=''):
+        """
+        check environment status
+        :param v:
+        :param user:
+        :return:
+        """
         status = self.config[v]
         if status['startup']:
-            res = f'已启动{v}环境，请刷新'
+            res = f'{status["opUser"]} 已启动{v}环境，请刷新'
         elif status['shutdown']:
-            res = f'正在关闭{v}环境，请稍等'
+            res = f'{status["opUser"]} 正在关闭{v}环境，请稍等'
         elif status['update']:
-            res = f'正在更新{v}环境jar包，请稍等'
+            res = f'{status["opUser"]} 正在更新{v}环境jar包，请稍等'
         elif status['changeBihome']:
-            res = f'正在更换{v}bihome路径，请稍等'
+            res = f'{status["opUser"]} 正在更换{v}bihome路径，请稍等'
         else:
             res = '0'
         if res != '0':
-            product_logger.info(res)
+            product_logger.info(f'[{user}] {res}')
         return res
 
-    def change_status(self, v, key, flag=False):
+    def change_status(self, v, key, flag=False, op_user=''):
+        """
+        change environment status,default false
+        :param v:
+        :param key:
+        :param flag:
+        :param op_user:
+        :return:
+        """
         self.config[v][key] = flag
+        self.config[v]["opUser"] = op_user
         self.update_product_status()
-
-    def update_product_status(self):
-        with open(self.status_path, 'w', encoding='utf-8') as status:
-            dump(self.config, status, indent=4)

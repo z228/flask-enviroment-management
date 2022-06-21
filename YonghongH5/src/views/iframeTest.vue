@@ -8,7 +8,7 @@
     </div>
     <div class="iframe_card">
       <el-card >
-        <iframe height="600px" width="1200px" :src="form.url"></iframe>
+        <iframe height="700px" width="1400px" :src="form.url"></iframe>
       </el-card>
     </div>
   </div>
@@ -18,9 +18,7 @@
 export default {
   data() {
     return {
-      form: {
-        url: "",
-      },
+      form: this.$common.form
     };
   },
   methods: {
@@ -31,7 +29,7 @@ export default {
 
 <style scoped>
 .url_input {
-  width: 500px;
+  width: 600px;
 }
 .all {
   margin: 10px;
@@ -39,6 +37,6 @@ export default {
 }
 .iframe_card {
   float: left;
-  margin-top: 60px;
+  margin-top: 10px;
 }
 </style>

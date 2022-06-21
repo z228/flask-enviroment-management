@@ -62,3 +62,16 @@ body,
 .upload-demo {
     display: inline;
 }
+
+.CodeMirror {
+    border: 1px solid #eee;
+    height: 550px !important;
+    /*min-height: 100px;*/
+}
+
+/*.CodeMirror-scroll {*/
+/*    height: auto !important;*/
+/*    min-height: 100px;*/
+/*    !*overflow-y: hidden;*!*/
+/*    !*overflow-x: auto;*!*/
+/*}*/

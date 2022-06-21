@@ -14,7 +14,7 @@ from config import APSchedulerJobConfig
 # clean.static_clean() #清理资源文件夹
 app = Flask(__name__)
 app.register_blueprint(productJar_operate, url_prefix='/productJar')
-app.debug = False
+app.debug = True
 bootstrap = Bootstrap(app)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = timedelta(seconds=1)
 app.config.from_object(APSchedulerJobConfig())
@@ -26,15 +26,6 @@ CORS(app, supports_credentials=True)
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'),
                                'static/favicon.ico', mimetype='image/vnd.microsoft.icon')
-
-
-# 主页面
-@app.route('/index', methods=['POST', 'GET'])
-def hello_world():
-    return render_template('index.html')
-
-
-# 主页面
 
 
 def get_log_with_lines(log, lines):

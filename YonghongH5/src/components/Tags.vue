@@ -41,19 +41,13 @@
                 if (item) {
                     delItem.path === this.$route.fullPath && this.$router.push(item.path);
                 }else{
-                    if(this.$store.state.userInfo==='admin'||this.$store.state.userInfo==='曾成龙')
                     this.$router.push('/windows');
-                    else
-                    this.$router.push('/cent185');
                 }
             },
             // 关闭全部标签
             closeAll(){
                 this.tagsList = [];
-                if(this.$store.state.userInfo==='admin'||this.$store.state.userInfo==='曾成龙')
                     this.$router.push('/windows');
-                    else
-                    this.$router.push('/cent185');
             },
             // 关闭其他标签
             closeOther(){

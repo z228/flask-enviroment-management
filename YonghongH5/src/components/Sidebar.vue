@@ -59,26 +59,6 @@ export default {
     return {
       collapse: false,
       items: [
-        // {
-        //   icon: 'el-icon-windows',
-        //   index: 'windows',
-        //   title: 'Windows环境',
-        // },
-        // {
-        //   icon: 'el-icon-ubuntu',
-        //   index: 'linux',
-        //   title: 'Linux环境'
-        // },
-        // {
-        //   icon: 'el-icon-centos',
-        //   index: 'cent185',
-        //   title: 'cent185环境'
-        // },
-        // {
-        //   icon: 'el-icon-script',
-        //   index: 'task',
-        //   title: 'Windows定时任务'
-        // },
       ]
     };
   },
@@ -93,32 +73,12 @@ export default {
       this.collapse = msg;
       bus.$emit('collapse-content', msg);
     });
-    if(this.$store.state.userInfo==='admin'||this.$store.state.userInfo==='曾成龙'||this.$store.state.userInfo==='zcl'){
+    if(this.$store.state.userInfo==='admin'){
       this.$common.objectValueAtoB([
         {
           icon: 'el-icon-windows',
           index: 'windows',
           title: 'Windows环境',
-        },
-        {
-          icon: 'el-icon-ubuntu',
-          index: 'linux',
-          title: 'Linux环境'
-        },
-        {
-          icon: 'el-icon-centos',
-          index: 'cent185',
-          title: 'cent185环境'
-        },
-        {
-          icon: 'el-icon-centos',
-          index: 'cent187',
-          title: 'cent187环境'
-        },
-        {
-          icon: 'el-icon-script',
-          index: 'task',
-          title: 'Windows定时任务'
         },
         {
           icon: 'el-icon-script',
@@ -136,10 +96,15 @@ export default {
     {
       this.$common.objectValueAtoB([
         {
-          icon: 'el-icon-centos',
-          index: 'cent185',
-          title: 'cent185环境'
-        }
+          icon: 'el-icon-windows',
+          index: 'windows',
+          title: 'Windows环境',
+        },
+        {
+          icon: 'el-icon-script',
+          index: 'iframe',
+          title: 'iframe'
+        },
       ],this.items);
     }
   }

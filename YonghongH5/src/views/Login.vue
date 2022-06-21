@@ -2,17 +2,17 @@
   <div class="login-main">
     <el-container>
       <el-header class="">
-        <img class="m-logo" src="../assets/img/bk.gif" alt="" />
+        <img class="m-logo" src="../assets/img/bk.gif" alt=""/>
       </el-header>
       <el-main>
         <div class="ms-login">
           <div class="ms-title editBan">Yonghong管理系统</div>
           <el-form
-            :model="ruleForm"
-            :rules="rules"
-            ref="ruleForm"
-            label-width="0px"
-            class="ms-content"
+              :model="ruleForm"
+              :rules="rules"
+              ref="ruleForm"
+              label-width="0px"
+              class="ms-content"
           >
             <el-form-item prop="username">
               <el-input v-model="ruleForm.userName" placeholder="username">
@@ -23,10 +23,10 @@
             </el-form-item>
             <el-form-item prop="password">
               <el-input
-                type="password"
-                placeholder="password"
-                v-model="ruleForm.password"
-                @keyup.enter="submitForm()"
+                  type="password"
+                  placeholder="password"
+                  v-model="ruleForm.password"
+                  @keyup.enter="submitForm()"
               >
                 <template #prepend>
                   <el-button icon="el-icon-lock"></el-button>
@@ -53,11 +53,11 @@ export default {
     return {
       ruleForm: {
         userName: "admin",
-        password: "",
+        password: "admin",
       },
       rules: {
         userName: [
-          { required: true, message: "请输入用户名", trigger: "blur" },
+          {required: true, message: "请输入用户名", trigger: "blur"},
           {
             min: 3,
             max: 15,
@@ -66,7 +66,7 @@ export default {
           },
         ],
         password: [
-          { required: true, message: "请输入密码", trigger: "change" },
+          {required: true, message: "请输入密码", trigger: "change"},
         ],
       },
     };
@@ -86,7 +86,7 @@ export default {
           } else {
             // alert('submit!');
             _this.$store.commit("SET_USERINFO", this.ruleForm.userName);
-            _this.$router.push("/cent185");
+            _this.$router.push("/windows");
           }
         } else {
           console.log("error submit!!");
@@ -103,14 +103,12 @@ export default {
     let jwt = this.$store.state.token;
     if (_this.$store.state.userInfo !== null) {
       if (
-        this.$store.state.userInfo === "admin" ||
-        this.$store.state.userInfo === "曾成龙" ||
-        this.$store.state.userInfo === "zcl"
+          this.$store.state.userInfo === "admin"
       )
         _this.$router.push("/windows");
       else {
         if (this.$store.state.userInfo === "") console.log("未登录");
-        else _this.$router.push("/cent185");
+        else _this.$router.push("/windows");
       }
     } else {
       if (_this.$store.state.userInfo === null) {

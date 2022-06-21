@@ -34,9 +34,8 @@ time_str = '20210819'
 # if "LISTENING" in res:
   # print(res)
 
-from filecmp import cmpfiles
-patha = r'\\192.168.0.187\share\develop\20220527'
+x = "a"
+patha = fr'\\192.168.0.187\{x}share\develop\20220527'
 pathb = r'\\192.168.1.134\git-package\develop\20220527'
 common = ['api.jar','product.jar','thirds.jar']
-res = cmpfiles(patha, pathb, common)
-print(res)
+print(patha)

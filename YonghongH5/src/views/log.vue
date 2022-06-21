@@ -2,9 +2,7 @@
   <div
     class="log-contain"
     v-if="
-      this.$store.state.userInfo === 'admin' ||
-      this.$store.state.userInfo === '曾成龙' ||
-      this.$store.state.userInfo === 'zcl'
+      this.$store.state.userInfo === 'admin'
     "
   >
     <div class="crumbs">
@@ -115,8 +113,8 @@ export default {
       ],
       value: "Python",
       textarea: "",
-      ip: "192.168.0.192",
-      ip_list: ["192.168.0.192", "192.168.0.187", "192.168.0.185"],
+      ip: "192.168.1.172",
+      ip_list: ["192.168.1.172"],
       status: {
         hasFountScript: false,
       },
@@ -183,4 +181,17 @@ export default {
 
 .btn_ent {
 }
+.CodeMirror {
+    border: 1px solid #eee;
+    height: 800px !important;
+    /*min-height: 100px;*/
+}
+
+.CodeMirror-scroll {
+    height: auto !important;
+    min-height: 100px;
+    /*overflow-y: hidden;*/
+    /*overflow-x: auto;*/
+}
+
 </style>
