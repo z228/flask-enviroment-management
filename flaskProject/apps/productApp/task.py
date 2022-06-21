@@ -83,13 +83,15 @@ def upload_jacoco_file():
         if jacoco == "jacoco_${DATE}_all.exec":
             continue
         if jacoco not in jacoco_199_files:
-            copy(f"{jacoco_root_path}/trunk/{jacoco}",f"{jacoco_199_path}/backup")
+            copy(f"{jacoco_root_path}/trunk/{jacoco}", f"{jacoco_199_path}/backup")
             task_logger.info(f'复制{jacoco} 到"{jacoco_199_path}/backup"')
             dos = f'dir "{jacoco_199_path}/backup"|findstr "{jacoco}"'
-            task_logger.info(dos+'\n'+os.popen(dos).read())
+            task_logger.info(dos + '\n' + os.popen(dos).read())
     return True
 
 
 def shutdown_trunk_tomcat():
-    productAction.shut_tomcat("trunk")
+    VERSION = list(productAction.config.keys())
+    for v in VERSION:
+        productAction.shut_tomcat(v, "system")
     task_logger.info("停掉trunk的tomcat进程")

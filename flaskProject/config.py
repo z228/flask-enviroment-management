@@ -20,15 +20,15 @@ class APSchedulerJobConfig(object):
             'minute': 0,
             'second': 0
         },
-        {
-            'id': 'No5',  # 任务唯一ID
-            'func': 'apps.productApp.task:upload_jacoco_file',
-            'args': None,  # 如果function需要参数，就在这里添加
-            'trigger': 'cron',
-            'hour': 23,
-            'minute': 30,
-            'second': 0
-        },
+        # {
+        #     'id': 'No5',  # 任务唯一ID
+        #     'func': 'apps.productApp.task:upload_jacoco_file',
+        #     'args': None,  # 如果function需要参数，就在这里添加
+        #     'trigger': 'cron',
+        #     'hour': 23,
+        #     'minute': 30,
+        #     'second': 0
+        # },
         # {
         #     'id': 'No6',  # 任务唯一ID
         #     'func': 'apps.productApp.task:test_task',
