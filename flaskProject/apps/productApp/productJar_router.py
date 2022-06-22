@@ -251,7 +251,7 @@ def update_and_reload_product():
 def get_junit_fail_list():
     data = loads(request.get_data())
     productAction.change_junit_exp(data)
-    return productAction.succ(res)
+    return productAction.succ("成功")
 
 
 # 更换jar功能页面
