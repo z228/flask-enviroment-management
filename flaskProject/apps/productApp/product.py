@@ -620,3 +620,8 @@ class ProductAction:
         self.config[v][key] = flag
         self.config[v]["opUser"] = op_user
         self.update_product_status()
+        
+    def change_junit_exp(self,case_list):
+        with open(f'{self.status_path}/cases.json', 'w', encoding='utf-8') as cases:
+            dumps(case_list, cases, indent=4)
+    

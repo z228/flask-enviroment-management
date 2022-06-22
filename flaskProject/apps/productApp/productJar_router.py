@@ -97,8 +97,8 @@ def get_url():
 # 获取141备份的jar包列表
 @productJar_operate.route('/141jar', methods=['GET'])
 def get_141_jar():
-    v = {}
-    return productAction.succ(productAction.get_jar_list())
+    v = productAction.get_jar_list()
+    return productAction.succ(v)
 
 
 # 更换环境bihome
@@ -243,6 +243,14 @@ def update_and_reload_product():
 def get_junit_fail_list():
     data = loads(request.get_data())
     res = get_junit_res(data['version'])
+    return productAction.succ(res)
+
+
+# junit需要更换exp的case
+@productJar_operate.route('/junitexp', methods=['POST'])
+def get_junit_fail_list():
+    data = loads(request.get_data())
+    change_junit_exp(data)
     return productAction.succ(res)
 
 
