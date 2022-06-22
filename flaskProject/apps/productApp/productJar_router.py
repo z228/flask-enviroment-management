@@ -250,7 +250,7 @@ def update_and_reload_product():
 @productJar_operate.route('/junitexp', methods=['POST'])
 def get_junit_fail_list():
     data = loads(request.get_data())
-    change_junit_exp(data)
+    productAction.change_junit_exp(data)
     return productAction.succ(res)
 
 
