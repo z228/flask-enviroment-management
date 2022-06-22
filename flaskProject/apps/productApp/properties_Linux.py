@@ -45,7 +45,7 @@ env_list = {
         "v9.4_dis_M3": {
             "path": "/opt/custom_v9.4_dis_M3",
             "port": "8941",
-            "bihomes": "bihome Export",
+            "bihomes": "bihome Export Script",
             "branch": "custom_v9.4_dis_M3"
         },
         "trunk": {
