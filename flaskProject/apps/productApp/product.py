@@ -622,6 +622,11 @@ class ProductAction:
         self.update_product_status()
         
     def change_junit_exp(self,case_list):
+        path_199 = r''
+        module = case_list['module']
+        version  = case_list['version']
+        cases = case_list['cases']
+        module_path = fr"assetExecute/testcases/{module}"
         with open(f'{self.status_path}/cases.json', 'w', encoding='utf-8') as cases:
             dump(case_list, cases, indent=4, ensure_ascii=False)
     

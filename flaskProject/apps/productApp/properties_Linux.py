@@ -53,6 +53,12 @@ env_list = {
             "port": "8080",
             "bihomes": "bihome",
             "branch": "develop"
+        },
+        "v9.4.3发版测试用": {
+            "path": "/opt/943",
+            "port": "8943",
+            "bihomes": "bihome",
+            "branch": "v9.4"
         }
     },
     "mid_path": ""
