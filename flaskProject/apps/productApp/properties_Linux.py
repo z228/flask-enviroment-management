@@ -59,6 +59,12 @@ env_list = {
             "port": "8943",
             "bihomes": "bihome",
             "branch": "v9.4"
+        },
+        "v9.4.3点点点冒烟用": {
+            "path": "/opt/release/943",
+            "port": "8943",
+            "bihomes": "bihome",
+            "branch": "v9.4"
         }
     },
     "mid_path": ""
