@@ -49,14 +49,14 @@ const routes = [
                 },
                 component: cent187
             },
-            {
-                path: '/junit',
-                name: 'junitCase',
-                meta: {
-                    title: 'junit',
-                },
-                component: junitCase
-            },
+            // {
+            //     path: '/junit',
+            //     name: 'junitCase',
+            //     meta: {
+            //         title: 'junit',
+            //     },
+            //     component: junitCase
+            // },
             {
                 path: '/iframe',
                 name: 'iframeTest',

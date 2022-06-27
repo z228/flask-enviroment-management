@@ -1,24 +1,44 @@
 from flask import Flask, send_from_directory, jsonify
 from flask_cors import CORS
 from datetime import timedelta
-from config import APSchedulerJobConfig
+from schedule import APSchedulerJobConfig
+from flask_sqlalchemy import SQLAlchemy
 from flask_apscheduler import APScheduler
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask_bootstrap import Bootstrap
 from apps.lib.BaseError import *
 from apps.productApp.productJar_router import *
 import logging_mgr
+import configs
 from os.path import join
 from os import getcwd, listdir
 
 app = Flask(__name__)
-app.register_blueprint(productJar_operate, url_prefix='/productJar')
+app.config.from_object(configs)
+db = SQLAlchemy(app)
 app.debug = False
 bootstrap = Bootstrap(app)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = timedelta(seconds=1)
 app.config.from_object(APSchedulerJobConfig())
 CORS(app, supports_credentials=True)
 root_path = getcwd()
+
+
+# 用户表
+class User(db.Model):
+    __tablename__ = 'users'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    username = db.Column(db.String(50))
+    password = db.Column(db.String(50), default="g5")
+    alias = db.Column(db.String(50))
+    email = db.Column(db.String(50))
+    ip = db.Column(db.String(50))
+
+    def __init__(self, username, password, alias):
+        self.username = username
+        self.password = password
+        self.alias = alias
 
 
 # 传递图标
@@ -79,4 +99,6 @@ if __name__ == '__main__':
     scheduler = APScheduler(scheduler=BackgroundScheduler(timezone='Asia/Shanghai'))  # 实例化APScheduler
     scheduler.init_app(app)  # 把任务列表载入实例flask
     scheduler.start()  # 启动任务计划
+    db.create_all()
+    app.register_blueprint(productJar_operate, url_prefix='/productJar')
     app.run(host='0.0.0.0')

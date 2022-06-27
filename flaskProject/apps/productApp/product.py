@@ -9,6 +9,7 @@ from shutil import copy2
 from socket import socket, AF_INET, SOCK_STREAM
 from time import sleep, localtime, strftime
 from xml.dom.minidom import parse
+from app import db, User
 
 product_logger = getLogger("product")
 
@@ -38,9 +39,11 @@ class ProductAction:
     bi_xml_path = ''  # tomcat下webapps/bi中bi.xml的路径
     server_xml_path = ''
     config = {}  # 所有环境的属性
+    users = []
 
     def __init__(self) -> None:
         self.read_config()
+        self.users = User.query.filter().all()
 
     # 向某个进程发送ctrl+c指令
     @staticmethod
@@ -63,7 +66,7 @@ class ProductAction:
             return []
         new_array = [i for i in array if i.isdigit()]
         return new_array
-    
+
     @staticmethod
     def clear_list_dumplicate(array=[]):
         new_array = list(set(array))
@@ -620,13 +623,21 @@ class ProductAction:
         self.config[v][key] = flag
         self.config[v]["opUser"] = op_user
         self.update_product_status()
-        
-    def change_junit_exp(self,case_list):
+
+    def change_junit_exp(self, case_list):
         path_199 = r''
         module = case_list['module']
-        version  = case_list['version']
+        version = case_list['version']
         cases = case_list['cases']
         module_path = fr"assetExecute/testcases/{module}"
         with open(f'{self.status_path}/cases.json', 'w', encoding='utf-8') as cases:
             dump(case_list, cases, indent=4, ensure_ascii=False)
-    
+
+    def user_validation(self, userinfo):
+        username = userinfo['username'].strip().lower()
+        passwd = userinfo['password']
+        for user in self.users:
+            if username in user.username + user.alias:
+                print(user)
+                return self.succ("登录成功") if passwd == user.password else self.info("密码错误")
+        return self.info("用户不存在")

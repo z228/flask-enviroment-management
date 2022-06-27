@@ -237,16 +237,15 @@ def update_and_reload_product():
     #     return productAction.info(res)
     # else:
     #     return productAction.succ(res)
-    
-# 获取junit失败case列表
-# @productJar_operate.route('/junitfail', methods=['POST'])
-# def get_junit_fail_list():
-#     data = loads(request.get_data())
-#     res = get_junit_res(data['version'])
-#     return productAction.succ(res)
 
 
-# junit需要更换exp的case
+# 登录系统校验
+@productJar_operate.route('/login', methods=['POST'])
+def login():
+    data = loads(request.get_data())
+    return productAction.user_validation(data)
+
+
 @productJar_operate.route('/junitexp', methods=['POST'])
 def get_junit_fail_list():
     data = loads(request.get_data())

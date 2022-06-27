@@ -157,22 +157,25 @@
                 class="upload-demo"
                 action="http://192.168.0.187:5000/productJar/uploadJar"
                 :show-file-list="false"
-                :on-success="(response,file,filelist)=> handleAvatarSuccess(scope.row, response,file,filelist)"
+                :on-success="
+                  (response, file, filelist) =>
+                    handleAvatarSuccess(scope.row, response, file, filelist)
+                "
+                :on-process="() => uploadJar(scope.row)"
                 :data="{ version: scope.row.version }"
                 style="width: 150px; margin-left: 10px"
               >
                 <el-button
-                @click="uploadJar(scope.row)"
                   size="small"
                   type="info"
                   icon="el-icon-upload2"
                   @disabled="scope.row.updateAndReload"
-                v-loading="scope.row.updateAndReload"
-                element-loading-text="jar包正在更换中"
-                element-loading-spinner="el-icon-loading"
-                element-loading-background="rgba(0, 0, 0, 0.8)"
-                element-loading-custom-class="updateLoading"
-                plain
+                  v-loading="scope.row.updateAndReload"
+                  element-loading-text="jar包正在更换中"
+                  element-loading-spinner="el-icon-loading"
+                  element-loading-background="rgba(0, 0, 0, 0.8)"
+                  element-loading-custom-class="updateLoading"
+                  plain
                   >上传自定义jar包</el-button
                 >
               </el-upload>
@@ -865,9 +868,9 @@ export default {
         });
       }
     },
-    uploadJar(row){
+    uploadJar(row) {
       this.changeTableData(row.version, "updateAndReload", true);
-    }
+    },
   },
 };
 </script>

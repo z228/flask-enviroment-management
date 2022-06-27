@@ -6,6 +6,7 @@ const globalObj = {};
 globalObj.name = '小明';
 globalObj.form= {
     url: "http://192.168.0.187:8080/bi?proc=0&action=index",
+    junitUrl:"http://192.168.1.199/bi/branch/v9.4/test/reports/20220622/html/index.html"
   };
 globalObj.college = [];
 globalObj.status = {
