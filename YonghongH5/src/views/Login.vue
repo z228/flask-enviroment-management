@@ -19,7 +19,7 @@
               class="ms-content"
           >
             <el-form-item prop="username">
-              <el-input v-model="ruleForm.userName" placeholder="username">
+              <el-input v-model="ruleForm.userName" placeholder="username" tabindex="1">
                 <template #prepend>
                   <el-button icon="el-icon-user"></el-button>
                 </template>
@@ -30,7 +30,8 @@
                   type="password"
                   placeholder="password"
                   v-model="ruleForm.password"
-                  @keyup.enter="submitForm()"
+                  @keyup.enter.native="submitForm()"
+                  tabindex="2"
               >
                 <template #prepend>
                   <el-button icon="el-icon-lock"></el-button>
@@ -39,7 +40,7 @@
             </el-form-item>
             <div class="login-btn">
               <el-form-item>
-                <el-button type="primary" @click="submitForm()">登录</el-button>
+                <el-button type="primary" @keyup.enter.native="submitForm()" @click="submitForm()" tabindex="3">登录</el-button>
               </el-form-item>
             </div>
             <p class="login-tips">Tips :无账户密码请联系管理员</p>
@@ -81,8 +82,8 @@ export default {
         if (valid) {
           const _this = this;
           this.$axios
-              .post("http://192.168.0.192:5000/productJar/login", {
-                username: this.ruleForm.username,
+              .post("http://192.168.0.187:5000/productJar/login", {
+                username: this.ruleForm.userName,
                 password: this.ruleForm.password,
               })
               .then((res) => {
@@ -93,8 +94,8 @@ export default {
                     showClose: true,
                     type: "success",
                   });
-                  this.$store.commit("SET_USERINFO", this.ruleForm.username);
-                  _this.$router.push("/windows");
+                  this.$store.commit("SET_USERINFO", this.ruleForm.userName);
+                  _this.$router.push("/cent187");
                 } else if (res.data.code === 205) {
                   this.$message({
                     message: res.data.data,
