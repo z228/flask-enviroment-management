@@ -4,6 +4,7 @@ from os.path import join
 
 from flask import Blueprint, request, render_template
 from werkzeug.utils import secure_filename
+from functools import wraps
 
 from . import test
 from .product import ProductAction
@@ -14,6 +15,20 @@ ALLOWED_EXTENSIONS = {'jar'}
 productJar_operate = Blueprint('productJar', __name__)
 productAction = ProductAction()
 VERSION = list(productAction.config.keys())
+
+
+# 定义鉴权装饰器，判断用户是否存在
+def authentication_user(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        # 判断session是否保存了用户名，保存了即该用户已登录
+        name = request.headers.get('Authorization')
+        if name:
+            for user in productAction.users:
+                if name in user.username + user.alias:
+                    return func(*args, *kwargs)
+        return productAction.user_not_found(name)
+    return wrapper
 
 
 # 产品jar功能页面
@@ -51,6 +66,7 @@ def save_script():
 
 # 获取所有版本号
 @productJar_operate.route('/all', methods=['GET'])
+@authentication_user
 def get_all_version():
     v = {}
     for key in VERSION:
@@ -61,6 +77,7 @@ def get_all_version():
 
 # 获取所有bihome
 @productJar_operate.route('/allBihome', methods=['GET'])
+@authentication_user
 def get_all_bihome():
     v = {key: productAction.config[key]["bihomes"].split(' ') for key in VERSION}
     return productAction.succ(v)
@@ -68,6 +85,7 @@ def get_all_bihome():
 
 # 获取当前bihome
 @productJar_operate.route('/currentBihome', methods=['GET'])
+@authentication_user
 def get_current_bihome():
     v = {key: productAction.config[key]["bihome"] for key in VERSION}
     return productAction.succ(v)
@@ -75,6 +93,7 @@ def get_current_bihome():
 
 # 获取所有jar包信息
 @productJar_operate.route('/jarInfo', methods=['GET'])
+@authentication_user
 def get_product_jar_info():
     v = {key: productAction.get_jar_info(key) for key in VERSION}
     return productAction.succ(v)
@@ -82,6 +101,7 @@ def get_product_jar_info():
 
 # 获取bi.properties内容
 @productJar_operate.route('/biPro', methods=['GET'])
+@authentication_user
 def get_product_bi_properties():
     v = {key: productAction.get_bi_properties(key) for key in VERSION}
     return productAction.succ(v)
@@ -89,6 +109,7 @@ def get_product_bi_properties():
 
 # 获取当前url
 @productJar_operate.route('/url', methods=['GET'])
+@authentication_user
 def get_url():
     v = {key: productAction.config[key]["url"] for key in VERSION}
     return productAction.succ(v)
@@ -96,6 +117,7 @@ def get_url():
 
 # 获取141备份的jar包列表
 @productJar_operate.route('/141jar', methods=['GET'])
+@authentication_user
 def get_141_jar():
     v = productAction.get_jar_list()
     return productAction.succ(v)
@@ -103,6 +125,7 @@ def get_141_jar():
 
 # 更换环境bihome
 @productJar_operate.route('/changeBihome', methods=['POST'])
+@authentication_user
 def change_bihome():
     data = loads(request.get_data())
     return productAction.succ(productAction.change_bi_home(data['version'], data['bihome']))
@@ -110,6 +133,7 @@ def change_bihome():
 
 # 停止产品
 @productJar_operate.route('/shutdown', methods=['POST'])
+@authentication_user
 def shutdown_product():
     data = loads(request.get_data())
     print(data['version'])
@@ -119,6 +143,7 @@ def shutdown_product():
 
 # 启动产品
 @productJar_operate.route('/startup', methods=['POST'])
+@authentication_user
 def start_product():
     data = loads(request.get_data())
     res = productAction.start_tomcat(data['version'], data['user'])
@@ -127,6 +152,7 @@ def start_product():
 
 # 检测产品是否启动中
 @productJar_operate.route('/check', methods=['GET'])
+@authentication_user
 def check_product():
     v = {}
     for key in VERSION:
@@ -143,6 +169,7 @@ def check_product():
 
 # 获取debug端口
 @productJar_operate.route('/port', methods=['GET'])
+@authentication_user
 def get_port():
     v = {key: productAction.config[key]["debug"] for key in VERSION}
     return productAction.succ(v)
@@ -150,6 +177,7 @@ def get_port():
 
 # 获取产品端口
 @productJar_operate.route('/bi', methods=['GET'])
+@authentication_user
 def get_view_port():
     v = {key: productAction.config[key]["port"] for key in VERSION}
     return productAction.succ(v)
@@ -157,6 +185,7 @@ def get_view_port():
 
 # 更换Jar包
 @productJar_operate.route('/update', methods=['POST'])
+@authentication_user
 def update_jar():
     data = loads(request.get_data())
     res = productAction.copy_jar(data['version'], data['date'], data['user'])
@@ -165,6 +194,7 @@ def update_jar():
 
 # 更换指定日期Jar包
 @productJar_operate.route('/updatewithDate', methods=['POST'])
+@authentication_user
 def update_jar_with_date():
     data = loads(request.get_data())
     res = productAction.copy_jar(data['version'], data['date'], data['user'])
@@ -183,6 +213,7 @@ def allowed_file(filename):
 
 # 上传ar包
 @productJar_operate.route('/uploadJar', methods=['POST'])
+@authentication_user
 def upload_jar():
     version = request.form.get('version')
     user = request.form.get('user')
@@ -217,26 +248,20 @@ def upload_jar():
 
 # 重启产品
 @productJar_operate.route('/reload_product', methods=['POST'])
+@authentication_user
 def reload_product():
     data = loads(request.get_data())
     res = productAction.restart_tomcat(data['version'], data['user'])
     return productAction.succ(res) if '成功' in res else productAction.info(res)
-    # if '成功' not in res:
-    #     return productAction.info(res)
-    # else:
-    #     return productAction.succ(res)
 
 
 # 更换Jar包并重启产品
 @productJar_operate.route('/updateReload', methods=['POST'])
+@authentication_user
 def update_and_reload_product():
     data = loads(request.get_data())
     res = productAction.copy_and_reload(data['version'], data['date'], data['user'])
     return productAction.succ(res) if '成功' in res else productAction.info(res)
-    # if '成功' not in res:
-    #     return productAction.info(res)
-    # else:
-    #     return productAction.succ(res)
 
 
 # 登录系统校验
@@ -247,6 +272,7 @@ def login():
 
 
 @productJar_operate.route('/junitexp', methods=['POST'])
+@authentication_user
 def get_junit_fail_list():
     data = loads(request.get_data())
     productAction.change_junit_exp(data)

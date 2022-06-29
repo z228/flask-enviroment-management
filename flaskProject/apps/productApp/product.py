@@ -100,6 +100,10 @@ class ProductAction:
         return dumps({"code": 500, "data": data}, ensure_ascii=False, separators=(',', ':'))
 
     @staticmethod
+    def user_not_found(user):
+        return dumps({"code": 405, "data": f"{user}用户不存在"}, ensure_ascii=False, separators=(',', ':'))
+
+    @staticmethod
     def info(data):
         return dumps({"code": 205, "data": data}, ensure_ascii=False, separators=(',', ':'))
 

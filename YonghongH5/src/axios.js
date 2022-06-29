@@ -13,14 +13,20 @@ axios.interceptors.response.use(response => {
 
         console.log("==========");
         // console.log(res);
-        if (store.state.userInfo === ''||store.state.userInfo === null) {
+        if (store.state.userInfo === '' || store.state.userInfo === null) {
             router.push("/login")
         }
-        if (res.code === 200||res.code === 205) {
+        if(res.code === 405)
+        {
+            store.commit("REMOVE_INFO")
+            Element.Message.error(res.data, {duration: 3 * 1000});
+            router.push("/login")
+        }
+        if (res.code === 200 || res.code === 205) {
             return response;
         } else {
-            Element.Message.error(res.msg, {duration: 3 * 1000});
-            return Promise.reject(response.data.msg);
+            Element.Message.error(res.data, {duration: 3 * 1000});
+            return Promise.reject(response.data.data);
         }
     },
     error => {
