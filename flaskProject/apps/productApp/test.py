@@ -1,7 +1,9 @@
 import os
 import shutil
 import time
-from flask import current_app
+from logging import getLogger
+
+product_logger = getLogger("product")
 
 path = {
     'back_up_folder_name': r'D:\old_version\trunk\Yonghong_Z-Suite\Yonghong',
@@ -41,6 +43,7 @@ def exchange_junit_res():
         # SVN_dir = f'\\\\192.168.1.199/{dist_list[i]}/assetExecute/testcases/DBPainter/exp'
         SVN_dir = f'D:/SVN/{aim_list[i]}/test/assetExecute/testcases/DBPainter/exp'
         print(SVN_dir)
+        product_logger.info(SVN_dir)
         os.system(f'svn update {SVN_dir}')
         os.system(f'svn commit {SVN_dir} -m "dateElem change" > {os.getcwd()}/logs/SVN_logs/SVN_{dist_list[i]}_Commit.txt')
     return True

@@ -8,6 +8,7 @@ from time import sleep, localtime, strftime
 from xml.dom.minidom import parse
 
 from logging import getLogger
+from app import db, User
 
 product_logger = getLogger("product")
 
@@ -25,15 +26,17 @@ class ProductAction:
     ip = '\\\\192.168.0.141/productJar/'
     ip_134 = '\\\\192.168.1.134/git-package/'
     ip_187 = '\\\\192.168.0.187/share/'
+    ip_199 = '\\\\192.168.1.199'
     ip = ip_134
     from_path = []
     script_path = f"{current_path}/static/job"
-    status_path = f"{current_path}/apps/productApp/status.json"
+    status_path = f"{current_path}/apps/productApp"
     user_info_path = f"{current_path}/apps/productApp/user.json"
     to_path = []
     day_31 = ['02', '04', '06', '08', '09', '11']
     port = []
     ubuntu_path = []
+    users = []
     current_system = system()
     codeType = {"default": ".py", "application/json": ".json", "sql": ".sql", "javascript": ".js", "css": ".css",
                 "xml": ".xml", "html": ".html", "yaml": ".yml", "markdown": ".md", "python": ".py"}
@@ -50,6 +53,7 @@ class ProductAction:
     # current_system="linux"
     def __init__(self) -> None:
         self.read_config()
+        self.users = User.query.filter().all()
         if self.current_system == "Windows":
             self.jar_list = self.get_jar_list()
 
@@ -87,6 +91,10 @@ class ProductAction:
         if date_str == '':
             return date_str
         return f"{date_str[0:4]}-{date_str[4:6]}-{date_str[6:8]}"
+    
+    @staticmethod
+    def clear_list_dumplicate(array=None):
+        return list(set(array))
 
     # 通过host+port获取进程pid
     @staticmethod
@@ -99,15 +107,19 @@ class ProductAction:
 
     @staticmethod
     def succ(data=""):
-        return dumps({"code": 200, "data": data})
+        return dumps({"code": 200, "data": data}, ensure_ascii=False, separators=(',', ':'))
 
     @staticmethod
     def error(data=""):
-        return dumps({"code": 500, "data": data})
+        return dumps({"code": 500, "data": data}, ensure_ascii=False, separators=(',', ':'))
+    
+    @staticmethod
+    def user_not_found(user):
+        return dumps({"code": 405, "data": f"{user}用户不存在"}, ensure_ascii=False, separators=(',', ':'))
 
     @staticmethod
     def info(data=""):
-        return dumps({"code": 205, "data": data})
+        return dumps({"code": 205, "data": data}, ensure_ascii=False, separators=(',', ':'))
 
     # 获取脚本列表
     def get_all_script(self):
@@ -169,8 +181,8 @@ class ProductAction:
             self.config[key]["changeBihome"] = False
             self.config[key]["status"] = '1' if self.is_port_used_fast(self.config[key]["port"]) else '0'
         self.update_product_status()
-        with open(f'{self.current_path}/apps/productApp/user.json', 'r', encoding='utf-8') as user:
-            self.users = load(user)
+        # with open(f'{self.current_path}/apps/productApp/user.json', 'r', encoding='utf-8') as user:
+        #     self.users = load(user)
 
     def get_debug_port(self, version):
         if self.current_system == "Windows":
@@ -391,7 +403,7 @@ class ProductAction:
         product_logger.info(f'最新的是{path0}的包')
         return os.path.join(from_path_in, path0)
 
-    def get_fast_path(self, version, date):
+    def get_fast_path(self, version, date=strftime("%Y%m%d", localtime())):
         git_branch = self.config[version]["branch"]
         path_187 = f'{self.ip_187}{git_branch}/{date}'
         path_134 = f'{self.ip}{git_branch}/{date}'
@@ -508,7 +520,9 @@ class ProductAction:
             branch = self.config[key]["branch"]
             dir_187 = os.listdir(f'{self.ip_187}{branch}') if os.path.exists(f'{self.ip_187}{branch}') else []
             dir_134 = os.listdir(f'{self.ip_134}{branch}')
-            jar_list[key] = dir_134 if len(dir_187) < len(dir_134) else dir_187
+            dir_134.extend(dir_187)
+            dir_list = self.clear_list_dumplicate(dir_134)
+            jar_list[key] = dir_list
             jar_list[key] = self.clear_list_not_num(jar_list[key])
             jar_list[key].sort()
             jar_list[key].reverse()
@@ -543,5 +557,91 @@ class ProductAction:
         self.update_product_status()
 
     def update_product_status(self):
-        with open(self.status_path, 'w', encoding='utf-8') as status:
-            dump(self.config, status, indent=4)
+        with open(f'{self.status_path}/status.json', 'w', encoding='utf-8') as status:
+            dump(self.config, status, indent=4, ensure_ascii =False)
+            
+    def change_junit_exp(self,case_list):
+        branchs = {'branch/v8.6':'v8.6_test','branch/v9.0':'v9.0_test','branch/v9.2.1':'v9.2.1_test','branch/v9.4':'v9.4_test','trunk':'trunk_test'}
+        module = case_list['module']
+        local_path = r'D:\SVN'
+        version  = case_list['version']
+        cases = case_list['cases']
+        testcase = r"assetExecute/testcases"
+        for local,remote in branchs.items():
+            if version not in remote:
+                continue
+            patha = os.path.join(self.ip_199,remote,testcase,module,'res')
+            pathb = os.path.join(local_path,local,'test',testcase,module,'exp')
+            os.chdir(pathb)
+            os.popen('svn cleanup')
+            res = os.popen('svn update').read()
+            product_logger.info(res)
+            for case in cases:
+                dos = f'copy "{patha}/{case}*" "{pathb}/{"/".join(case.split("/")[0:-1])}"'
+                product_logger.info(dos)
+                res = os.popen(dos).read()
+                product_logger.info(res)
+        # with open(f'{self.status_path}/cases.json', 'w', encoding='utf-8') as cases:
+        #     dump(case_list, cases, indent=4, ensure_ascii=False)
+        
+    def user_validation(self, userinfo):
+        username = userinfo['username'].strip().lower()
+        passwd = userinfo['password']
+        user = self.get_user_by_username(username)
+        if user:
+            return self.succ("登录成功") if passwd == user.password else self.info("密码错误")
+        return self.info("用户不存在")
+    
+    def get_user_by_username(self, username):
+        for user in self.users:
+            if username.strip().lower() in user.username + user.alias:
+                return user
+        return ""
+    
+    def update_userlist(self):
+        self.users = User.query.filter().all()
+        
+    def update_userinfo(self,userinfo):
+        username = userinfo["username"]
+        password = userinfo["password"]
+        alias = userinfo["alias"]
+        email = userinfo["email"]
+        user = User.query.filter(User.username == username).first()
+        if user:
+            change = (user.username!=username) | (user.password!=password) | (user.alias!=alias) | (user.email!=email)
+            if change:
+                user.username = username
+                user.password = password
+                user.alias = alias
+                user.email = email
+                # db.session.add(user)
+                db.session.commit()
+                self.update_userlist()
+                return self.succ("用户信息修改成功")
+            return self.info("用户信息无变化")
+        return self.info("用户不存在")
+            
+        
+    def create_new_user(self,userinfo):
+        username = userinfo["username"]
+        password = userinfo["password"]
+        alias = userinfo["alias"]
+        email = userinfo["email"]
+        if not User.query.filter(User.username == username).first():
+            user = User(username, password, alias, email)
+            db.session.add(user)
+            # 连接数据库，添加进MySQL中
+            db.session.commit()
+            self.update_userlist()
+            return self.succ("用户添加成功")
+        return self.info("用户已存在")
+        
+        
+    def delete_user(self,username):
+        user = User.query.filter(User.username == username).first()
+        if user:
+            db.session.delete(user)
+            db.session.commit()
+            self.update_userlist()
+            return self.succ("用户删除成功")
+        return self.info("用户不存在")

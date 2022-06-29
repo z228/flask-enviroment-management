@@ -1,1 +1,1 @@
-__all__ = ["product", "product_router", "task","test"]
+__all__ = ["product", "product_router", "task","test","send_mail"]

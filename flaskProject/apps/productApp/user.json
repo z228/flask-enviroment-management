@@ -1,11 +1,82 @@
 {
-    "zcl": {
-      "alias": "曾成龙 pitt",
-      "password":"g5",
-      "ip": ""
-    },
-    "admin": {
-      "password":"admin",
-      "ip": ""
-    }
+  "zcl": {
+    "alias":"曾成龙 pitt",
+    "password": "g5",
+    "ip": ""
+  }
+  "shikun": {
+    "alias":"larry 石坤 sk",
+    "password": "g5",
+    "ip": ""
+  },
+  "zhensong": {
+    "alias":"jason 郑松 zs",
+    "password": "g5",
+    "ip": ""
+  },
+  "shenfangshuai": {
+    "alias":"sfs 申方帅",
+    "password": "g5",
+    "ip": ""
+  },
+  "wangfeiyan": {
+    "alias":"wfy 王飞燕 cynthia",
+    "password": "g5",
+    "ip": ""
+  },
+  "wangliting": {
+    "alias":"wlt 王丽婷",
+    "password": "g5",
+    "ip": ""
+  },
+  "hechuan": {
+    "alias":"brandon 贺川 hc",
+    "password": "g5",
+    "ip": ""
+  },
+  "zhoulin": {
+    "alias":"zl 周林",
+    "password": "g5",
+    "ip": ""
+  },
+  "liulei": {
+    "alias":"刘磊 ll",
+    "password": "g5",
+    "ip": ""
+  },
+  "zhaoxin": {
+    "alias":"zx 赵欣",
+    "password": "g5",
+    "ip": ""
+  },
+  "chenxiaoxia": {
+    "alias":"cxx 陈晓霞 三三",
+    "password": "g5",
+    "ip": ""
+  },
+  "wanghairong": {
+    "alias":"王海容 whr",
+    "password": "g5",
+    "ip": ""
+  },
+  "zhaoyalan": {
+    "alias":"lucy 赵亚兰 zyl",
+    "password": "g5",
+    "ip": ""
+  },
+  "laizhenhai": {
+    "alias":"lzh 赖振海 jose",
+    "password": "g5",
+    "ip": ""
+  },
+  "gaoqiuhan": {
+    "alias":"una 高秋涵 gqh",
+    "password": "g5",
+    "ip": ""
+  },
+  "huangyueqi": {
+    "alias":"黄月琪 hyq",
+    "password": "g5",
+    "ip": ""
+  }
 }
