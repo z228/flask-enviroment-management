@@ -640,8 +640,60 @@ class ProductAction:
     def user_validation(self, userinfo):
         username = userinfo['username'].strip().lower()
         passwd = userinfo['password']
+        user = self.get_user_by_username(username)
+        if user:
+            return self.succ("登录成功") if passwd == user.password else self.info("密码错误")
+        return self.info("用户不存在")
+
+    def get_user_by_username(self, username):
         for user in self.users:
-            if username in user.username + user.alias:
-                print(user)
-                return self.succ("登录成功") if passwd == user.password else self.info("密码错误")
+            if username.strip().lower() in user.username + user.alias:
+                return user
+        return ""
+
+    def update_userlist(self):
+        self.users = User.query.filter().all()
+
+    def update_userinfo(self, userinfo):
+        username = userinfo["username"]
+        password = userinfo["password"]
+        alias = userinfo["alias"]
+        email = userinfo["email"]
+        user = User.query.filter(User.username == username).first()
+        if user:
+            change = (user.username != username) | (user.password != password) | (user.alias != alias) | (
+                        user.email != email)
+            if change:
+                user.username = username
+                user.password = password
+                user.alias = alias
+                user.email = email
+                # db.session.add(user)
+                db.session.commit()
+                self.update_userlist()
+                return self.succ("用户信息修改成功")
+            return self.info("用户信息无变化")
+        return self.info("用户不存在")
+
+    def create_new_user(self, userinfo):
+        username = userinfo["username"]
+        password = userinfo["password"]
+        alias = userinfo["alias"]
+        email = userinfo["email"]
+        if not User.query.filter(User.username == username).first():
+            user = User(username, password, alias, email)
+            db.session.add(user)
+            # 连接数据库，添加进MySQL中
+            db.session.commit()
+            self.update_userlist()
+            return self.succ("用户添加成功")
+        return self.info("用户已存在")
+
+    def delete_user(self, username):
+        user = User.query.filter(User.username == username).first()
+        if user:
+            db.session.delete(user)
+            db.session.commit()
+            self.update_userlist()
+            return self.succ("用户删除成功")
         return self.info("用户不存在")

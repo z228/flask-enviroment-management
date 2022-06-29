@@ -22,12 +22,12 @@ def authentication_user(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         # 判断session是否保存了用户名，保存了即该用户已登录
-        name = request.headers.get('Authorization')
-        if name:
-            for user in productAction.users:
-                if name in user.username + user.alias:
-                    return func(*args, *kwargs)
+        name = request.headers.get('Authorization').strip().lower()
+        user = productAction.get_user_by_username(name)
+        if user:
+            return func(*args, *kwargs)
         return productAction.user_not_found(name)
+
     return wrapper
 
 
@@ -269,6 +269,39 @@ def update_and_reload_product():
 def login():
     data = loads(request.get_data())
     return productAction.user_validation(data)
+
+
+# 更新用户信息
+@productJar_operate.route('/updateuserinfo', methods=['POST'])
+def update_userinfo():
+    userinfo = loads(request.get_data())
+    return productAction.update_userinfo(userinfo)
+
+
+# 获取当前用户信息
+@productJar_operate.route('/getuserinfo', methods=['POST'])
+def get_userinfo():
+    data = loads(request.get_data())
+    username = data["username"]
+    user = productAction.get_user_by_username(username)
+    if user:
+        return productAction.succ(user.getInfo())
+    return productAction.user_not_found(username)
+
+
+# 添加用户
+@productJar_operate.route('/adduser', methods=['POST'])
+def add_user():
+    data = loads(request.get_data())
+    return productAction.create_new_user(data)
+
+
+# 删除用户
+@productJar_operate.route('/deleteuser', methods=['POST'])
+def delete_user():
+    data = loads(request.get_data())
+    username = data["username"].strip().lower()
+    return productAction.delete_user(username)
 
 
 @productJar_operate.route('/junitexp', methods=['POST'])

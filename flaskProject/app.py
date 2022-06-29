@@ -35,10 +35,14 @@ class User(db.Model):
     email = db.Column(db.String(50))
     ip = db.Column(db.String(50))
 
-    def __init__(self, username, password, alias):
+    def __init__(self, username, password, alias="", email=""):
         self.username = username
         self.password = password
         self.alias = alias
+        self.email = email
+
+    def getInfo(self):
+        return {"username": self.username, "password": self.password, "alias": self.alias, "email": self.email}
 
 
 # 传递图标
