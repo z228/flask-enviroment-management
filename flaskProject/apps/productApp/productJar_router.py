@@ -214,7 +214,6 @@ def allowed_file(filename):
 
 # 上传ar包
 @productJar_operate.route('/uploadJar', methods=['POST'])
-@authentication_user
 def upload_jar():
     version = request.form.get('version')
     user = request.form.get('user')
