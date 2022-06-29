@@ -663,7 +663,7 @@ class ProductAction:
         password = userinfo["password"]
         alias = userinfo["alias"]
         email = userinfo["email"]
-        user = User.query.filter(User.user_id == user_id).first()
+        user = User.query.filter(User.id == user_id).first()
         if user:
             if self.get_user_by_username(username):
                 return self.info("用户名已存在")
