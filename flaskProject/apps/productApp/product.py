@@ -646,9 +646,9 @@ class ProductAction:
         return self.info("用户不存在")
 
     def get_user_by_username(self, username):
-        user_info = User.query.filter(User.username == username.strip().lower()).first()
-        if user_info:
-            return user_info
+        for user in self.users:
+            if username.strip().lower() == user.username:
+                return user
         for user in self.users:
             if username.strip().lower() in user.alias:
                 return user
