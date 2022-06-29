@@ -665,7 +665,7 @@ class ProductAction:
         email = userinfo["email"]
         user = User.query.filter(User.id == user_id).first()
         if user:
-            if self.get_user_by_username(username):
+            if self.get_user_by_username(username) and user.username != username:
                 return self.info("用户名已存在")
             change = (user.username != username) | (user.password != password) | (user.alias != alias) | (
                     user.email != email)
