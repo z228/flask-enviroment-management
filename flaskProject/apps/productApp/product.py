@@ -659,7 +659,7 @@ class ProductAction:
 
     def update_userinfo(self, userinfo):
         user_id = userinfo["userId"]
-        username = userinfo["username"]
+        username = userinfo["username"].strip().lower()
         password = userinfo["password"]
         alias = userinfo["alias"]
         email = userinfo["email"]
@@ -682,7 +682,7 @@ class ProductAction:
         return self.info("用户不存在")
 
     def create_new_user(self, userinfo):
-        username = userinfo["username"]
+        username = userinfo["username"].strip().lower()
         password = userinfo["password"]
         alias = userinfo["alias"]
         email = userinfo["email"]
