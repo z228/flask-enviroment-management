@@ -658,7 +658,7 @@ class ProductAction:
         self.users = User.query.filter().all()
 
     def update_userinfo(self, userinfo):
-        user_id = userinfo["user_id"]
+        user_id = userinfo["userId"]
         username = userinfo["username"]
         password = userinfo["password"]
         alias = userinfo["alias"]
