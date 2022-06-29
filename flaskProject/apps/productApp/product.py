@@ -646,8 +646,11 @@ class ProductAction:
         return self.info("用户不存在")
 
     def get_user_by_username(self, username):
+        user_info = User.query.filter(User.username == username.strip().lower()).first()
+        if user_info:
+            return user_info
         for user in self.users:
-            if username.strip().lower() in user.username + user.alias:
+            if username.strip().lower() in user.alias:
                 return user
         return ""
 
@@ -655,14 +658,17 @@ class ProductAction:
         self.users = User.query.filter().all()
 
     def update_userinfo(self, userinfo):
+        user_id = userinfo["user_id"]
         username = userinfo["username"]
         password = userinfo["password"]
         alias = userinfo["alias"]
         email = userinfo["email"]
-        user = User.query.filter(User.username == username).first()
+        user = User.query.filter(User.user_id == user_id).first()
         if user:
+            if self.get_user_by_username(username):
+                return self.info("用户名已存在")
             change = (user.username != username) | (user.password != password) | (user.alias != alias) | (
-                        user.email != email)
+                    user.email != email)
             if change:
                 user.username = username
                 user.password = password

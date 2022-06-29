@@ -29,7 +29,7 @@ class User(db.Model):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    username = db.Column(db.String(50))
+    username = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(50), default="g5")
     alias = db.Column(db.String(50))
     email = db.Column(db.String(50))
@@ -42,7 +42,8 @@ class User(db.Model):
         self.email = email
 
     def getInfo(self):
-        return {"username": self.username, "password": self.password, "alias": self.alias, "email": self.email}
+        return {"id": self.id, "username": self.username, "password": self.password, "alias": self.alias,
+                "email": self.email}
 
 
 # 传递图标

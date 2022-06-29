@@ -5,6 +5,7 @@ import Home from "../components/Home";
 import Login from '../views/Login.vue'
 import iframeTest from '../views/iframeTest.vue'
 import junitCase from '../views/junitCase.vue'
+import userinfo from '../views/userinfo.vue'
 
 Vue.use(VueRouter)
 const originalPush = VueRouter.prototype.push
@@ -69,6 +70,14 @@ const routes = [
                     title: 'iframe',
                 },
                 component: iframeTest
+            },
+            {
+                path: '/userinfo',
+                name: 'userinfo',
+                meta: {
+                    title: 'userinfo',
+                },
+                component: userinfo
             },
         ]
     }

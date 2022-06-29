@@ -172,7 +172,7 @@
                   (response, file, filelist) =>
                     handleAvatarSuccess(scope.row, response, file, filelist)
                 "
-                  :on-process="() => uploadJar(scope.row)"
+                  :on-progress="(event, file, fileList) => uploadJar(scope.row, event, file, fileList)"
                   :data="{ version: scope.row.version }"
                   style="width: 150px; margin-left: 10px"
               >
@@ -319,7 +319,7 @@ export default {
       let _this = this;
       this.$axios
           .get("http://192.168.0.187:5000/productJar/jarInfo", {
-             headers: {
+            headers: {
               "Authorization": sessionStorage.getItem("userInfo")
             }
           })
@@ -337,7 +337,7 @@ export default {
             console.log(err);
             this.$message({
               message: err,
-              duration: 600000,
+              duration: 10 * 1000,
               showClose: true,
               type: "error",
             });
@@ -347,7 +347,7 @@ export default {
       let _this = this;
       this.$axios
           .get("http://192.168.0.187:5000/productJar/all", {
-             headers: {
+            headers: {
               "Authorization": sessionStorage.getItem("userInfo")
             }
           })
@@ -370,7 +370,7 @@ export default {
           .catch((err) => {
             this.$message({
               message: err,
-              duration: 600000,
+              duration: 10 * 1000,
               showClose: true,
               type: "error",
             });
@@ -381,7 +381,7 @@ export default {
       let _this = this;
       this.$axios
           .get("http://192.168.0.187:5000/productJar/141jar", {
-             headers: {
+            headers: {
               "Authorization": sessionStorage.getItem("userInfo")
             }
           })
@@ -400,7 +400,7 @@ export default {
             console.log(err);
             this.$message({
               message: err,
-              duration: 600000,
+              duration: 10 * 1000,
               showClose: true,
               type: "error",
             });
@@ -410,7 +410,7 @@ export default {
       let _this = this;
       this.$axios
           .get("http://192.168.0.187:5000/productJar/allBihome", {
-             headers: {
+            headers: {
               "Authorization": sessionStorage.getItem("userInfo")
             }
           })
@@ -428,7 +428,7 @@ export default {
             console.log(err);
             this.$message({
               message: err,
-              duration: 600000,
+              duration: 10 * 1000,
               showClose: true,
               type: "error",
             });
@@ -438,7 +438,7 @@ export default {
       let _this = this;
       this.$axios
           .get("http://192.168.0.187:5000/productJar/currentBihome", {
-             headers: {
+            headers: {
               "Authorization": sessionStorage.getItem("userInfo")
             }
           })
@@ -451,7 +451,7 @@ export default {
             console.log(err);
             this.$message({
               message: err,
-              duration: 600000,
+              duration: 10 * 1000,
               showClose: true,
               type: "error",
             });
@@ -461,7 +461,7 @@ export default {
       let _this = this;
       this.$axios
           .get("http://192.168.0.187:5000/productJar/url", {
-             headers: {
+            headers: {
               "Authorization": sessionStorage.getItem("userInfo")
             }
           })
@@ -483,7 +483,7 @@ export default {
             console.log(err);
             this.$message({
               message: err,
-              duration: 600000,
+              duration: 10 * 1000,
               showClose: true,
               type: "error",
             });
@@ -493,7 +493,7 @@ export default {
       let _this = this;
       this.$axios
           .get("http://192.168.0.187:5000/productJar/check", {
-             headers: {
+            headers: {
               "Authorization": sessionStorage.getItem("userInfo")
             }
           })
@@ -551,7 +551,7 @@ export default {
             console.log(err);
             this.$message({
               message: err,
-              duration: 600000,
+              duration: 10 * 1000,
               showClose: true,
               type: "error",
             });
@@ -561,7 +561,7 @@ export default {
       let _this = this;
       this.$axios
           .get("http://192.168.0.187:5000/productJar/port", {
-             headers: {
+            headers: {
               "Authorization": sessionStorage.getItem("userInfo")
             }
           })
@@ -579,7 +579,7 @@ export default {
             console.log(err);
             this.$message({
               message: err,
-              duration: 600000,
+              duration: 10 * 1000,
               showClose: true,
               type: "error",
             });
@@ -589,7 +589,7 @@ export default {
       let _this = this;
       this.$axios
           .get("http://192.168.0.187:5000/productJar/bi", {
-             headers: {
+            headers: {
               "Authorization": sessionStorage.getItem("userInfo")
             }
           })
@@ -607,7 +607,7 @@ export default {
             console.log(err);
             this.$message({
               message: err,
-              duration: 600000,
+              duration: 10 * 1000,
               showClose: true,
               type: "error",
             });
@@ -621,7 +621,7 @@ export default {
             version: row.version,
             user: this.$store.state.userInfo,
           }, {
-             headers: {
+            headers: {
               "Authorization": sessionStorage.getItem("userInfo")
             }
           })
@@ -633,7 +633,7 @@ export default {
             if (res.data.code === 200) {
               this.$message({
                 message: res.data.data,
-                duration: 600000,
+                duration: 10 * 1000,
                 showClose: true,
                 type: "success",
               });
@@ -642,7 +642,7 @@ export default {
               console.log(res.data);
               this.$message({
                 message: res.data.data,
-                duration: 600000,
+                duration: 10 * 1000,
                 showClose: true,
                 type: "warning",
               });
@@ -652,7 +652,7 @@ export default {
           .catch((err) => {
             this.$message({
               message: err,
-              duration: 600000,
+              duration: 10 * 1000,
               showClose: true,
               type: "error",
             });
@@ -668,7 +668,7 @@ export default {
             version: row.version,
             user: this.$store.state.userInfo,
           }, {
-             headers: {
+            headers: {
               "Authorization": sessionStorage.getItem("userInfo")
             }
           })
@@ -684,7 +684,7 @@ export default {
               }
               this.$message({
                 message: res.data.data,
-                duration: 600000,
+                duration: 10 * 1000,
                 showClose: true,
                 type: "success",
               });
@@ -693,7 +693,7 @@ export default {
               console.log(res.data);
               this.$message({
                 message: res.data.data,
-                duration: 600000,
+                duration: 10 * 1000,
                 showClose: true,
                 type: "warning",
               });
@@ -703,7 +703,7 @@ export default {
           .catch((err) => {
             this.$message({
               message: err,
-              duration: 600000,
+              duration: 10 * 1000,
               showClose: true,
               type: "error",
             });
@@ -728,7 +728,7 @@ export default {
         };
       this.$axios
           .post("http://192.168.0.187:5000/productJar/update", form, {
-             headers: {
+            headers: {
               "Authorization": sessionStorage.getItem("userInfo")
             }
           })
@@ -736,7 +736,7 @@ export default {
             if (res.data.code === 200) {
               this.$message({
                 message: res.data.data,
-                duration: 600000,
+                duration: 10 * 1000,
                 showClose: true,
                 type: "success",
               });
@@ -745,7 +745,7 @@ export default {
               console.log(res.data);
               this.$message({
                 message: res.data.data,
-                duration: 600000,
+                duration: 10 * 1000,
                 showClose: true,
                 type: "warning",
               });
@@ -756,7 +756,7 @@ export default {
           .catch((err) => {
             this.$message({
               message: err,
-              duration: 600000,
+              duration: 10 * 1000,
               showClose: true,
               type: "error",
             });
@@ -772,7 +772,7 @@ export default {
             version: row.version,
             user: this.$store.state.userInfo,
           }, {
-             headers: {
+            headers: {
               "Authorization": sessionStorage.getItem("userInfo")
             }
           })
@@ -788,7 +788,7 @@ export default {
               }
               this.$message({
                 message: res.data.data,
-                duration: 600000,
+                duration: 10 * 1000,
                 showClose: true,
                 type: "success",
               });
@@ -797,7 +797,7 @@ export default {
               console.log(res.data);
               this.$message({
                 message: res.data.data,
-                duration: 600000,
+                duration: 10 * 1000,
                 showClose: true,
                 type: "warning",
               });
@@ -807,7 +807,7 @@ export default {
           .catch((err) => {
             this.$message({
               message: err,
-              duration: 600000,
+              duration: 10 * 1000,
               showClose: true,
               type: "error",
             });
@@ -833,7 +833,7 @@ export default {
       this.changeTableData(row.version, "updateAndReload", true);
       this.$axios
           .post("http://192.168.0.187:5000/productJar/updateReload", form, {
-             headers: {
+            headers: {
               "Authorization": sessionStorage.getItem("userInfo")
             }
           })
@@ -849,7 +849,7 @@ export default {
               }
               this.$message({
                 message: res.data.data,
-                duration: 600000,
+                duration: 10 * 1000,
                 showClose: true,
                 type: "success",
               });
@@ -858,7 +858,7 @@ export default {
               console.log(res.data);
               this.$message({
                 message: res.data.data,
-                duration: 600000,
+                duration: 10 * 1000,
                 showClose: true,
                 type: "warning",
               });
@@ -869,7 +869,7 @@ export default {
           .catch((err) => {
             this.$message({
               message: err,
-              duration: 600000,
+              duration: 10 * 1000,
               showClose: true,
               type: "error",
             });
@@ -884,7 +884,7 @@ export default {
             bihome: key,
             user: this.$store.state.userInfo,
           }, {
-             headers: {
+            headers: {
               "Authorization": sessionStorage.getItem("userInfo")
             }
           })
@@ -892,7 +892,7 @@ export default {
             if (res.data.code === 200) {
               this.$message({
                 message: res.data.data,
-                duration: 600000,
+                duration: 10 * 1000,
                 showClose: true,
                 type: "success",
               });
@@ -901,7 +901,7 @@ export default {
           .catch((err) => {
             this.$message({
               message: err,
-              duration: 600000,
+              duration: 10 * 1000,
               showClose: true,
               type: "error",
             });
@@ -927,7 +927,7 @@ export default {
       if (res.code === 200) {
         this.$message({
           message: res.data,
-          duration: 600000,
+          duration: 10 * 1000,
           showClose: true,
           type: "success",
         });
@@ -935,13 +935,13 @@ export default {
       } else {
         this.$message({
           message: res.data,
-          duration: 600000,
+          duration: 10 * 1000,
           showClose: true,
           type: "error",
         });
       }
     },
-    uploadJar(row) {
+    uploadJar(row, event, file, fileList) {
       this.changeTableData(row.version, "updateAndReload", true);
     },
   },

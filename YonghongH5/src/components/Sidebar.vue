@@ -84,6 +84,11 @@ export default {
           index: 'iframe',
           title: 'iframe'
         },
+          {
+          icon: 'el-icon-user',
+          index: 'userinfo',
+          title: '用户信息'
+        },
       ]
     };
   },
