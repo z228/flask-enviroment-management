@@ -22,12 +22,13 @@ def authentication_user(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         # 判断session是否保存了用户名，保存了即该用户已登录
-        name = request.headers.get('Authorization').strip().lower()
-        user = productAction.get_user_by_username(name)
-        if user:
-            return func(*args, *kwargs)
+        name = request.headers.get('Authorization')
+        if name:
+            username = name.strip().lower()
+            user = productAction.get_user_by_username(username)
+            if user:
+                return func(*args, *kwargs)
         return productAction.user_not_found(name)
-
     return wrapper
 
 
