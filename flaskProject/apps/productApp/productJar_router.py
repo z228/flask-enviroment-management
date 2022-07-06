@@ -289,6 +289,15 @@ def get_userinfo():
     return productAction.user_not_found(username)
 
 
+# 获取所有用户信息
+@productJar_operate.route('/alluserinfo', methods=['GET'])
+def get_all_userinfo():
+    rep = []
+    for user in productAction.users:
+        rep.append(user.getInfo())
+    return productAction.succ(rep)
+
+
 # 添加用户
 @productJar_operate.route('/adduser', methods=['POST'])
 def add_user():
