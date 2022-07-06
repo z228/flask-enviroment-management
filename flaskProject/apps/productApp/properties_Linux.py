@@ -54,18 +54,12 @@ env_list = {
             "bihomes": "bihome",
             "branch": "develop"
         },
-        # "v9.4.3发版测试用": {
-        #     "path": "/opt/943",
-        #     "port": "8943",
-        #     "bihomes": "bihome",
-        #     "branch": "v9.4"
-        # },
-        # "v9.4.3点点点冒烟用": {
-        #     "path": "/opt/release/943",
-        #     "port": "8943",
-        #     "bihomes": "bihome",
-        #     "branch": "v9.4"
-        # }
+        "trunk(数据库系统)": {
+            "path": "/opt/trunkDB",
+            "port": "8010",
+            "bihomes": "bihome",
+            "branch": "develop"
+        },
     },
     "mid_path": ""
 }
