@@ -36,11 +36,11 @@ env_list = {
             "bihomes": "bihome Export",
             "branch": "custom_v9.2.3_huawei_dis"
         },
-        "v9.4.1_huawei_xian": {
+        "v9.4.3_huawei_xian": {
             "path": "/opt/Yonghong_Z-Suite_xian_941",
             "port": "8941",
             "bihomes": "bihome Export UIauto",
-            "branch": "custom_v9.4.1_huawei_xian"
+            "branch": "custom_v9.4.3_huawei_xian"
         },
         "v9.4_dis_M3": {
             "path": "/opt/custom_v9.4_dis_M3",
