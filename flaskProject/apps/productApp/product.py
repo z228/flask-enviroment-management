@@ -341,12 +341,18 @@ class ProductAction:
                     sys(f'sh  {self.config[v]["path"]}/tomcat/bin/shutdown.sh')
                 else:
                     sys(f'kill -9 {self.get_pid_by_port(str(host_port))}')
+            count = 1
             while 1:
+                if count % 10 == 0:
+                    product_logger.info(f'[{user}]{v} 再次运行停止tomcat命令')
+                    sys(f'sh  {self.config[v]["path"]}/tomcat/bin/shutdown.sh')
+                    sleep(2)
                 if self.is_port_used(self.host_ip, host_port):
                     product_logger.info(f'[{user}]{v} tomcat服务停止中')
                 else:
                     product_logger.info(f'[{user}]{v} tomcat服务停止成功')
                     break
+                count += 1
                 sleep(2)
             self.change_status(v, "shutdown")
             self.config[v]["startUser"] = ''
