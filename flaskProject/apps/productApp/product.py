@@ -680,8 +680,8 @@ class ProductAction:
                 user.password = password
                 user.alias = alias
                 user.email = email
-                # db.session.add(user)
                 db.session.commit()
+                db.session.remove()
                 self.update_userlist()
                 return self.succ("用户信息修改成功")
             return self.info("用户信息无变化")
@@ -697,6 +697,7 @@ class ProductAction:
             db.session.add(user)
             # 连接数据库，添加进MySQL中
             db.session.commit()
+            db.session.remove()
             self.update_userlist()
             return self.succ("用户添加成功")
         return self.info("用户已存在")
@@ -706,6 +707,7 @@ class ProductAction:
         if user:
             db.session.delete(user)
             db.session.commit()
+            db.session.remove()
             self.update_userlist()
             return self.succ("用户删除成功")
         return self.info("用户不存在")
