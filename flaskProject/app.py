@@ -99,6 +99,14 @@ def custom_error_handler(e):
     return response
 
 
+@app.teardown_request
+def shutdown_session(exception):
+    if exception:
+        db.session.rollback()
+    else:
+        db.session.commit()
+
+
 if __name__ == '__main__':
     # os.symlink(log_path, log_path_today)
     scheduler = APScheduler(scheduler=BackgroundScheduler(timezone='Asia/Shanghai'))  # 实例化APScheduler
