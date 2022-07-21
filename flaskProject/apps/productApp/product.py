@@ -22,9 +22,9 @@ else:
 
 class ProductAction:
     host_ip = '127.0.0.1'
-    ip_141 = '/mnt/141/productJar/'
-    ip_134 = '/mnt/134/productJar/'
-    ip_187 = '/mnt/187/productJar/'
+    ip_141 = '/opt/mnt/141/productJar/'
+    ip_134 = '/opt/mnt/134/productJar/'
+    ip_187 = '/opt/mnt/187/productJar/'
     ip = ip_134
     from_path = []
     script_path = f"{os.getcwd()}/static/job"
