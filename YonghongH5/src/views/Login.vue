@@ -2,20 +2,21 @@
   <div class="login-main">
     <el-container>
       <el-header class="">
-        <img class="m-logo" src="../assets/img/bk.gif" alt="" />
+        <img class="m-logo" src="../assets/img/bk.gif" alt=""/>
       </el-header>
       <el-main>
         <div class="ms-login">
           <div class="ms-title editBan">Yonghong管理系统</div>
           <el-form
-            :model="ruleForm"
-            :rules="rules"
-            ref="ruleForm"
-            label-width="0px"
-            class="ms-content"
+              :model="ruleForm"
+              :rules="rules"
+              ref="ruleForm"
+              label-width="0px"
+              class="ms-content"
           >
             <el-form-item prop="username">
-              <el-input v-model="ruleForm.userName" placeholder="username">
+              <el-input v-model="ruleForm.username" placeholder="username" tabindex="1"
+                        @keyup.enter.native="submitForm()">
                 <template #prepend>
                   <el-button icon="el-icon-user"></el-button>
                 </template>
@@ -23,10 +24,11 @@
             </el-form-item>
             <el-form-item prop="password">
               <el-input
-                type="password"
-                placeholder="password"
-                v-model="ruleForm.password"
-                @keyup.enter="submitForm()"
+                  type="password"
+                  placeholder="password"
+                  v-model="ruleForm.password"
+                  @keyup.enter.native="submitForm()"
+                  tabindex="2"
               >
                 <template #prepend>
                   <el-button icon="el-icon-lock"></el-button>
@@ -35,7 +37,8 @@
             </el-form-item>
             <div class="login-btn">
               <el-form-item>
-                <el-button type="primary" @click="submitForm()">登录</el-button>
+                <el-button type="primary" @click="submitForm()" @keyup.enter.native="submitForm()" tabindex="3">登录
+                </el-button>
               </el-form-item>
             </div>
             <p class="login-tips">Tips :无账户密码请联系管理员</p>
@@ -52,21 +55,21 @@ export default {
   data() {
     return {
       ruleForm: {
-        userName: "admin",
+        username: "",
         password: "",
       },
       rules: {
-        userName: [
-          { required: true, message: "请输入用户名", trigger: "blur" },
+        username: [
+          {required: true, message: "请输入用户名", trigger: "blur"},
           {
-            min: 3,
+            min: 1,
             max: 15,
-            message: "长度在 3 到 15 个字符",
+            message: "长度在 1 到 15 个字符",
             trigger: "change",
           },
         ],
         password: [
-          { required: true, message: "请输入密码", trigger: "change" },
+          {required: true, message: "请输入密码", trigger: "change"},
         ],
       },
     };
@@ -76,18 +79,30 @@ export default {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
           const _this = this;
-          if (this.ruleForm.userName === "admin") {
-            if (this.ruleForm.password === "admin") {
-              this.$store.commit("SET_USERINFO", this.ruleForm.userName);
-              _this.$router.push("/windows");
-            } else {
-              alert("admin密码错误!");
-            }
-          } else {
-            // alert('submit!');
-            _this.$store.commit("SET_USERINFO", this.ruleForm.userName);
-            _this.$router.push("/cent185");
-          }
+          this.$axios
+              .post("http://192.168.0.192:5000/productJar/login", {
+                username: this.ruleForm.username,
+                password: this.ruleForm.password,
+              })
+              .then((res) => {
+                if (res.data.code === 200) {
+                  this.$message({
+                    message: res.data.data,
+                    duration: 3000,
+                    showClose: true,
+                    type: "success",
+                  });
+                  this.$store.commit("SET_USERINFO", this.ruleForm.username);
+                  _this.$router.push("/windows");
+                } else if (res.data.code === 205) {
+                  this.$message({
+                    message: res.data.data,
+                    duration: 3000,
+                    showClose: true,
+                    type: "error",
+                  });
+                }
+              })
         } else {
           console.log("error submit!!");
           return false;
@@ -103,9 +118,9 @@ export default {
     let jwt = this.$store.state.token;
     if (_this.$store.state.userInfo !== null) {
       if (
-        this.$store.state.userInfo === "admin" ||
-        this.$store.state.userInfo === "曾成龙" ||
-        this.$store.state.userInfo === "zcl"
+          this.$store.state.userInfo === "admin" ||
+          this.$store.state.userInfo === "曾成龙" ||
+          this.$store.state.userInfo === "zcl"
       )
         _this.$router.push("/windows");
       else {

@@ -193,7 +193,6 @@ def update_jar_with_date():
 
 # 更换Linux服务器Jar包
 @productJar_operate.route('/updateLinuxJar', methods=['POST'])
-@authentication_user
 def update_linux_jar():
     ftpServer = MyFTP()
     ftpServer.connect()

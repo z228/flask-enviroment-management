@@ -260,7 +260,11 @@ export default {
     getURL() {
       let _this = this;
       this.$axios
-          .get("http://192.168.0.192:5000/productJar/url")
+          .get("http://192.168.0.192:5000/productJar/url", {
+             headers: {
+              "Authorization": sessionStorage.getItem("userInfo")
+            }
+          })
           .then((res) => {
             for (let v in res.data.data) {
               if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
@@ -289,7 +293,11 @@ export default {
     getAllProduct() {
       let _this = this;
       this.$axios
-          .get("http://192.168.0.192:5000/productJar/all")
+          .get("http://192.168.0.192:5000/productJar/all", {
+             headers: {
+              "Authorization": sessionStorage.getItem("userInfo")
+            }
+          })
           .then((res) => {
             for (let v in res.data.data) {
               if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
@@ -312,7 +320,11 @@ export default {
     get141Jar() {
       let _this = this;
       this.$axios
-          .get("http://192.168.0.192:5000/productJar/141jar")
+          .get("http://192.168.0.192:5000/productJar/141jar", {
+             headers: {
+              "Authorization": sessionStorage.getItem("userInfo")
+            }
+          })
           .then((res) => {
             for (let v in res.data.data) {
               if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
@@ -328,7 +340,11 @@ export default {
     getAllBihome() {
       let _this = this;
       this.$axios
-          .get("http://192.168.0.192:5000/productJar/allBihome")
+          .get("http://192.168.0.192:5000/productJar/allBihome", {
+             headers: {
+              "Authorization": sessionStorage.getItem("userInfo")
+            }
+          })
           .then((res) => {
             for (let v in res.data.data) {
               if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
@@ -343,7 +359,11 @@ export default {
     getCurrentBihome() {
       let _this = this;
       this.$axios
-          .get("http://192.168.0.192:5000/productJar/currentBihome")
+          .get("http://192.168.0.192:5000/productJar/currentBihome", {
+             headers: {
+              "Authorization": sessionStorage.getItem("userInfo")
+            }
+          })
           .then((res) => {
             for (let v in res.data.data) {
               _this.$set(_this.bihome, v, res.data.data[v]);
@@ -353,7 +373,11 @@ export default {
     getJarInfo() {
       let _this = this;
       this.$axios
-          .get("http://192.168.0.192:5000/productJar/jarInfo")
+          .get("http://192.168.0.192:5000/productJar/jarInfo", {
+             headers: {
+              "Authorization": sessionStorage.getItem("userInfo")
+            }
+          })
           .then((res) => {
             for (let v in res.data.data) {
               if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
@@ -368,7 +392,11 @@ export default {
     checkStatus() {
       let _this = this;
       this.$axios
-          .get("http://192.168.0.192:5000/productJar/check")
+          .get("http://192.168.0.192:5000/productJar/check", {
+             headers: {
+              "Authorization": sessionStorage.getItem("userInfo")
+            }
+          })
           .then((res) => {
             for (let v in res.data.data) {
               if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
@@ -395,7 +423,11 @@ export default {
     getDebugPort() {
       let _this = this;
       this.$axios
-          .get("http://192.168.0.192:5000/productJar/port")
+          .get("http://192.168.0.192:5000/productJar/port", {
+             headers: {
+              "Authorization": sessionStorage.getItem("userInfo")
+            }
+          })
           .then((res) => {
             for (let v in res.data.data) {
               if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
@@ -410,7 +442,11 @@ export default {
     getViewPort() {
       let _this = this;
       this.$axios
-          .get("http://192.168.0.192:5000/productJar/bi")
+          .get("http://192.168.0.192:5000/productJar/bi", {
+             headers: {
+              "Authorization": sessionStorage.getItem("userInfo")
+            }
+          })
           .then((res) => {
             for (let v in res.data.data) {
               if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
@@ -427,6 +463,10 @@ export default {
       this.$axios
           .post("http://192.168.0.192:5000/productJar/shutdown", {
             version: row.version,
+          }, {
+             headers: {
+              "Authorization": sessionStorage.getItem("userInfo")
+            }
           })
           .then((res) => {
             if (res.data.code === 200) {
@@ -456,6 +496,10 @@ export default {
       this.$axios
           .post("http://192.168.0.192:5000/productJar/startup", {
             version: row.version,
+          }, {
+             headers: {
+              "Authorization": sessionStorage.getItem("userInfo")
+            }
           })
           .then((res) => {
             if (res.data.code === 200) {
@@ -495,7 +539,11 @@ export default {
           date: "",
         };
       this.$axios
-          .post("http://192.168.0.192:5000/productJar/update", form)
+          .post("http://192.168.0.192:5000/productJar/update", form, {
+             headers: {
+              "Authorization": sessionStorage.getItem("userInfo")
+            }
+          })
           .then((res) => {
             if (res.data.code === 200) {
               this.$message({
@@ -518,6 +566,10 @@ export default {
       this.$axios
           .post("http://192.168.0.192:5000/productJar/reload_product", {
             version: row.version,
+          },{
+             headers: {
+              "Authorization": sessionStorage.getItem("userInfo")
+            }
           })
           .then((res) => {
             if (res.data.code === 200) {
@@ -550,7 +602,11 @@ export default {
           date: "",
         };
       this.$axios
-          .post("http://192.168.0.192:5000/productJar/updateReload", form)
+          .post("http://192.168.0.192:5000/productJar/updateReload", form,{
+             headers: {
+              "Authorization": sessionStorage.getItem("userInfo")
+            }
+          })
           .then((res) => {
             if (res.data.code === 200) {
               this.$message({
@@ -573,6 +629,10 @@ export default {
           .post("http://192.168.0.192:5000/productJar/changeBihome", {
             version: row.version,
             bihome: key,
+          }, {
+             headers: {
+              "Authorization": sessionStorage.getItem("userInfo")
+            }
           })
           .then((res) => {
             if (res.data.code === 200) {

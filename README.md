@@ -33,6 +33,14 @@ python(3.6)+flask
     ```
     + `/opt/html`可以自己修改为前端build出来的dist目录
     + nginx的重启命令：`nginx -s reload`，Windows上自行重启服务即可
+    
+### 页面截图
+ ##### 主要页面
+![img.png](img.png)
+
+##### 登录页面
+![img_1.png](img_1.png)
+
 #### 参与贡献
 
 1.  Fork 本仓库
