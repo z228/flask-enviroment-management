@@ -25,16 +25,13 @@
               >
                 <template slot="title">{{ subItem.title }}</template>
                 <el-menu-item
-                    v-for="(threeItem,i) in subItem.subs"
+                    v-for="(threeItem, i) in subItem.subs"
                     :key="i"
                     :index="threeItem.index"
                 >{{ threeItem.title }}
                 </el-menu-item>
               </el-submenu>
-              <el-menu-item
-                  v-else
-                  :index="subItem.index"
-                  :key="subItem.index"
+              <el-menu-item v-else :index="subItem.index" :key="subItem.index"
               >{{ subItem.title }}
               </el-menu-item>
             </template>
@@ -52,7 +49,7 @@
 </template>
 
 <script>
-import bus from './bus';
+import bus from "./bus";
 
 export default {
   data() {
@@ -60,51 +57,122 @@ export default {
       collapse: false,
       items: [
         // {
-        //   icon: 'el-icon-windows',
-        //   index: 'windows',
-        //   title: 'Windows环境',
+        //   icon: 'el-icon-centos',
+        //   index: 'cent187',
+        //   title: 'cent187环境'
         // },
-        // {
-        //   icon: 'el-icon-ubuntu',
-        //   index: 'linux',
-        //   title: 'Linux环境'
-        // },
-        {
-          icon: 'el-icon-centos',
-          index: 'cent187',
-          title: 'cent187环境'
-        },
+        // // {
+        // //   icon: 'el-icon-script',
+        // //   index: 'junit',
+        // //   title: 'junit'
+        // // },
         // {
         //   icon: 'el-icon-script',
-        //   index: 'junit',
-        //   title: 'junit'
+        //   index: 'iframe',
+        //   title: 'iframe'
         // },
-        {
-          icon: 'el-icon-script',
-          index: 'iframe',
-          title: 'iframe'
-        },
-          {
-          icon: 'el-icon-user',
-          index: 'userinfo',
-          title: '用户信息'
-        },
-      ]
+        //   {
+        //   icon: 'el-icon-user',
+        //   index: 'userinfo',
+        //   title: '用户信息'
+        // },
+      ],
     };
   },
   computed: {
     onRoutes() {
-      return this.$route.path.replace('/', '');
-    }
+      return this.$route.path.replace("/", "");
+    },
   },
   created() {
-   
     // 通过 Event Bus 进行组件间通信，来折叠侧边栏
-    bus.$on('collapse', msg => {
+    bus.$on("collapse", (msg) => {
       this.collapse = msg;
-      bus.$emit('collapse-content', msg);
+      bus.$emit("collapse-content", msg);
     });
-  }
+    if (
+        this.$store.state.username === "admin" ||
+        this.$store.state.username === "zcl"
+        // this.$store.state.username === "zhengsong"
+    ) {
+      this.$common.objectValueAtoB(
+          [
+            {
+              icon: "el-icon-centos",
+              index: "cent187",
+              title: "cent187环境",
+            },
+            {
+              icon: "el-icon-centos",
+              index: "cent185",
+              title: "cent185环境",
+            },
+            {
+              icon: "el-icon-apple",
+              index: "mac188",
+              title: "mac188环境",
+            },
+            {
+              icon: "el-icon-script",
+              index: "iframe",
+              title: "iframe",
+            },
+            {
+              icon: "el-icon-user",
+              index: "userinfo",
+              title: "用户信息",
+            },
+            {
+              icon: "el-icon-tickets",
+              index: "log",
+              title: "日志查询",
+            },
+            {
+              icon: "el-icon-setting",
+              index: "usermanage",
+              title: "用户管理",
+            },
+          ],
+          this.items
+      );
+    } else {
+      this.$common.objectValueAtoB(
+          [
+            {
+              icon: "el-icon-centos",
+              index: "cent187",
+              title: "cent187环境",
+            },
+            {
+              icon: "el-icon-centos",
+              index: "cent185",
+              title: "cent185环境",
+            },
+            {
+              icon: "el-icon-apple",
+              index: "mac188",
+              title: "mac188环境",
+            },
+            // {
+            //   icon: 'el-icon-script',
+            //   index: 'junit',
+            //   title: 'junit'
+            // },
+            {
+              icon: "el-icon-script",
+              index: "iframe",
+              title: "iframe",
+            },
+            {
+              icon: "el-icon-user",
+              index: "userinfo",
+              title: "用户信息",
+            },
+          ],
+          this.items
+      );
+    }
+  },
 };
 </script>
 

@@ -2,7 +2,7 @@
   <div>
     <div class="iframe_card">
       <el-card>
-        <el-form ref="userinfo" :model="userinfo" label-width="80px" :rules="rules">
+        <el-form ref="userinfo" :model="userinfo" label-width="80px" >
           <el-form-item label="用户名" class="inputForm" prop="username">
             <el-input v-model="userinfo.username" class="inputForm" :disabled="true"></el-input>
           </el-form-item>
@@ -31,6 +31,7 @@ export default {
   data() {
     return {
       userinfo: {
+        userId:null,
         username: "",
         password: "",
         alias: "",
@@ -60,11 +61,12 @@ export default {
     getUserinfo() {
       this.$axios
           .post("http://192.168.0.187:5000/productJar/getuserinfo", {
-            username: this.$store.state.userInfo,
+            username: this.$store.state.username,
           })
           .then((res) => {
             let info = res.data.data
             if (res.data.code === 200) {
+              this.userinfo.userId = info.id
               this.userinfo.username = info.username
               this.userinfo.password = info.password
               this.userinfo.alias = info.alias
@@ -75,7 +77,8 @@ export default {
     updateUserinfo() {
       this.$axios
           .post("http://192.168.0.187:5000/productJar/updateuserinfo", {
-            username: this.$store.state.userInfo,
+            userId:this.userinfo.userId,
+            username: this.userinfo.username,
             password: this.userinfo.password,
             alias: this.userinfo.alias,
             email: this.userinfo.email,
@@ -90,14 +93,12 @@ export default {
                 type: "success",
               });
             } else {
-              if (res.data.code === 200) {
                 this.$message({
                   message: info,
                   duration: 10 * 1000,
                   showClose: true,
                   type: "info",
                 });
-              }
             }
           })
     },

@@ -3,15 +3,15 @@
     <div class="crumbs">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item>
-          <i class="el-icon-centos"></i>cent187(服务器ip：192.168.0.187)
+          <i class="el-icon-apple"></i>cent185(服务器ip：192.168.0.188)
           <el-button
             type="success"
             icon="el-icon-refresh"
             circle
             size="mini"
             @click="refresh()"
-          ></el-button>
-          刷新环境状态
+          ></el-button
+          >刷新环境状态
         </el-breadcrumb-item>
       </el-breadcrumb>
     </div>
@@ -29,21 +29,21 @@
                 <slot v-for="info in scope.row.jarInfo">
                   <p>{{ info }}</p>
                 </slot>
-                <el-tag slot="reference" type="success"
-                  >{{ scope.row.version }}
-                </el-tag>
+                <el-tag slot="reference" type="success">{{
+                  scope.row.version
+                }}</el-tag>
               </el-popover>
             </template>
           </el-table-column>
-          <el-table-column prop="path" label="url路径" width="300">
-            <template slot-scope="scope">
+          <el-table-column prop="path" label="url路径" width="300"
+            ><template slot-scope="scope">
               <router-link
                 tag="a"
                 :to="{}"
                 target="_blank"
                 :href="scope.row.url"
-                >{{ scope.row.url }}
-              </router-link>
+                >{{ scope.row.url }}</router-link
+              >
             </template>
           </el-table-column>
           <el-table-column prop="path" label="状态" width="150">
@@ -53,15 +53,15 @@
                 effect="plain"
                 class="status-tag"
                 style="display: flex justify-content: center"
-                >{{ scope.row.msg }}
-              </el-tag>
+                >{{ scope.row.msg }}</el-tag
+              >
             </template>
           </el-table-column>
-          <!-- <el-table-column prop="path" label="产品端口" width="80">
+          <el-table-column prop="path" label="产品端口" width="80">
             <template slot-scope="scope">
               <el-tag type="success">{{ scope.row.viewPort }}</el-tag>
             </template>
-          </el-table-column> -->
+          </el-table-column>
           <el-table-column prop="path" label="调试端口" width="80">
             <template slot-scope="scope">
               <el-tag type="success">{{ scope.row.port }}</el-tag>
@@ -80,8 +80,8 @@
                 element-loading-spinner="el-icon-loading"
                 element-loading-background="rgba(0, 0, 0, 0.8)"
                 plain
-                >关闭
-              </el-button>
+                >关闭</el-button
+              >
               <el-button
                 @click="startup(scope.row)"
                 type="primary"
@@ -92,12 +92,11 @@
                 element-loading-spinner="el-icon-loading"
                 element-loading-background="rgba(0, 0, 0, 0.8)"
                 plain
-              >
-                <svg class="icon" aria-hidden="true">
+                ><svg class="icon" aria-hidden="true">
                   <use xlink:href="#el-icon-run"></use>
                 </svg>
-                启动
-              </el-button>
+                启动</el-button
+              >
               <!-- <el-button
                 @click="update(scope.row)"
                 type="danger"
@@ -116,12 +115,11 @@
                 element-loading-spinner="el-icon-loading"
                 element-loading-background="rgba(0, 0, 0, 0.8)"
                 plain
-              >
-                <svg class="icon" aria-hidden="true">
+                ><svg class="icon" aria-hidden="true">
                   <use xlink:href="#el-icon-reload"></use>
                 </svg>
-                重启
-              </el-button>
+                重启</el-button
+              >
               <el-button
                 @click="updateAndReload(scope.row)"
                 type="success"
@@ -134,8 +132,8 @@
                 element-loading-background="rgba(0, 0, 0, 0.8)"
                 element-loading-custom-class="updateLoading"
                 plain
-                >更换Jar包并重启
-              </el-button>
+                >更换Jar包并重启</el-button
+              >
               <el-select
                 v-model="date[scope.row.version]"
                 placeholder="请选择jar包日期"
@@ -159,57 +157,30 @@
               </el-select>
               <el-upload
                 class="upload-demo"
-                action="http://192.168.0.187:5000/productJar/uploadJar"
+                action="http://192.168.0.188:5000/productJar/uploadJar"
                 :show-file-list="false"
-                :on-success="
-                  (response, file, filelist) =>
-                    handleAvatarSuccess(scope.row, response, file, filelist)
-                "
-                :on-progress="
-                  (event, file, fileList) =>
-                    uploadJar(scope.row, event, file, fileList)
-                "
+                :on-success="(response,file,filelist)=> handleAvatarSuccess(scope.row, response,file,filelist)"
                 :data="{ version: scope.row.version }"
                 style="width: 150px; margin-left: 10px"
               >
                 <el-button
+                @click="uploadJar(scope.row)"
                   size="small"
                   type="info"
                   icon="el-icon-upload2"
                   @disabled="scope.row.updateAndReload"
-                  v-loading="scope.row.updateAndReload"
-                  element-loading-text="jar包正在更换中"
-                  element-loading-spinner="el-icon-loading"
-                  element-loading-background="rgba(0, 0, 0, 0.8)"
-                  element-loading-custom-class="updateLoading"
-                  plain
-                  >上传自定义jar包
-                </el-button>
+                v-loading="scope.row.updateAndReload"
+                element-loading-text="jar包正在更换中"
+                element-loading-spinner="el-icon-loading"
+                element-loading-background="rgba(0, 0, 0, 0.8)"
+                element-loading-custom-class="updateLoading"
+                plain
+                  >上传自定义jar包</el-button
+                >
               </el-upload>
-              <!-- <el-date-picker
-              v-model="date[scope.row.version]"
-              type="date"
-              placeholder="选择日期"
-              format="yyyy 年 MM 月 dd 日"
-              value-format="yyyyMMdd"
-            >
-            </el-date-picker> -->
-              <!-- <el-button style="margin-left: 10px" type="text" @click="dialogVisible = true">编辑bi.pro</el-button> -->
-
-              <!-- <el-dialog
-  title="提示"
-  :visible.sync="dialogVisible"
-  width="30%"
-  :before-close="handleClose">
-  <span>这是一段信息</span>
-  <span slot="footer" class="dialog-footer">
-    <el-button @click="dialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
-  </span>
-</el-dialog> -->
             </template>
           </el-table-column>
-          <el-table-column label="可更换bihome" width="170">
+          <!-- <el-table-column label="可更换bihome" width="170">
             <template slot-scope="scope">
               <el-select
                 v-model="bihome[scope.row.version]"
@@ -234,10 +205,10 @@
                 type="text"
                 size="small"
                 style="margin-left: 10px"
-                >应用
-              </el-button>
+                >应用</el-button
+              >
             </template>
-          </el-table-column>
+          </el-table-column> -->
         </el-table>
       </el-card>
     </div>
@@ -251,11 +222,7 @@
             即可自动完成替换
           </p>
           <br />
-          <p>
-            2.切换bihome，打开下拉选择，选中后，点击应用即可切换(没有启动环境不会自动启动环境，已启动的会自动重启)
-          </p>
-          <br />
-          <p>3.Hover在版本列的标签上会显示环境中jar包的信息</p>
+          <p>2.Hover在版本列的标签上会显示环境中jar包的信息</p>
         </el-breadcrumb-item>
       </el-breadcrumb>
     </div>
@@ -267,7 +234,7 @@ import Vue from "vue";
 import bus from "../components/bus";
 
 export default {
-  name: "cent187",
+  name: "cent185",
 
   data() {
     return {
@@ -294,27 +261,16 @@ export default {
     });
   },
   created() {
-    let username = sessionStorage.getItem("username");
-    if (username === "" || username === null) {
-      this.$router.push("/login");
-      this.$message({
-        message: "未登录",
-        duration: 10 * 1000,
-        showClose: true,
-        type: "error",
-      });
-    } else {
-      this.$set(this.status, "hasFound", false);
-      this.getAllProduct();
-      this.get141Jar();
-      this.getAllBihome();
-      this.checkStatus();
-      this.getDebugPort();
-      // this.getViewPort();
-      this.getCurrentBihome();
-      this.getURL();
-      this.getJarInfo();
-    }
+    this.$set(this.status, "hasFound", false);
+    this.getAllProduct();
+    this.get141Jar();
+    this.getAllBihome();
+    this.checkStatus();
+    this.getDebugPort();
+    this.getViewPort();
+    this.getCurrentBihome();
+    this.getURL();
+    this.getJarInfo();
   },
   methods: {
     refresh() {
@@ -332,11 +288,7 @@ export default {
     getJarInfo() {
       let _this = this;
       this.$axios
-        .get("http://192.168.0.187:5000/productJar/jarInfo", {
-          headers: {
-            Authorization: sessionStorage.getItem("username"),
-          },
-        })
+        .get("http://192.168.0.188:5000/productJar/jarInfo")
         .then((res) => {
           for (let v in res.data.data) {
             if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
@@ -351,7 +303,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 10 * 1000,
+            duration: 600000,
             showClose: true,
             type: "error",
           });
@@ -360,11 +312,7 @@ export default {
     getAllProduct() {
       let _this = this;
       this.$axios
-        .get("http://192.168.0.187:5000/productJar/all", {
-          headers: {
-            Authorization: sessionStorage.getItem("username"),
-          },
-        })
+        .get("http://192.168.0.188:5000/productJar/all")
         .then((res) => {
           for (let v in res.data.data) {
             if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
@@ -384,7 +332,7 @@ export default {
         .catch((err) => {
           this.$message({
             message: err,
-            duration: 10 * 1000,
+            duration: 600000,
             showClose: true,
             type: "error",
           });
@@ -394,11 +342,7 @@ export default {
     get141Jar() {
       let _this = this;
       this.$axios
-        .get("http://192.168.0.187:5000/productJar/141jar", {
-          headers: {
-            Authorization: sessionStorage.getItem("username"),
-          },
-        })
+        .get("http://192.168.0.188:5000/productJar/141jar")
         .then((res) => {
           for (let v in res.data.data) {
             if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
@@ -414,7 +358,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 10 * 1000,
+            duration: 600000,
             showClose: true,
             type: "error",
           });
@@ -423,11 +367,7 @@ export default {
     getAllBihome() {
       let _this = this;
       this.$axios
-        .get("http://192.168.0.187:5000/productJar/allBihome", {
-          headers: {
-            Authorization: sessionStorage.getItem("username"),
-          },
-        })
+        .get("http://192.168.0.188:5000/productJar/allBihome")
         .then((res) => {
           for (let v in res.data.data) {
             if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
@@ -442,7 +382,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 10 * 1000,
+            duration: 600000,
             showClose: true,
             type: "error",
           });
@@ -451,11 +391,7 @@ export default {
     getCurrentBihome() {
       let _this = this;
       this.$axios
-        .get("http://192.168.0.187:5000/productJar/currentBihome", {
-          headers: {
-            Authorization: sessionStorage.getItem("username"),
-          },
-        })
+        .get("http://192.168.0.188:5000/productJar/currentBihome")
         .then((res) => {
           for (let v in res.data.data) {
             _this.$set(_this.bihome, v, res.data.data[v]);
@@ -465,7 +401,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 10 * 1000,
+            duration: 600000,
             showClose: true,
             type: "error",
           });
@@ -474,11 +410,7 @@ export default {
     getURL() {
       let _this = this;
       this.$axios
-        .get("http://192.168.0.187:5000/productJar/url", {
-          headers: {
-            Authorization: sessionStorage.getItem("username"),
-          },
-        })
+        .get("http://192.168.0.188:5000/productJar/url")
         .then((res) => {
           for (let v in res.data.data) {
             if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
@@ -487,7 +419,7 @@ export default {
                   _this.$set(
                     _this.tableData[i],
                     "url",
-                    "http://192.168.0.187:" + res.data.data[v]
+                    "http://192.168.0.188:" + res.data.data[v]
                   );
               }
             }
@@ -497,7 +429,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 10 * 1000,
+            duration: 600000,
             showClose: true,
             type: "error",
           });
@@ -506,11 +438,7 @@ export default {
     checkStatus() {
       let _this = this;
       this.$axios
-        .get("http://192.168.0.187:5000/productJar/check", {
-          headers: {
-            Authorization: sessionStorage.getItem("username"),
-          },
-        })
+        .get("http://192.168.0.188:5000/productJar/check")
         .then((res) => {
           for (let v in res.data.data) {
             if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
@@ -552,7 +480,7 @@ export default {
                     _this.$set(
                       _this.tableData[i],
                       "msg",
-                      res.data.data[v].startUser + "已启动"
+                      res.data.data[v].startUser + "正在debug"
                     );
                   }
                   break;
@@ -565,7 +493,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 10 * 1000,
+            duration: 600000,
             showClose: true,
             type: "error",
           });
@@ -574,11 +502,7 @@ export default {
     getDebugPort() {
       let _this = this;
       this.$axios
-        .get("http://192.168.0.187:5000/productJar/port", {
-          headers: {
-            Authorization: sessionStorage.getItem("username"),
-          },
-        })
+        .get("http://192.168.0.188:5000/productJar/port")
         .then((res) => {
           for (let v in res.data.data) {
             if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
@@ -593,7 +517,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 10 * 1000,
+            duration: 600000,
             showClose: true,
             type: "error",
           });
@@ -602,11 +526,7 @@ export default {
     getViewPort() {
       let _this = this;
       this.$axios
-        .get("http://192.168.0.187:5000/productJar/bi", {
-          headers: {
-            Authorization: sessionStorage.getItem("username"),
-          },
-        })
+        .get("http://192.168.0.188:5000/productJar/bi")
         .then((res) => {
           for (let v in res.data.data) {
             if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
@@ -621,7 +541,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 10 * 1000,
+            duration: 600000,
             showClose: true,
             type: "error",
           });
@@ -631,18 +551,10 @@ export default {
       let _this = this;
       this.changeTableData(row.version, "shutdown", true);
       this.$axios
-        .post(
-          "http://192.168.0.187:5000/productJar/shutdown",
-          {
-            version: row.version,
-            user: this.$store.state.userInfo,
-          },
-          {
-            headers: {
-              Authorization: sessionStorage.getItem("username"),
-            },
-          }
-        )
+        .post("http://192.168.0.188:5000/productJar/shutdown", {
+          version: row.version,
+          user: this.$store.state.userInfo,
+        })
         .then((res) => {
           for (let i = 0; i < _this.tableData.length; i++) {
             if (_this.tableData[i].version === row.version)
@@ -651,7 +563,7 @@ export default {
           if (res.data.code === 200) {
             this.$message({
               message: res.data.data,
-              duration: 10 * 1000,
+              duration: 600000,
               showClose: true,
               type: "success",
             });
@@ -660,7 +572,7 @@ export default {
             console.log(res.data);
             this.$message({
               message: res.data.data,
-              duration: 10 * 1000,
+              duration: 600000,
               showClose: true,
               type: "warning",
             });
@@ -670,7 +582,7 @@ export default {
         .catch((err) => {
           this.$message({
             message: err,
-            duration: 10 * 1000,
+            duration: 600000,
             showClose: true,
             type: "error",
           });
@@ -682,18 +594,10 @@ export default {
       let _this = this;
       this.changeTableData(row.version, "start", true);
       this.$axios
-        .post(
-          "http://192.168.0.187:5000/productJar/startup",
-          {
-            version: row.version,
-            user: this.$store.state.userInfo,
-          },
-          {
-            headers: {
-              Authorization: sessionStorage.getItem("username"),
-            },
-          }
-        )
+        .post("http://192.168.0.188:5000/productJar/startup", {
+          version: row.version,
+          user: this.$store.state.userInfo,
+        })
         .then((res) => {
           if (res.data.code === 200) {
             for (let i = 0; i < _this.tableData.length; i++) {
@@ -701,12 +605,12 @@ export default {
                 _this.$set(
                   _this.tableData[i],
                   "msg",
-                  this.$store.state.userInfo + "已启动"
+                  this.$store.state.userInfo + "正在debug"
                 );
             }
             this.$message({
               message: res.data.data,
-              duration: 10 * 1000,
+              duration: 600000,
               showClose: true,
               type: "success",
             });
@@ -715,7 +619,7 @@ export default {
             console.log(res.data);
             this.$message({
               message: res.data.data,
-              duration: 10 * 1000,
+              duration: 600000,
               showClose: true,
               type: "warning",
             });
@@ -725,7 +629,7 @@ export default {
         .catch((err) => {
           this.$message({
             message: err,
-            duration: 10 * 1000,
+            duration: 600000,
             showClose: true,
             type: "error",
           });
@@ -749,16 +653,12 @@ export default {
           user: this.$store.state.userInfo,
         };
       this.$axios
-        .post("http://192.168.0.187:5000/productJar/update", form, {
-          headers: {
-            Authorization: sessionStorage.getItem("username"),
-          },
-        })
+        .post("http://192.168.0.188:5000/productJar/update", form)
         .then((res) => {
           if (res.data.code === 200) {
             this.$message({
               message: res.data.data,
-              duration: 10 * 1000,
+              duration: 600000,
               showClose: true,
               type: "success",
             });
@@ -767,7 +667,7 @@ export default {
             console.log(res.data);
             this.$message({
               message: res.data.data,
-              duration: 10 * 1000,
+              duration: 600000,
               showClose: true,
               type: "warning",
             });
@@ -778,7 +678,7 @@ export default {
         .catch((err) => {
           this.$message({
             message: err,
-            duration: 10 * 1000,
+            duration: 600000,
             showClose: true,
             type: "error",
           });
@@ -790,18 +690,10 @@ export default {
       let _this = this;
       this.changeTableData(row.version, "reload", true);
       this.$axios
-        .post(
-          "http://192.168.0.187:5000/productJar/reload_product",
-          {
-            version: row.version,
-            user: this.$store.state.userInfo,
-          },
-          {
-            headers: {
-              Authorization: sessionStorage.getItem("username"),
-            },
-          }
-        )
+        .post("http://192.168.0.188:5000/productJar/reload_product", {
+          version: row.version,
+          user: this.$store.state.userInfo,
+        })
         .then((res) => {
           if (res.data.code === 200) {
             for (let i = 0; i < _this.tableData.length; i++) {
@@ -809,12 +701,12 @@ export default {
                 _this.$set(
                   _this.tableData[i],
                   "msg",
-                  this.$store.state.userInfo + "已启动"
+                  this.$store.state.userInfo + "正在debug"
                 );
             }
             this.$message({
               message: res.data.data,
-              duration: 10 * 1000,
+              duration: 600000,
               showClose: true,
               type: "success",
             });
@@ -823,7 +715,7 @@ export default {
             console.log(res.data);
             this.$message({
               message: res.data.data,
-              duration: 10 * 1000,
+              duration: 600000,
               showClose: true,
               type: "warning",
             });
@@ -833,7 +725,7 @@ export default {
         .catch((err) => {
           this.$message({
             message: err,
-            duration: 10 * 1000,
+            duration: 600000,
             showClose: true,
             type: "error",
           });
@@ -858,11 +750,7 @@ export default {
         };
       this.changeTableData(row.version, "updateAndReload", true);
       this.$axios
-        .post("http://192.168.0.187:5000/productJar/updateReload", form, {
-          headers: {
-            Authorization: sessionStorage.getItem("username"),
-          },
-        })
+        .post("http://192.168.0.188:5000/productJar/updateReload", form)
         .then((res) => {
           if (res.data.code === 200) {
             for (let i = 0; i < _this.tableData.length; i++) {
@@ -870,12 +758,12 @@ export default {
                 _this.$set(
                   _this.tableData[i],
                   "msg",
-                  this.$store.state.userInfo + "已启动"
+                  this.$store.state.userInfo + "正在debug"
                 );
             }
             this.$message({
               message: res.data.data,
-              duration: 10 * 1000,
+              duration: 600000,
               showClose: true,
               type: "success",
             });
@@ -884,7 +772,7 @@ export default {
             console.log(res.data);
             this.$message({
               message: res.data.data,
-              duration: 10 * 1000,
+              duration: 600000,
               showClose: true,
               type: "warning",
             });
@@ -895,7 +783,7 @@ export default {
         .catch((err) => {
           this.$message({
             message: err,
-            duration: 10 * 1000,
+            duration: 600000,
             showClose: true,
             type: "error",
           });
@@ -905,24 +793,16 @@ export default {
     },
     exchangeBihome(row, key) {
       this.$axios
-        .post(
-          "http://192.168.0.187:5000/productJar/changeBihome",
-          {
-            version: row.version,
-            bihome: key,
-            user: this.$store.state.userInfo,
-          },
-          {
-            headers: {
-              Authorization: sessionStorage.getItem("username"),
-            },
-          }
-        )
+        .post("http://192.168.0.188:5000/productJar/changeBihome", {
+          version: row.version,
+          bihome: key,
+          user: this.$store.state.userInfo,
+        })
         .then((res) => {
           if (res.data.code === 200) {
             this.$message({
               message: res.data.data,
-              duration: 10 * 1000,
+              duration: 600000,
               showClose: true,
               type: "success",
             });
@@ -931,7 +811,7 @@ export default {
         .catch((err) => {
           this.$message({
             message: err,
-            duration: 10 * 1000,
+            duration: 600000,
             showClose: true,
             type: "error",
           });
@@ -957,7 +837,7 @@ export default {
       if (res.code === 200) {
         this.$message({
           message: res.data,
-          duration: 10 * 1000,
+          duration: 600000,
           showClose: true,
           type: "success",
         });
@@ -965,15 +845,15 @@ export default {
       } else {
         this.$message({
           message: res.data,
-          duration: 10 * 1000,
+          duration: 600000,
           showClose: true,
           type: "error",
         });
       }
     },
-    uploadJar(row, event, file, fileList) {
+    uploadJar(row){
       this.changeTableData(row.version, "updateAndReload", true);
-    },
+    }
   },
 };
 </script>

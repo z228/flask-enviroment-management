@@ -2,24 +2,24 @@
   <div class="login-main">
     <el-container>
       <el-header class="">
-        <img
-            class="m-logo"
-            src="../assets/img/bk.gif"
-            alt=""
-        />
+        <img class="m-logo" src="../assets/img/bk.gif" alt="" />
       </el-header>
       <el-main>
         <div class="ms-login">
           <div class="ms-title editBan">Debug环境管理系统</div>
           <el-form
-              :model="ruleForm"
-              :rules="rules"
-              ref="ruleForm"
-              label-width="0px"
-              class="ms-content"
+            :model="ruleForm"
+            :rules="rules"
+            ref="ruleForm"
+            label-width="0px"
+            class="ms-content"
           >
             <el-form-item prop="username">
-              <el-input v-model="ruleForm.userName" placeholder="username" tabindex="1">
+              <el-input
+                v-model="ruleForm.userName"
+                placeholder="username"
+                tabindex="1"
+              >
                 <template #prepend>
                   <el-button icon="el-icon-user"></el-button>
                 </template>
@@ -27,11 +27,11 @@
             </el-form-item>
             <el-form-item prop="password">
               <el-input
-                  type="password"
-                  placeholder="password"
-                  v-model="ruleForm.password"
-                  @keyup.enter.native="submitForm()"
-                  tabindex="2"
+                type="password"
+                placeholder="password"
+                v-model="ruleForm.password"
+                @keyup.enter.native="submitForm()"
+                tabindex="2"
               >
                 <template #prepend>
                   <el-button icon="el-icon-lock"></el-button>
@@ -40,7 +40,13 @@
             </el-form-item>
             <div class="login-btn">
               <el-form-item>
-                <el-button type="primary" @keyup.enter.native="submitForm()" @click="submitForm()" tabindex="3">登录</el-button>
+                <el-button
+                  type="primary"
+                  @keyup.enter.native="submitForm()"
+                  @click="submitForm()"
+                  tabindex="3"
+                  >登录
+                </el-button>
               </el-form-item>
             </div>
             <p class="login-tips">Tips :无账户密码请联系管理员</p>
@@ -62,7 +68,7 @@ export default {
       },
       rules: {
         userName: [
-          {required: true, message: "请输入用户名", trigger: "blur"},
+          { required: true, message: "请输入用户名", trigger: "blur" },
           {
             min: 3,
             max: 15,
@@ -71,7 +77,7 @@ export default {
           },
         ],
         password: [
-          {required: true, message: "请输入密码", trigger: "change"},
+          { required: true, message: "请输入密码", trigger: "change" },
         ],
       },
     };
@@ -82,29 +88,39 @@ export default {
         if (valid) {
           const _this = this;
           this.$axios
-              .post("http://192.168.0.187:5000/productJar/login", {
-                username: this.ruleForm.userName,
-                password: this.ruleForm.password,
-              })
-              .then((res) => {
-                if (res.data.code === 200) {
-                  this.$message({
-                    message: res.data.data,
-                    duration: 3000,
-                    showClose: true,
-                    type: "success",
+            .post("http://192.168.0.187:5000/productJar/login", {
+              username: this.ruleForm.userName,
+              password: this.ruleForm.password,
+            })
+            .then((res) => {
+              if (res.data.code === 200) {
+                this.$message({
+                  message: res.data.data,
+                  duration: 3000,
+                  showClose: true,
+                  type: "success",
+                });
+                this.$store.commit("SET_USERINFO", this.ruleForm.userName);
+                this.$axios
+                  .post("http://192.168.0.187:5000/productJar/getuserinfo", {
+                    username: this.$store.state.userInfo,
+                  })
+                  .then((res) => {
+                    let info = res.data.data;
+                    if (res.data.code === 200) {
+                      this.$store.commit("SET_USERNAME", info.username);
+                      _this.$router.push("/cent187");
+                    }
                   });
-                  this.$store.commit("SET_USERINFO", this.ruleForm.userName);
-                  _this.$router.push("/cent187");
-                } else if (res.data.code === 205) {
-                  this.$message({
-                    message: res.data.data,
-                    duration: 3000,
-                    showClose: true,
-                    type: "error",
-                  });
-                }
-              })
+              } else if (res.data.code === 205) {
+                this.$message({
+                  message: res.data.data,
+                  duration: 3000,
+                  showClose: true,
+                  type: "error",
+                });
+              }
+            });
         } else {
           console.log("error submit!!");
           return false;
@@ -118,14 +134,17 @@ export default {
   created() {
     const _this = this;
     let jwt = this.$store.state.token;
-    if (_this.$store.state.userInfo !== null) {
-      if (this.$store.state.userInfo === 'admin' || this.$store.state.userInfo === '曾成龙')
+    let userinfo = _this.$store.state.userInfo
+    let username = _this.$store.state.username
+    if (username !== null&&userinfo !==null &&username !==""&&userinfo !=="") {
+      if (
+        this.$store.state.userInfo === "admin" ||
+        this.$store.state.userInfo === "曾成龙"
+      )
         _this.$router.push("/cent187");
       else {
-        if (this.$store.state.userInfo === '')
-          console.log("未登录");
-        else
-          _this.$router.push("/cent187");
+        if (this.$store.state.userInfo === "") console.log("未登录");
+        else _this.$router.push("/cent187");
       }
     } else {
       if (_this.$store.state.userInfo === null) {
