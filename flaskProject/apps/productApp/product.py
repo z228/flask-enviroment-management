@@ -399,8 +399,8 @@ class ProductAction:
                     sys('sh catalina.sh jpda start > caches.txt')
                 break
         product_logger.info(f'[{user}] 启动{v} tomcat服务成功')
-        self.config[key]["sts"] += 1
-        self.config[key]["st"] = strftime("日期:%Y%m%d 时间:%H:%M:%S", localtime(stat(join(product_path, i)).st_mtime))
+        self.config[v]["sts"] += 1
+        self.config[v]["st"] = strftime("日期:%Y%m%d 时间:%H:%M:%S", localtime(stat(join(product_path, i)).st_mtime))
         self.change_status(v, "startup")
         self.config[v]["startUser"] = user
         return f'启动{v} tomcat服务成功'
