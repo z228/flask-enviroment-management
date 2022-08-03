@@ -157,21 +157,26 @@ class ProductAction:
         self.bi_xml_path = f'{self.root_path}/tomcat/webapps/bi/WEB-INF/web.xml'
         self.server_xml_path = f'{self.root_path}/tomcat/conf/server.xml'
         for key in self.config.keys():
-            self.config[key]["port"] = self.get_bi_port(key)
-            self.config[key]["bihome"] = self.get_bi_home(key)
-            if 'dis' in key:
-                self.config[key]["url"] = self.config[key]["port"] + '/bi/?showOthers=true'
+            if key in status.keys():
+                self.config[key] = status[key]
             else:
-                self.config[key]["url"] = self.config[key]["port"] + '/bi'
-            self.config[key]["debug"] = self.get_debug_port(key)
+                self.config[key]["port"] = self.get_bi_port(key)
+                self.config[key]["bihome"] = self.get_bi_home(key)
+                if 'dis' in key:
+                    self.config[key]["url"] = self.config[key]["port"] + '/bi/?showOthers=true'
+                else:
+                    self.config[key]["url"] = self.config[key]["port"] + '/bi'
+                self.config[key]["debug"] = self.get_debug_port(key)
+                self.config[key]["startUser"] = status[key]["startUser"] if key in status.keys() else ''
+            self.config[key]["st"] = '' if "st" not in status[key]
+            self.config[key]["sts"] = 0 if "sts" not in status[key]
+            self.config[key]["opUser"] = ''
             self.config[key]["startup"] = False
             self.config[key]["shutdown"] = False
             self.config[key]["update"] = False
             self.config[key]["reload"] = False
             self.config[key]["updateAndReload"] = False
             self.config[key]["changeBihome"] = False
-            self.config[key]["opUser"] = ''
-            self.config[key]["startUser"] = status[key]["startUser"] if key in status.keys() else ''
         self.update_product_status()
 
     def get_debug_port(self, version):
@@ -392,6 +397,8 @@ class ProductAction:
                     sys('sh catalina.sh jpda start > caches.txt')
                 break
         product_logger.info(f'[{user}] 启动{v} tomcat服务成功')
+        self.config[key]["sts"] += 1
+        self.config[key]["st"] = strftime("日期:%Y%m%d 时间:%H:%M:%S", localtime(stat(join(product_path, i)).st_mtime))
         self.change_status(v, "startup")
         self.config[v]["startUser"] = user
         return f'启动{v} tomcat服务成功'

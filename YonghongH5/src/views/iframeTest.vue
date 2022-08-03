@@ -8,7 +8,7 @@
     </div>
     <div class="iframe_card">
       <el-card >
-        <iframe height="700px" width="1400px" :src="form.url"></iframe>
+        <iframe id="db" height="700px" width="1400px" :src="form.url"></iframe>
       </el-card>
     </div>
   </div>
@@ -22,7 +22,10 @@ export default {
     };
   },
   methods: {
-    jump() {},
+    jump() {
+      window.location  = "http://192.168.0.192:8094/bi?proc=1&action=viewer&export=excel&db=111"
+
+    },
   },
 };
 </script>

@@ -48,6 +48,12 @@ env_list = {
             "bihomes": "bihome Export Script",
             "branch": "custom_v9.4_dis_M3"
         },
+        "943广联达": {
+            "path": "/opt/943_gld",
+            "port": "8943",
+            "bihomes": "bihome",
+            "branch": "custom_v9.4.3_gld"
+        },
         "trunk": {
             "path": "/opt/trunk",
             "port": "8080",

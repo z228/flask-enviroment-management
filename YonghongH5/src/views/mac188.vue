@@ -37,12 +37,10 @@
           </el-table-column>
           <el-table-column prop="path" label="url路径" width="300"
             ><template slot-scope="scope">
-              <router-link
-                tag="a"
-                :to="{}"
+              <a
                 target="_blank"
                 :href="scope.row.url"
-                >{{ scope.row.url }}</router-link
+                >{{ scope.row.url }}</a
               >
             </template>
           </el-table-column>
