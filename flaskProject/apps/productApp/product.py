@@ -168,8 +168,8 @@ class ProductAction:
                     self.config[key]["url"] = self.config[key]["port"] + '/bi'
                 self.config[key]["debug"] = self.get_debug_port(key)
                 self.config[key]["startUser"] = status[key]["startUser"] if key in status.keys() else ''
-            self.config[key]["st"] = '' if "st" not in status[key].keys()
-            self.config[key]["sts"] = 0 if "sts" not in status[key].keys()
+            self.config[key]["st"] = '' if "st" not in status[key].keys() else status[key]["st"]
+            self.config[key]["sts"] = 0 if "sts" not in status[key].keys() else status[key]["sts"]
             self.config[key]["opUser"] = ''
             self.config[key]["startup"] = False
             self.config[key]["shutdown"] = False
