@@ -159,6 +159,8 @@ class ProductAction:
         for key in self.config.keys():
             if key in status.keys():
                 self.config[key] = status[key]
+                self.config[key]["st"] = '' if "st" not in status[key].keys() else status[key]["st"]
+                self.config[key]["sts"] = 0 if "sts" not in status[key].keys() else status[key]["sts"]
             else:
                 self.config[key]["port"] = self.get_bi_port(key)
                 self.config[key]["bihome"] = self.get_bi_home(key)
@@ -168,8 +170,8 @@ class ProductAction:
                     self.config[key]["url"] = self.config[key]["port"] + '/bi'
                 self.config[key]["debug"] = self.get_debug_port(key)
                 self.config[key]["startUser"] = status[key]["startUser"] if key in status.keys() else ''
-            self.config[key]["st"] = '' if "st" not in status[key].keys() else status[key]["st"]
-            self.config[key]["sts"] = 0 if "sts" not in status[key].keys() else status[key]["sts"]
+                self.config[key]["st"] = ''
+                self.config[key]["sts"] = 0
             self.config[key]["opUser"] = ''
             self.config[key]["startup"] = False
             self.config[key]["shutdown"] = False
