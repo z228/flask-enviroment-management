@@ -606,7 +606,7 @@ class ProductAction:
         :return:
         """
         with open(f'{self.status_path}/status.json', 'w', encoding='utf-8') as status:
-            dump(self.config, status, indent=4)
+            dump(self.config, status, indent=4, ensure_ascii=False)
 
     def check_status(self, v, user=''):
         """
