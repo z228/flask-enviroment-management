@@ -112,6 +112,11 @@ export default {
               index: "mac188",
               title: "mac188环境",
             },
+			{
+			  icon: 'el-icon-pie-chart',
+			  index: 'serverstatus',
+		      title: '服务器状态'
+			},
             {
               icon: "el-icon-script",
               index: "iframe",

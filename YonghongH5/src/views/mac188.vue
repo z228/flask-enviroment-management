@@ -3,7 +3,7 @@
     <div class="crumbs">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item>
-          <i class="el-icon-apple"></i>cent185(服务器ip：192.168.0.188)
+          <i class="el-icon-apple"></i>mac188(服务器ip：192.168.0.188)
           <el-button
             type="success"
             icon="el-icon-refresh"

@@ -29,6 +29,7 @@ def authentication_user(func):
             if user:
                 return func(*args, *kwargs)
         return productAction.user_not_found(name)
+
     return wrapper
 
 
@@ -158,8 +159,8 @@ def check_product():
     v = {}
     for key in VERSION:
         v[key] = {}
-        v[key]["startUser"] = productAction.config[key]["startUser"] if productAction.is_port_used('localhost', eval(
-            productAction.config[key]["port"])) else '0'
+        v[key]["startUser"] = productAction.config[key]["startUser"] if productAction.is_port_used_fast(
+            productAction.config[key]["port"]) else '0'
         v[key]["startup"] = productAction.config[key]["startup"]
         v[key]["shutdown"] = productAction.config[key]["shutdown"]
         v[key]["update"] = productAction.config[key]["update"]

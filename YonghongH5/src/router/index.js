@@ -6,6 +6,7 @@ import mac188 from "../views/mac188.vue";
 import Home from "../components/Home";
 import Login from "../views/Login.vue";
 import iframeTest from "../views/iframeTest.vue";
+import serverstatus from '../views/serverstatus.vue'
 import junitCase from "../views/junitCase.vue";
 import userinfo from "../views/userinfo.vue";
 import userManage from "../views/userManage.vue";
@@ -59,6 +60,14 @@ const routes = [
         },
         component: mac188,
       },
+	  {
+        path: '/serverstatus',
+        name: 'serverstatus',
+        meta: {
+            title: 'serverstatus',
+         },
+        component: serverstatus
+       },
       // {
       //     path: '/junit',
       //     name: 'junitCase',

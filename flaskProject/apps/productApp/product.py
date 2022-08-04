@@ -169,9 +169,11 @@ class ProductAction:
                 else:
                     self.config[key]["url"] = self.config[key]["port"] + '/bi'
                 self.config[key]["debug"] = self.get_debug_port(key)
-                self.config[key]["startUser"] = status[key]["startUser"] if key in status.keys() else ''
+                self.config[key]["startUser"] = ''
                 self.config[key]["st"] = ''
                 self.config[key]["sts"] = 0
+            if not self.is_port_used_fast(self.config[key]["port"]):
+                self.config[key]["startUser"] = ''
             self.config[key]["opUser"] = ''
             self.config[key]["startup"] = False
             self.config[key]["shutdown"] = False
@@ -283,6 +285,13 @@ class ProductAction:
         finally:
             s.close()
 
+    def is_port_used_fast(self, c_port):
+        res = popen(f'netstat -ano |findstr {c_port}').read() if self.current_system == "Windows" else popen(
+            f'lsof -i:{c_port}').read()
+        if "LISTENING" in res or "LISTEN" in res:
+            return True
+        return False
+
     @staticmethod
     def current_time():
         return strftime("%H:%M:%S", localtime())
@@ -336,8 +345,8 @@ class ProductAction:
         if check_res != '0':
             return check_res
         self.change_status(v, "shutdown", True, user)
-        host_port = eval(self.config[v]["port"])
-        if self.is_port_used(self.host_ip, host_port):
+        host_port = self.config[v]["port"]
+        if self.is_port_used_fast(host_port):
             if self.current_system == "Windows":
                 product_logger.info(f'[{user}]停止trunk tomcat进程')
                 sys(f'python {self.script_path}/stopTrunk.py {host_port} > stopTomcat.txt')
@@ -354,7 +363,7 @@ class ProductAction:
                     product_logger.info(f'[{user}]{v} 再次运行停止tomcat命令')
                     sys(f'sh  {self.config[v]["path"]}/tomcat/bin/shutdown.sh')
                     sleep(2)
-                if self.is_port_used(self.host_ip, host_port):
+                if self.is_port_used_fast(host_port):
                     product_logger.info(f'[{user}]{v} tomcat服务停止中')
                 else:
                     product_logger.info(f'[{user}]{v} tomcat服务停止成功')
@@ -380,11 +389,11 @@ class ProductAction:
         if check_res != '0':
             return check_res
         self.change_status(v, "startup", True, user)
-        host_port = eval(self.config[v]["port"])
+        host_port = self.config[v]["port"]
         work_dir = self.config[v]["path"] + self.tomcat_path
         chdir(work_dir)
         for scape in range(100):
-            if self.is_port_used(self.host_ip, host_port):
+            if self.is_port_used_fast(self.host_ip, host_port):
                 if self.config[v]["startUser"] != '':
                     self.change_status(v, "startup")
                     product_logger.info(f'[{user}] {self.config[v]["startUser"]}已启动{v} tomcat服务')
