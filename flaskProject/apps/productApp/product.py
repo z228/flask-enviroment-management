@@ -393,7 +393,7 @@ class ProductAction:
         work_dir = self.config[v]["path"] + self.tomcat_path
         chdir(work_dir)
         for scape in range(100):
-            if self.is_port_used_fast(self.host_ip, host_port):
+            if self.is_port_used_fast(host_port):
                 if self.config[v]["startUser"] != '':
                     self.change_status(v, "startup")
                     product_logger.info(f'[{user}] {self.config[v]["startUser"]}已启动{v} tomcat服务')
