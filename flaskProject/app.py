@@ -14,7 +14,7 @@ from os.path import join
 from os import getcwd, listdir
 from heartrate import trace, files
 
-trace(files=files.path_contains('productApp'), port=99)
+trace(files=files.path_contains('productApp'), host='0.0.0.0', port=99)
 app = Flask(__name__)
 app.config.from_object(configs)
 db = SQLAlchemy(app)
