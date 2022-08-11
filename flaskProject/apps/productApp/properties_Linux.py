@@ -54,6 +54,12 @@ env_list = {
             "bihomes": "bihome",
             "branch": "custom_v9.4.3_gld"
         },
+        "10.0": {
+            "path": "/opt/10",
+            "port": "8100",
+            "bihomes": "bihome",
+            "branch": "develop"
+        },
         "trunk": {
             "path": "/opt/trunk",
             "port": "8080",
