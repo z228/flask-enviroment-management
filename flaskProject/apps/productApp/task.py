@@ -131,9 +131,10 @@ def try_copy(v, ip_today, ip_134_today):
 """
         part2 = """</div></body>
 </html>"""
-        content = f"<p>{ip_134_today.replace('/mnt/134/productJar','134\git-package')} update to {ip_today.replace('/home','187')}</p><p><small>取包的路径：\\\\192.168.0.187\share（账户密码：<b>tkl-share/9926</b>）</small></p>"
+        content = f"<p>{ip_134_today.replace('/mnt/134/productJar','134\git-package')} update to {ip_today.replace('/home','187')}"
+         = "</p><p><small>取包的路径：\\\\192.168.0.187\share（账户密码：<b>tkl-share/9926</b>）</small></p>"
         task_logger.info(content)
-        send("zengchenglong@yonghongtech.com", subject, part0 + content + part2)
+        send("zengchenglong@yonghongtech.com", subject, part0 + content + content0 + part2)
     except PermissionError:
         bash = f"echo '{ip_134_today}/{v}be tied up,please wait...time{get_now_format_time()}\n'>> {cache_path}"
         os.system(bash)
