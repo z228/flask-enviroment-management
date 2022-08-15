@@ -15,7 +15,7 @@ def send(receiver,subject,text):
     receivers =receiver # 接收邮件，可设置为你的QQ邮箱或者其他邮箱
 
     # 三个参数：第一个为文本内容，第二个 plain 设置文本格式，第三个 utf-8 设置编码
-    message = MIMEText(text, 'plain', 'utf-8')
+    message = MIMEText(text, 'html', 'utf-8')
     message['From'] = Header(sender, 'utf-8')  # 发送者
     message['To'] = Header(receivers, 'utf-8')  # 接收者
 

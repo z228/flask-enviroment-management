@@ -119,10 +119,21 @@ def try_copy(v, ip_today, ip_134_today):
         copytree(ip_134_today, ip_today)
         bash = f"echo '{ip_134_today} update time{get_now_format_time()}\n'>> {cache_path}"
         os.system(bash)
-        subject = "新的Jar包"
-        content = f"{ip_134_today} update to {ip_today}"
+        subject = f"{v} 新的Jar包 已更新"
+        part0 = """<!DOCTYPE html>
+<html>
+<head>
+    <meta. charset="UTF-8">
+        <title>${ENV, var="JOB_NAME"}-第${BUILD_NUMBER}次构建日志</title>
+</head>
+<body leftmargin="8" marginwidth="0" topmargin="8" marginheight="4" ffset="0">
+<div style="font-size: 14pt; font-family: Tahoma, Arial, Helvetica, sans-serif">
+"""
+        part2 = """</div></body>
+</html>"""
+        content = f"<p>{ip_134_today.replace('/mnt/134/productJar','134\git-package')} update to {ip_today.replace('/home','187')}</p><p><small>取包的路径：\\\\192.168.0.187\share（账户密码：<b>tkl-share/9926</b>）</small></p>"
         task_logger.info(content)
-        send("zengchenglong@yonghongtech.com", subject, content)
+        send("zengchenglong@yonghongtech.com", subject, part0 + content + part2)
     except PermissionError:
         bash = f"echo '{ip_134_today}/{v}be tied up,please wait...time{get_now_format_time()}\n'>> {cache_path}"
         os.system(bash)
