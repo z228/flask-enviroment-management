@@ -128,10 +128,11 @@ def try_copy(v, ip_today, ip_134_today):
 </head>
 <body leftmargin="8" marginwidth="0" topmargin="8" marginheight="4" ffset="0">
 <div style="font-size: 14pt; font-family: Tahoma, Arial, Helvetica, sans-serif">
+<p>
 """
         part2 = """</div></body>
 </html>"""
-        content = f"<p>{ip_134_today.replace('/mnt/134/productJar','134\git-package')} update to {ip_today.replace('/home','187')}"
+        content = f"{ip_134_today.replace('/mnt/134/productJar','134\git-package')} update to {ip_today.replace('/home','187')}"
         content0 = "</p><p><small>取包的路径：\\\\192.168.0.187\share（账户密码：<b>tkl-share/9926</b>）</small></p>"
         task_logger.info(content)
         send("zengchenglong@yonghongtech.com", subject, part0 + content + content0 + part2)
