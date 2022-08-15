@@ -207,7 +207,7 @@
 </el-dialog> -->
             </template>
           </el-table-column>
-          <el-table-column label="可更换bihome" width="170">
+          <!-- <el-table-column label="可更换bihome" width="170">
             <template slot-scope="scope">
               <el-select
                 v-model="bihome[scope.row.version]"
@@ -235,7 +235,7 @@
                 >应用
               </el-button>
             </template>
-          </el-table-column>
+          </el-table-column> -->
         </el-table>
       </el-card>
     </div>

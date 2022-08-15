@@ -3,7 +3,7 @@ import VueRouter from "vue-router";
 import cent187 from "../views/cent187.vue";
 import cent185 from "../views/cent185.vue";
 import mac188 from "../views/mac188.vue";
-import Home from "../components/Home";
+import Home from "../components/Home.vue";
 import Login from "../views/Login.vue";
 import iframeTest from "../views/iframeTest.vue";
 import serverstatus from '../views/serverstatus.vue'

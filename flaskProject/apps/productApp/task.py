@@ -4,6 +4,7 @@ from shutil import rmtree, copytree
 from time import strftime, strptime, localtime
 from . import product
 from logging import getLogger
+from apps.lib.send_mail import send
 
 to_path = ['D:/old_version/8.6/', 'D:/old_version/8.8/', 'D:/old_version/9.0/', 'D:/old_version/9.1/',
            'D:/old_version/9.2/', 'D:/old_version/9.2.1/', 'D:/old_version/9.3/', 'D:/old_version/trunk/']
@@ -118,7 +119,10 @@ def try_copy(v, ip_today, ip_134_today):
         copytree(ip_134_today, ip_today)
         bash = f"echo '{ip_134_today} update time{get_now_format_time()}\n'>> {cache_path}"
         os.system(bash)
-        task_logger.info(f"{ip_134_today} update")
+        subject = "新的Jar包"
+        content = f"{ip_134_today} update to {ip_today}"
+        task_logger.info(content)
+        send("zengchenglong@yonghongtech.com", subject, content)
     except PermissionError:
         bash = f"echo '{ip_134_today}/{v}be tied up,please wait...time{get_now_format_time()}\n'>> {cache_path}"
         os.system(bash)
