@@ -135,7 +135,7 @@ def try_copy(v, ip_today, ip_134_today):
         path0 = ip_134_today.replace('/mnt/134/productJar','134\git-package')
         path1 = ip_today.replace('/home','187')
         content = f"{path0} update to {path1}"
-        content0 = "</p><p><small>取包的路径：</p><p>#1.\\\\192.168.0.187\share（账户密码：<b>tkl-share/9926</b>）</small></p><p>#2.\\\\192.168.0.141\productJar（账户密码：<b>cdqa/yonghong@123</b>）</p>"
+        content0 = "</p><p><small>取包的路径：</small><br><small>#1.\\\\192.168.0.187\share（账户密码：<b>tkl-share/9926</b>）</small><br><small>#2.\\\\192.168.0.141\productJar（账户密码：<b>cdqa/yonghong@123</b>）</small></p>"
         task_logger.info(content)
         send("zengchenglong@yonghongtech.com", subject, part0 + content + content0 + part2)
     except PermissionError:
