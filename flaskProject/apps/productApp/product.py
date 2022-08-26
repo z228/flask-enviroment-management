@@ -164,7 +164,7 @@ class ProductAction:
             else:
                 self.config[key]["port"] = self.get_bi_port(key)
                 self.config[key]["bihome"] = self.get_bi_home(key)
-                if 'dis' in key:
+                if 'dis' in key.lower():
                     self.config[key]["url"] = self.config[key]["port"] + '/bi/?showOthers=true'
                 else:
                     self.config[key]["url"] = self.config[key]["port"] + '/bi'
