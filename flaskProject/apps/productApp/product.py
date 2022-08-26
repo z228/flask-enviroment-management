@@ -405,7 +405,10 @@ class ProductAction:
                 if self.current_system == "Windows":
                     sys('startup > caches.txt')
                 else:
-                    sys('sh catalina.sh jpda start > caches.txt')
+                    if self.config[v]["debug"] == "未配置":
+                        sys('sh startup.sh > caches.txt')
+                    else:
+                        sys('sh catalina.sh jpda start > caches.txt')
                 break
         product_logger.info(f'[{user}] 启动{v} tomcat服务成功')
         self.config[v]["sts"] += 1
