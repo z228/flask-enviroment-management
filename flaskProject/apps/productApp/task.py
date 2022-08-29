@@ -124,7 +124,7 @@ def try_copy(v, ip_today, ip_134_today):
 <html>
 <head>
     <meta. charset="UTF-8">
-        <title>${ENV, var="JOB_NAME"}-第${BUILD_NUMBER}次构建日志</title>
+        <title>jar包更新</title>
 </head>
 <body leftmargin="8" marginwidth="0" topmargin="8" marginheight="4" ffset="0">
 <div style="font-size: 14pt; font-family: Tahoma, Arial, Helvetica, sans-serif">
