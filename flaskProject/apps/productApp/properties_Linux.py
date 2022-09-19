@@ -64,7 +64,7 @@ env_list = {
             "path": "/opt/10",
             "port": "8100",
             "bihomes": "bihome",
-            "branch": "develop"
+            "branch": "v10.0"
         },
         "trunk": {
             "path": "/opt/trunk",
