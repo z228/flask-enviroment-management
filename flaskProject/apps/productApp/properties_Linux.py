@@ -54,6 +54,12 @@ env_list = {
             "bihomes": "bihome",
             "branch": "custom_v9.4.3_gld"
         },
+        "944发版测试用": {
+            "path": "/opt/944",
+            "port": "8944",
+            "bihomes": "bihome",
+            "branch": "v9.4"
+        },
         "10_huaweiDIS": {
             "path": "/opt/10_huaweiDIS",
             "port": "8110",
