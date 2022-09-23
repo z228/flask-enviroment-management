@@ -11,7 +11,10 @@ to_path = ['D:/old_version/8.6/', 'D:/old_version/8.8/', 'D:/old_version/9.0/', 
 path = 'Yonghong_Z-Suite/Yonghong'
 productAction = product.ProductAction()
 config = productAction.config
-version = [config[i]['branch'] for i in config.keys()]
+version = []
+for i in config.keys():
+    if config[i]['branch'] not in version:
+        version.append(config[i]['branch'])
 product_path = r'/home/share'
 cache_path = r'/home/share/cache.txt'
 ip_dist = r'/home/share/version/'
