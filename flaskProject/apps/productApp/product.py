@@ -157,6 +157,7 @@ class ProductAction:
         self.bi_xml_path = f'{self.root_path}/tomcat/webapps/bi/WEB-INF/web.xml'
         self.server_xml_path = f'{self.root_path}/tomcat/conf/server.xml'
         for key in self.config.keys():
+            branch = self.config[key]["branch"]
             if key in status.keys():
                 self.config[key] = status[key]
                 self.config[key]["st"] = '' if "st" not in status[key].keys() else status[key]["st"]
@@ -174,6 +175,7 @@ class ProductAction:
                 self.config[key]["sts"] = 0
             if not self.is_port_used_fast(self.config[key]["port"]):
                 self.config[key]["startUser"] = ''
+            self.config[key]["branch"] = branch
             self.config[key]["opUser"] = ''
             self.config[key]["startup"] = False
             self.config[key]["shutdown"] = False
