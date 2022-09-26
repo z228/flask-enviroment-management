@@ -41,7 +41,7 @@ def get_jar_list():
             jar_list[key] = productAction.clear_list_not_num(jar_list[key])
             jar_list[key].sort()
             jar_list[key].reverse()
-        print(jar_list)
+        task_logger.info(jar_list)
 
 def clean_jar():
     for i in to_path:
