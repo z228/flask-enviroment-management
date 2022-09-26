@@ -9,7 +9,7 @@ from functools import wraps
 from . import test
 from .product import ProductAction
 from .junit import *
-from .task import test_param
+from .task import jar_list
 
 ALLOWED_EXTENSIONS = {'jar'}
 
@@ -74,9 +74,10 @@ def save_script():
 def get_all_version():
     v = {}
     for key in VERSION:
-        v[key] = {}
-        v[key]["path"] = productAction.config[key]["path"]
-    return productAction.succ(productAction.config)
+        v[key] = productAction.config[key]
+        v[key]["startUser"] = productAction.config[key]["startUser"] if productAction.is_port_used_fast(
+            productAction.config[key]["port"]) else '0'
+    return productAction.succ(v)
 
 
 # 获取所有bihome
@@ -123,9 +124,9 @@ def get_url():
 @productJar_operate.route('/141jar', methods=['GET'])
 @authentication_user
 def get_141_jar():
-    v = productAction.get_jar_list()
-    product_logger.info(test_param)
-    return productAction.succ(v)
+    # v = productAction.get_jar_list()
+    # product_logger.info(jar_list)
+    return productAction.succ(jar_list)
 
 
 # 更换环境bihome
@@ -161,14 +162,14 @@ def start_product():
 def check_product():
     v = {}
     for key in VERSION:
-        v[key] = {}
+        v[key] = productAction.config[key]
         v[key]["startUser"] = productAction.config[key]["startUser"] if productAction.is_port_used_fast(
             productAction.config[key]["port"]) else '0'
-        v[key]["startup"] = productAction.config[key]["startup"]
-        v[key]["shutdown"] = productAction.config[key]["shutdown"]
-        v[key]["update"] = productAction.config[key]["update"]
-        v[key]["reload"] = productAction.config[key]["reload"]
-        v[key]["updateAndReload"] = productAction.config[key]["updateAndReload"]
+        # v[key]["startup"] = productAction.config[key]["startup"]
+        # v[key]["shutdown"] = productAction.config[key]["shutdown"]
+        # v[key]["update"] = productAction.config[key]["update"]
+        # v[key]["reload"] = productAction.config[key]["reload"]
+        # v[key]["updateAndReload"] = productAction.config[key]["updateAndReload"]
     return productAction.succ(v)
 
 

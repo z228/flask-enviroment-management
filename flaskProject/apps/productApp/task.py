@@ -24,7 +24,6 @@ jacoco_local_path = r'/opt/jacoco/trunk'
 file_list = ['api.jar', 'product.jar', 'thirds.jar']
 task_logger = getLogger("task")
 jar_list = {}
-test_param = 0
 
 
 def get_jar_list():
@@ -32,8 +31,6 @@ def get_jar_list():
         get jar list from ip_187 and ip_134
         :return:
         """
-        global test_params
-        test_param += 1
         for key in config.keys():
             branch = config[key]["branch"]
             dir_187 = os.listdir(f'{productAction.ip_187}{branch}') if os.path.exists(f'{productAction.ip_187}{branch}') else []
@@ -44,7 +41,6 @@ def get_jar_list():
             jar_list[key] = productAction.clear_list_not_num(jar_list[key])
             jar_list[key].sort()
             jar_list[key].reverse()
-        task_logger.info(jar_list)
 
 def clean_jar():
     for i in to_path:
@@ -178,3 +174,6 @@ def get_now_format_time():
 
 def copy_jacoco_to_192():
     os.popen(f'\mv -f {jacoco_local_path}/*zengchenglong3.exec {jacoco_192_path}')
+
+
+get_jar_list()

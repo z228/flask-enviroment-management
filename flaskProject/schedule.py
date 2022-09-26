@@ -51,6 +51,6 @@ class APSchedulerJobConfig(object):
             'func': 'apps.productApp.task:get_jar_list',
             'args': None,  # 如果function需要参数，就在这里添加
             'trigger': 'interval',
-            'seconds': 50
+            'seconds': 7200
         }
     ]
