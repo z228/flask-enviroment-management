@@ -72,11 +72,11 @@ def save_script():
 @productJar_operate.route('/all', methods=['GET'])
 @authentication_user
 def get_all_version():
-    v = {}
-    for key in VERSION:
-        v[key] = productAction.config[key]
-        v[key]["startUser"] = productAction.config[key]["startUser"] if productAction.is_port_used_fast(
-            productAction.config[key]["port"]) else '0'
+    # v = {}
+    # for key in VERSION:
+    #     v[key] = productAction.config[key]
+    #     v[key]["startUser"] = productAction.config[key]["startUser"] if productAction.is_port_used_fast(
+    #         productAction.config[key]["port"]) else '0'
     return productAction.succ(productAction.config)
 
 
