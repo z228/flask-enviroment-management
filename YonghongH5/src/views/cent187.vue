@@ -153,7 +153,7 @@
               </el-select>
               <el-upload
                 class="upload-demo"
-                action="http://192.168.0.187:5555/productJar/uploadJar"
+                action="http://192.168.0.187:5000/productJar/uploadJar"
                 :show-file-list="false"
                 :on-success="
                   (response, file, filelist) =>
@@ -287,7 +287,7 @@ export default {
       clearInterval(timer);
     });
   },
-  created() {
+  async created() {
     let username = sessionStorage.getItem("username");
     if (username === "" || username === null) {
       this.$router.push("/login");
@@ -299,7 +299,7 @@ export default {
       });
     } else {
       this.$set(this.status, "hasFound", false);
-      this.getAllProduct();
+      await this.getAllProduct();
       this.get141Jar();
       //this.getAllBihome();
       this.checkStatus();
@@ -326,7 +326,7 @@ export default {
     getJarInfo() {
       let _this = this;
       this.$axios
-        .get("http://192.168.0.187:5555/productJar/jarInfo", {
+        .get("http://192.168.0.187:5000/productJar/jarInfo", {
           headers: {
             Authorization: sessionStorage.getItem("username"),
           },
@@ -351,20 +351,20 @@ export default {
           });
         });
     },
-    getAllProduct() {
+    async getAllProduct() {
       let _this = this;
-      this.$axios
-        .get("http://192.168.0.187:5555/productJar/all", {
+      await this.$axios
+        .get("http://192.168.0.187:5000/productJar/all", {
           headers: {
             Authorization: sessionStorage.getItem("username"),
           },
         })
         .then((res) => {
           for (let v of res.data.data) {
-              _this.tableData.push({
-                version: v,
-               //path: res.data.data[v].path,
-              });
+            _this.tableData.push({
+              version: v,
+              //path: res.data.data[v].path,
+            });
           }
           _this.$set(_this.status, "hasFound", true);
         })
@@ -381,7 +381,7 @@ export default {
     get141Jar() {
       let _this = this;
       this.$axios
-        .get("http://192.168.0.187:5555/productJar/141jar", {
+        .get("http://192.168.0.187:5000/productJar/141jar", {
           headers: {
             Authorization: sessionStorage.getItem("username"),
           },
@@ -410,7 +410,7 @@ export default {
     getAllBihome() {
       let _this = this;
       this.$axios
-        .get("http://192.168.0.187:5555/productJar/allBihome", {
+        .get("http://192.168.0.187:5000/productJar/allBihome", {
           headers: {
             Authorization: sessionStorage.getItem("username"),
           },
@@ -438,7 +438,7 @@ export default {
     getCurrentBihome() {
       let _this = this;
       this.$axios
-        .get("http://192.168.0.187:5555/productJar/currentBihome", {
+        .get("http://192.168.0.187:5000/productJar/currentBihome", {
           headers: {
             Authorization: sessionStorage.getItem("username"),
           },
@@ -461,7 +461,7 @@ export default {
     getURL() {
       let _this = this;
       this.$axios
-        .get("http://192.168.0.187:5555/productJar/url", {
+        .get("http://192.168.0.187:5000/productJar/url", {
           headers: {
             Authorization: sessionStorage.getItem("username"),
           },
@@ -493,7 +493,7 @@ export default {
     checkStatus() {
       let _this = this;
       this.$axios
-        .get("http://192.168.0.187:5555/productJar/check", {
+        .get("http://192.168.0.187:5000/productJar/check", {
           headers: {
             Authorization: sessionStorage.getItem("username"),
           },
@@ -503,11 +503,11 @@ export default {
             if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
               for (let i = 0; i < _this.tableData.length; i++) {
                 if (_this.tableData[i].version === v) {
-                  _this.$set(
-                    _this.tableData[i],
-                    "checkRes",
-                    res.data.data[v].startUser
-                  );
+                  // _this.$set(
+                  //   _this.tableData[i],
+                  //   "checkRes",
+                  //   res.data.data[v].startUser
+                  // );
                   _this.$set(
                     _this.tableData[i],
                     "start",
@@ -533,7 +533,7 @@ export default {
                     "updateAndReload",
                     res.data.data[v].updateAndReload
                   );
-                  if (_this.tableData[i].checkRes === "0")
+                  if (res.data.data[v].startUser === "0")
                     _this.$set(_this.tableData[i], "msg", "空闲中");
                   else {
                     _this.$set(
@@ -561,7 +561,7 @@ export default {
     getDebugPort() {
       let _this = this;
       this.$axios
-        .get("http://192.168.0.187:5555/productJar/port", {
+        .get("http://192.168.0.187:5000/productJar/port", {
           headers: {
             Authorization: sessionStorage.getItem("username"),
           },
@@ -589,7 +589,7 @@ export default {
     getViewPort() {
       let _this = this;
       this.$axios
-        .get("http://192.168.0.187:5555/productJar/bi", {
+        .get("http://192.168.0.187:5000/productJar/bi", {
           headers: {
             Authorization: sessionStorage.getItem("username"),
           },
@@ -619,7 +619,7 @@ export default {
       this.changeTableData(row.version, "shutdown", true);
       this.$axios
         .post(
-          "http://192.168.0.187:5555/productJar/shutdown",
+          "http://192.168.0.187:5000/productJar/shutdown",
           {
             version: row.version,
             user: this.$store.state.userInfo,
@@ -670,7 +670,7 @@ export default {
       this.changeTableData(row.version, "start", true);
       this.$axios
         .post(
-          "http://192.168.0.187:5555/productJar/startup",
+          "http://192.168.0.187:5000/productJar/startup",
           {
             version: row.version,
             user: this.$store.state.userInfo,
@@ -736,7 +736,7 @@ export default {
           user: this.$store.state.userInfo,
         };
       this.$axios
-        .post("http://192.168.0.187:5555/productJar/update", form, {
+        .post("http://192.168.0.187:5000/productJar/update", form, {
           headers: {
             Authorization: sessionStorage.getItem("username"),
           },
@@ -778,7 +778,7 @@ export default {
       this.changeTableData(row.version, "reload", true);
       this.$axios
         .post(
-          "http://192.168.0.187:5555/productJar/reload_product",
+          "http://192.168.0.187:5000/productJar/reload_product",
           {
             version: row.version,
             user: this.$store.state.userInfo,
@@ -845,7 +845,7 @@ export default {
         };
       this.changeTableData(row.version, "updateAndReload", true);
       this.$axios
-        .post("http://192.168.0.187:5555/productJar/updateReload", form, {
+        .post("http://192.168.0.187:5000/productJar/updateReload", form, {
           headers: {
             Authorization: sessionStorage.getItem("username"),
           },
@@ -893,7 +893,7 @@ export default {
     exchangeBihome(row, key) {
       this.$axios
         .post(
-          "http://192.168.0.187:5555/productJar/changeBihome",
+          "http://192.168.0.187:5000/productJar/changeBihome",
           {
             version: row.version,
             bihome: key,
@@ -975,6 +975,7 @@ export default {
 .upload-demo {
   display: inline;
 }
+
 .status-tag {
   display: flex;
   justify-content: center;
