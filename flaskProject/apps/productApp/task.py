@@ -32,6 +32,7 @@ def get_jar_list():
         get jar list from ip_187 and ip_134
         :return:
         """
+        global test_params
         test_param += 1
         for key in config.keys():
             branch = config[key]["branch"]
