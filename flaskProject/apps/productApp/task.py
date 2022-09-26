@@ -23,7 +23,25 @@ jacoco_192_path = r'/mnt/192/jacoco/trunk'
 jacoco_local_path = r'/opt/jacoco/trunk'
 file_list = ['api.jar', 'product.jar', 'thirds.jar']
 task_logger = getLogger("task")
+jar_list = {}
 
+
+def get_jar_list(self):
+        """
+        get jar list from ip_187 and ip_134
+        :return:
+        """
+        for key in config.keys():
+            branch = config[key]["branch"]
+            dir_187 = listdir(f'{productAction.ip_187}{branch}') if exists(f'{productAction.ip_187}{branch}') else []
+            dir_134 = listdir(f'{productAction.ip_134}{branch}')
+            dir_134.extend(dir_187)
+            dir_list = productAction.clear_list_dumplicate(dir_134)
+            jar_list[key] = dir_list
+            jar_list[key] = productAction.clear_list_not_num(jar_list[key])
+            jar_list[key].sort()
+            jar_list[key].reverse()
+        print(jar_list)
 
 def clean_jar():
     for i in to_path:

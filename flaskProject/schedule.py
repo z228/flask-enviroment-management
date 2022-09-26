@@ -45,5 +45,12 @@ class APSchedulerJobConfig(object):
             'hour': 23,
             'minute': 10,
             'second': 0
+        },
+        {
+            'id': 'No6',  # 任务唯一ID
+            'func': 'apps.productApp.task:get_jar_list',
+            'args': None,  # 如果function需要参数，就在这里添加
+            'trigger': 'interval',
+            'seconds': 50
         }
     ]
