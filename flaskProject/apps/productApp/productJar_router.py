@@ -77,7 +77,7 @@ def get_all_version():
         v[key] = productAction.config[key]
         v[key]["startUser"] = productAction.config[key]["startUser"] if productAction.is_port_used_fast(
             productAction.config[key]["port"]) else '0'
-    return productAction.succ(v)
+    return productAction.succ(productAction.config)
 
 
 # 获取所有bihome
@@ -165,11 +165,11 @@ def check_product():
         v[key] = productAction.config[key]
         v[key]["startUser"] = productAction.config[key]["startUser"] if productAction.is_port_used_fast(
             productAction.config[key]["port"]) else '0'
-        # v[key]["startup"] = productAction.config[key]["startup"]
-        # v[key]["shutdown"] = productAction.config[key]["shutdown"]
-        # v[key]["update"] = productAction.config[key]["update"]
-        # v[key]["reload"] = productAction.config[key]["reload"]
-        # v[key]["updateAndReload"] = productAction.config[key]["updateAndReload"]
+        v[key]["startup"] = productAction.config[key]["startup"]
+        v[key]["shutdown"] = productAction.config[key]["shutdown"]
+        v[key]["update"] = productAction.config[key]["update"]
+        v[key]["reload"] = productAction.config[key]["reload"]
+        v[key]["updateAndReload"] = productAction.config[key]["updateAndReload"]
     return productAction.succ(v)
 
 
