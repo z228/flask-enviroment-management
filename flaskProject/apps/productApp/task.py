@@ -24,6 +24,7 @@ jacoco_local_path = r'/opt/jacoco/trunk'
 file_list = ['api.jar', 'product.jar', 'thirds.jar']
 task_logger = getLogger("task")
 jar_list = {}
+test_param = 0
 
 
 def get_jar_list():
@@ -31,6 +32,7 @@ def get_jar_list():
         get jar list from ip_187 and ip_134
         :return:
         """
+        test_param += 1
         for key in config.keys():
             branch = config[key]["branch"]
             dir_187 = os.listdir(f'{productAction.ip_187}{branch}') if os.path.exists(f'{productAction.ip_187}{branch}') else []

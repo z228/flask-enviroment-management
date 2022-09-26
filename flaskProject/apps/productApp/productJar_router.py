@@ -9,10 +9,12 @@ from functools import wraps
 from . import test
 from .product import ProductAction
 from .junit import *
+from .task import test_param
 
 ALLOWED_EXTENSIONS = {'jar'}
 
 productJar_operate = Blueprint('productJar', __name__)
+product_logger = getLogger("product")
 productAction = ProductAction()
 VERSION = list(productAction.config.keys())
 
@@ -122,6 +124,7 @@ def get_url():
 @authentication_user
 def get_141_jar():
     v = productAction.get_jar_list()
+    product_logger.info(test_param)
     return productAction.succ(v)
 
 
