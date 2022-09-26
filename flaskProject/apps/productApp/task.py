@@ -26,7 +26,7 @@ task_logger = getLogger("task")
 jar_list = {}
 
 
-def get_jar_list(self):
+def get_jar_list():
         """
         get jar list from ip_187 and ip_134
         :return:
