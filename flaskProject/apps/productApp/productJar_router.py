@@ -77,7 +77,7 @@ def get_all_version():
     #     v[key] = productAction.config[key]
     #     v[key]["startUser"] = productAction.config[key]["startUser"] if productAction.is_port_used_fast(
     #         productAction.config[key]["port"]) else '0'
-    return productAction.succ(productAction.config)
+    return productAction.succ(VERSION)
 
 
 # 获取所有bihome
