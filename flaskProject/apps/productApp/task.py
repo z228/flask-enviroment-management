@@ -1,5 +1,7 @@
+from cmath import exp
 import os
 from filecmp import cmpfiles
+from re import S
 from shutil import rmtree, copytree
 from time import strftime, strptime, localtime
 from . import product
@@ -27,20 +29,22 @@ jar_list = {}
 
 
 def get_jar_list():
-        """
-        get jar list from ip_187 and ip_134
-        :return:
-        """
-        for key in config.keys():
-            branch = config[key]["branch"]
-            dir_187 = os.listdir(f'{productAction.ip_187}{branch}') if os.path.exists(f'{productAction.ip_187}{branch}') else []
-            dir_134 = os.listdir(f'{productAction.ip_134}{branch}')
-            dir_134.extend(dir_187)
-            dir_list = productAction.clear_list_dumplicate(dir_134)
-            jar_list[key] = dir_list
-            jar_list[key] = productAction.clear_list_not_num(jar_list[key])
-            jar_list[key].sort()
-            jar_list[key].reverse()
+    """
+    get jar list from ip_187 and ip_134
+    :return:
+    """
+    for key in config.keys():
+        branch = config[key]["branch"]
+        dir_187 = os.listdir(f'{productAction.ip_187}{branch}') if os.path.exists(
+            f'{productAction.ip_187}{branch}') else []
+        dir_134 = os.listdir(f'{productAction.ip_134}{branch}')
+        dir_134.extend(dir_187)
+        dir_list = productAction.clear_list_dumplicate(dir_134)
+        jar_list[key] = dir_list
+        jar_list[key] = productAction.clear_list_not_num(jar_list[key])
+        jar_list[key].sort()
+        jar_list[key].reverse()
+
 
 def clean_jar():
     for i in to_path:
@@ -104,7 +108,8 @@ def diff_day(ftime, fmt):
 def clean_backup_jar():
     os.system(f"rm {os.path.join(product_path, 'cache.txt')}")
     for i in version:
-        backup_folders = os.popen(f"ls {os.path.join(product_path, i)}").read().split()
+        backup_folders = os.popen(
+            f"ls {os.path.join(product_path, i)}").read().split()
         if len(backup_folders) <= 5:
             continue
         for j in backup_folders:
@@ -152,12 +157,13 @@ def try_copy(v, ip_today, ip_134_today):
 """
         part2 = """</div></body>
 </html>"""
-        path0 = ip_134_today.replace('/mnt/134/productJar','134\git-package')
-        path1 = ip_today.replace('/home','187')
+        path0 = ip_134_today.replace('/mnt/134/productJar', '134\git-package')
+        path1 = ip_today.replace('/home', '187')
         content = f"{path0} update to {path1}"
         content0 = "</p><p><small>取包的路径：</small><br><small>#1.\\\\192.168.0.187\share（账户密码：<b>tkl-share/9926</b>）</small><br><small>#2.\\\\192.168.0.141\productJar（账户密码：<b>cdqa/yonghong@123</b>）</small></p>"
         task_logger.info(content)
-        send("qa-visualcd@yonghongtech.com", subject, part0 + content + content0 + part2)
+        send("qa-visualcd@yonghongtech.com", subject,
+             part0 + content + content0 + part2)
     except PermissionError:
         bash = f"echo '{ip_134_today}/{v}be tied up,please wait...time{get_now_format_time()}\n'>> {cache_path}"
         os.system(bash)
@@ -173,7 +179,38 @@ def get_now_format_time():
 
 
 def copy_jacoco_to_192():
-    os.popen(f'\mv -f {jacoco_local_path}/*zengchenglong3.exec {jacoco_192_path}')
+    os.popen(
+        f'\mv -f {jacoco_local_path}/*zengchenglong3.exec {jacoco_192_path}')
+
+
+def commit_junit_exp():
+    branchs = ['v9.0_test', 'v9.2.1_test',
+               'v9.4_test', 'v10.0_test', 'trunk_test']
+    visualcd_suites = ['Chart', 'CustomerBug', 'DBDataprocess',
+                       'DBPainter', 'DynamicCalc', 'Export']
+    msg = 'change exp of junit'
+    for branch in branchs:
+        task_logger.info(branch)
+        exp_path = f'/home/share/junit_test/{branch}/assetExecute/testcases'
+        for suite in visualcd_suites:
+            svn_exp_path = os.path.join(exp_path, suite, 'exp')
+            # task_logger.info(svn_exp_path)
+            # os.chdir(svn_exp_path)
+            os.popen(f'svn up {svn_exp_path}')
+            os.popen(f'svn cleanup {svn_exp_path}')
+            task_logger.info(f'svn st {svn_exp_path}')
+            status = os.popen(f'svn st {svn_exp_path}').read()
+            if not status:
+                task_logger.info(f"{branch}的{suite}没有修改")
+                continue
+            task_logger.info(status)
+            for statu in status.split('\n'):
+                # task_logger.info(statu.split())
+                if statu.split()[0] == '?':
+                    log = os.popen(f'svn add {statu.split()[1]}').read()
+                    task_logger.info(log)
+            log = os.popen(f'svn ci {svn_exp_path} -m "{msg}"').read()
+            task_logger.info(log)
 
 
 get_jar_list()
