@@ -1,23 +1,23 @@
-import Vue from "vue";
-import VueRouter from "vue-router";
-import cent187 from "../views/cent187.vue";
-import cent185 from "../views/cent185.vue";
-import mac188 from "../views/mac188.vue";
-import Home from "../components/Home.vue";
-import Login from "../views/Login.vue";
-import iframeTest from "../views/iframeTest.vue";
-import serverstatus from '../views/serverstatus.vue'
-import junitCase from "../views/junitCase.vue";
-import userinfo from "../views/userinfo.vue";
-import userManage from "../views/userManage.vue";
-import log from '../views/log.vue'
+import Vue from "vue"
+import VueRouter from "vue-router"
+import cent187 from "../views/cent187.vue"
+import cent185 from "../views/cent185.vue"
+import mac188 from "../views/mac188.vue"
+import Home from "../components/Home.vue"
+import Login from "../views/Login.vue"
+import iframeTest from "../views/iframeTest.vue"
+import serverstatus from "../views/serverstatus.vue"
+import junitCase from "../views/junitCase.vue"
+import userinfo from "../views/userinfo.vue"
+import userManage from "../views/userManage.vue"
+import log from "../views/log.vue"
 
-Vue.use(VueRouter);
-const originalPush = VueRouter.prototype.push;
+Vue.use(VueRouter)
+const originalPush = VueRouter.prototype.push
 
 VueRouter.prototype.push = function push(location) {
-  return originalPush.call(this, location).catch((err) => err);
-};
+  return originalPush.call(this, location).catch((err) => err)
+}
 
 const routes = [
   {
@@ -44,7 +44,7 @@ const routes = [
         },
         component: cent187,
       },
-        {
+      {
         path: "/cent185",
         name: "cent185",
         meta: {
@@ -52,7 +52,7 @@ const routes = [
         },
         component: cent185,
       },
-        {
+      {
         path: "/mac188",
         name: "mac188",
         meta: {
@@ -60,22 +60,22 @@ const routes = [
         },
         component: mac188,
       },
-	  {
-        path: '/serverstatus',
-        name: 'serverstatus',
+      {
+        path: "/serverstatus",
+        name: "serverstatus",
         meta: {
-            title: 'serverstatus',
-         },
-        component: serverstatus
-       },
-      // {
-      //     path: '/junit',
-      //     name: 'junitCase',
-      //     meta: {
-      //         title: 'junit',
-      //     },
-      //     component: junitCase
-      // },
+          title: "serverstatus",
+        },
+        component: serverstatus,
+      },
+      {
+        path: "/junit",
+        name: "junitCase",
+        meta: {
+          title: "junit",
+        },
+        component: junitCase,
+      },
       {
         path: "/iframe",
         name: "iframeTest",
@@ -110,12 +110,12 @@ const routes = [
       },
     ],
   },
-];
+]
 
 const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
   routes,
-});
+})
 
-export default router;
+export default router

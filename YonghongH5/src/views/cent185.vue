@@ -37,11 +37,7 @@
           </el-table-column>
           <el-table-column prop="path" label="url路径" width="300"
             ><template slot-scope="scope">
-              <a
-                target="_blank"
-                :href="scope.row.url"
-                >{{ scope.row.url }}</a
-              >
+              <a target="_blank" :href="scope.row.url">{{ scope.row.url }}</a>
             </template>
           </el-table-column>
           <el-table-column prop="path" label="状态" width="150">
@@ -157,22 +153,25 @@
                 class="upload-demo"
                 action="http://192.168.0.185:5000/productJar/uploadJar"
                 :show-file-list="false"
-                :on-success="(response,file,filelist)=> handleAvatarSuccess(scope.row, response,file,filelist)"
+                :on-success="
+                  (response, file, filelist) =>
+                    handleAvatarSuccess(scope.row, response, file, filelist)
+                "
                 :data="{ version: scope.row.version }"
                 style="width: 150px; margin-left: 10px"
               >
                 <el-button
-                @click="uploadJar(scope.row)"
+                  @click="uploadJar(scope.row)"
                   size="small"
                   type="info"
                   icon="el-icon-upload2"
                   @disabled="scope.row.updateAndReload"
-                v-loading="scope.row.updateAndReload"
-                element-loading-text="jar包正在更换中"
-                element-loading-spinner="el-icon-loading"
-                element-loading-background="rgba(0, 0, 0, 0.8)"
-                element-loading-custom-class="updateLoading"
-                plain
+                  v-loading="scope.row.updateAndReload"
+                  element-loading-text="jar包正在更换中"
+                  element-loading-spinner="el-icon-loading"
+                  element-loading-background="rgba(0, 0, 0, 0.8)"
+                  element-loading-custom-class="updateLoading"
+                  plain
                   >上传自定义jar包</el-button
                 >
               </el-upload>
@@ -258,9 +257,9 @@ export default {
       clearInterval(timer);
     });
   },
-  created() {
+  async created() {
     this.$set(this.status, "hasFound", false);
-    this.getAllProduct();
+    await this.getAllProduct();
     this.get141Jar();
     this.getAllBihome();
     this.checkStatus();
@@ -301,7 +300,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -330,7 +329,7 @@ export default {
         .catch((err) => {
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -356,7 +355,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -380,7 +379,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -399,7 +398,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -427,7 +426,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -491,7 +490,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -515,7 +514,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -539,7 +538,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -561,7 +560,7 @@ export default {
           if (res.data.code === 200) {
             this.$message({
               message: res.data.data,
-              duration: 600000,
+              duration: 10 * 1000,
               showClose: true,
               type: "success",
             });
@@ -570,7 +569,7 @@ export default {
             console.log(res.data);
             this.$message({
               message: res.data.data,
-              duration: 600000,
+              duration: 10 * 1000,
               showClose: true,
               type: "warning",
             });
@@ -580,7 +579,7 @@ export default {
         .catch((err) => {
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -608,7 +607,7 @@ export default {
             }
             this.$message({
               message: res.data.data,
-              duration: 600000,
+              duration: 10 * 1000,
               showClose: true,
               type: "success",
             });
@@ -617,7 +616,7 @@ export default {
             console.log(res.data);
             this.$message({
               message: res.data.data,
-              duration: 600000,
+              duration: 10 * 1000,
               showClose: true,
               type: "warning",
             });
@@ -627,7 +626,7 @@ export default {
         .catch((err) => {
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -656,7 +655,7 @@ export default {
           if (res.data.code === 200) {
             this.$message({
               message: res.data.data,
-              duration: 600000,
+              duration: 10 * 1000,
               showClose: true,
               type: "success",
             });
@@ -665,7 +664,7 @@ export default {
             console.log(res.data);
             this.$message({
               message: res.data.data,
-              duration: 600000,
+              duration: 10 * 1000,
               showClose: true,
               type: "warning",
             });
@@ -676,7 +675,7 @@ export default {
         .catch((err) => {
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -704,7 +703,7 @@ export default {
             }
             this.$message({
               message: res.data.data,
-              duration: 600000,
+              duration: 10 * 1000,
               showClose: true,
               type: "success",
             });
@@ -713,7 +712,7 @@ export default {
             console.log(res.data);
             this.$message({
               message: res.data.data,
-              duration: 600000,
+              duration: 10 * 1000,
               showClose: true,
               type: "warning",
             });
@@ -723,7 +722,7 @@ export default {
         .catch((err) => {
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -761,7 +760,7 @@ export default {
             }
             this.$message({
               message: res.data.data,
-              duration: 600000,
+              duration: 10 * 1000,
               showClose: true,
               type: "success",
             });
@@ -770,7 +769,7 @@ export default {
             console.log(res.data);
             this.$message({
               message: res.data.data,
-              duration: 600000,
+              duration: 10 * 1000,
               showClose: true,
               type: "warning",
             });
@@ -781,7 +780,7 @@ export default {
         .catch((err) => {
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -800,7 +799,7 @@ export default {
           if (res.data.code === 200) {
             this.$message({
               message: res.data.data,
-              duration: 600000,
+              duration: 10 * 1000,
               showClose: true,
               type: "success",
             });
@@ -809,7 +808,7 @@ export default {
         .catch((err) => {
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -835,7 +834,7 @@ export default {
       if (res.code === 200) {
         this.$message({
           message: res.data,
-          duration: 600000,
+          duration: 10 * 1000,
           showClose: true,
           type: "success",
         });
@@ -843,15 +842,15 @@ export default {
       } else {
         this.$message({
           message: res.data,
-          duration: 600000,
+          duration: 10 * 1000,
           showClose: true,
           type: "error",
         });
       }
     },
-    uploadJar(row){
+    uploadJar(row) {
       this.changeTableData(row.version, "updateAndReload", true);
-    }
+    },
   },
 };
 </script>

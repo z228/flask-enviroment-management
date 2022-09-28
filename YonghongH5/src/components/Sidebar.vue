@@ -1,14 +1,14 @@
 <template>
   <div class="sidebar">
     <el-menu
-        class="sidebar-el-menu"
-        :default-active="onRoutes"
-        :collapse="collapse"
-        background-color="#324157"
-        text-color="#bfcbd9"
-        active-text-color="#20a0ff"
-        unique-opened
-        router
+      class="sidebar-el-menu"
+      :default-active="onRoutes"
+      :collapse="collapse"
+      background-color="#324157"
+      text-color="#bfcbd9"
+      active-text-color="#20a0ff"
+      unique-opened
+      router
     >
       <template v-for="item in items">
         <template v-if="item.subs">
@@ -19,20 +19,20 @@
             </template>
             <template v-for="subItem in item.subs">
               <el-submenu
-                  v-if="subItem.subs"
-                  :index="subItem.index"
-                  :key="subItem.index"
+                v-if="subItem.subs"
+                :index="subItem.index"
+                :key="subItem.index"
               >
                 <template slot="title">{{ subItem.title }}</template>
                 <el-menu-item
-                    v-for="(threeItem, i) in subItem.subs"
-                    :key="i"
-                    :index="threeItem.index"
-                >{{ threeItem.title }}
+                  v-for="(threeItem, i) in subItem.subs"
+                  :key="i"
+                  :index="threeItem.index"
+                  >{{ threeItem.title }}
                 </el-menu-item>
               </el-submenu>
               <el-menu-item v-else :index="subItem.index" :key="subItem.index"
-              >{{ subItem.title }}
+                >{{ subItem.title }}
               </el-menu-item>
             </template>
           </el-submenu>
@@ -91,90 +91,95 @@ export default {
       bus.$emit("collapse-content", msg);
     });
     if (
-        this.$store.state.username === "admin" ||
-        this.$store.state.username === "zcl"
-        // this.$store.state.username === "zhengsong"
+      this.$store.state.username === "admin" ||
+      this.$store.state.username === "zcl"
+      // this.$store.state.username === "zhengsong"
     ) {
       this.$common.objectValueAtoB(
-          [
-            {
-              icon: "el-icon-centos",
-              index: "cent187",
-              title: "cent187环境",
-            },
-            {
-              icon: "el-icon-centos",
-              index: "cent185",
-              title: "cent185环境",
-            },
-            {
-              icon: "el-icon-apple",
-              index: "mac188",
-              title: "mac188环境",
-            },
-			{
-			  icon: 'el-icon-pie-chart',
-			  index: 'serverstatus',
-		      title: '服务器状态'
-			},
-            {
-              icon: "el-icon-script",
-              index: "iframe",
-              title: "iframe",
-            },
-            {
-              icon: "el-icon-user",
-              index: "userinfo",
-              title: "用户信息",
-            },
-            {
-              icon: "el-icon-tickets",
-              index: "log",
-              title: "日志查询",
-            },
-            {
-              icon: "el-icon-setting",
-              index: "usermanage",
-              title: "用户管理",
-            },
-          ],
-          this.items
+        [
+          {
+            icon: "el-icon-centos",
+            index: "cent187",
+            title: "cent187环境",
+          },
+          {
+            icon: "el-icon-centos",
+            index: "cent185",
+            title: "cent185环境",
+          },
+          {
+            icon: "el-icon-apple",
+            index: "mac188",
+            title: "mac188环境",
+          },
+          {
+            icon: "el-icon-pie-chart",
+            index: "serverstatus",
+            title: "服务器状态",
+          },
+          {
+            icon: "el-icon-script",
+            index: "iframe",
+            title: "iframe",
+          },
+          {
+            icon: "el-icon-script",
+            index: "junit",
+            title: "junit",
+          },
+          {
+            icon: "el-icon-user",
+            index: "userinfo",
+            title: "用户信息",
+          },
+          {
+            icon: "el-icon-tickets",
+            index: "log",
+            title: "日志查询",
+          },
+          {
+            icon: "el-icon-setting",
+            index: "usermanage",
+            title: "用户管理",
+          },
+        ],
+        this.items
       );
     } else {
       this.$common.objectValueAtoB(
-          [
-            {
-              icon: "el-icon-centos",
-              index: "cent187",
-              title: "cent187环境",
-            },
-            {
-              icon: "el-icon-centos",
-              index: "cent185",
-              title: "cent185环境",
-            },
-            {
-              icon: "el-icon-apple",
-              index: "mac188",
-              title: "mac188环境",
-            },
-            // {
-            //   icon: 'el-icon-script',
-            //   index: 'junit',
-            //   title: 'junit'
-            // },
-            {
-              icon: "el-icon-script",
-              index: "iframe",
-              title: "iframe",
-            },
-            {
-              icon: "el-icon-user",
-              index: "userinfo",
-              title: "用户信息",
-            },
-          ],
-          this.items
+        [
+          {
+            icon: "el-icon-centos",
+            index: "cent187",
+            title: "cent187环境",
+          },
+          {
+            icon: "el-icon-centos",
+            index: "cent185",
+            title: "cent185环境",
+          },
+          {
+            icon: "el-icon-apple",
+            index: "mac188",
+            title: "mac188环境",
+          },
+          {
+            icon: "el-icon-script",
+            index: "junit",
+            title: "junit",
+          },
+          {
+            icon: "el-icon-script",
+            index: "iframe",
+            title: "iframe",
+          },
+          {
+            icon: "el-icon-user",
+            index: "userinfo",
+            title: "用户信息",
+          },
+        ],
+        this.items
       );
     }
   },

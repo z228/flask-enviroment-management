@@ -52,5 +52,12 @@ class APSchedulerJobConfig(object):
             'args': None,  # 如果function需要参数，就在这里添加
             'trigger': 'interval',
             'seconds': 7200
+        },
+        {
+            'id': 'No8',  # 任务唯一ID
+            'func': 'apps.productApp.task:commit_junit_exp',
+            'args': None,  # 如果function需要参数，就在这里添加
+            'trigger': 'interval',
+            'seconds': 60
         }
     ]

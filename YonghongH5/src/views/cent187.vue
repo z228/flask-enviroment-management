@@ -351,9 +351,9 @@ export default {
           });
         });
     },
-    async getAllProduct() {
+    getAllProduct() {
       let _this = this;
-      await this.$axios
+      this.$axios
         .get("http://192.168.0.187:5000/productJar/all", {
           headers: {
             Authorization: sessionStorage.getItem("username"),

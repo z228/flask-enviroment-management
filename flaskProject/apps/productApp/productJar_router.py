@@ -1,6 +1,7 @@
-from json import loads
+from json import loads, load
 from os import listdir
 from os.path import join
+from shutil import copy2
 
 from flask import Blueprint, request, render_template
 from werkzeug.utils import secure_filename
@@ -84,7 +85,8 @@ def get_all_version():
 @productJar_operate.route('/allBihome', methods=['GET'])
 @authentication_user
 def get_all_bihome():
-    v = {key: productAction.config[key]["bihomes"].split(' ') for key in VERSION}
+    v = {key: productAction.config[key]
+         ["bihomes"].split(' ') for key in VERSION}
     return productAction.succ(v)
 
 
@@ -265,7 +267,8 @@ def reload_product():
 @authentication_user
 def update_and_reload_product():
     data = loads(request.get_data())
-    res = productAction.copy_and_reload(data['version'], data['date'], data['user'])
+    res = productAction.copy_and_reload(
+        data['version'], data['date'], data['user'])
     return productAction.succ(res) if '成功' in res else productAction.info(res)
 
 
@@ -318,12 +321,29 @@ def delete_user():
     return productAction.delete_user(username)
 
 
-@productJar_operate.route('/junitexp', methods=['POST'])
+@productJar_operate.route('/junitdiff', methods=['POST'])
 @authentication_user
 def get_junit_fail_list():
     data = loads(request.get_data())
-    productAction.change_junit_exp(data)
-    return productAction.succ("成功")
+    version = data["version"]
+    with open(f'/home/share/junit_res/el_tree_{version}_test_res.json', 'r', encoding='utf-8') as f:
+        fail_cases = load(f)
+    return productAction.succ(fail_cases)
+
+
+@productJar_operate.route('/junitexp', methods=['POST'])
+@authentication_user
+def exchange_junit_exp():
+    data = loads(request.get_data())
+    exp_path = f'/home/share/junit_test/{data["version"]}_test/assetExecute/testcases'
+    for case in data["cases"]:
+        src = join(exp_path, case)
+        dst = src.replace('res', 'exp')
+        # product_logger.info(src)
+        # product_logger.info(dst)
+        copy2(src, dst)
+        product_logger.info(f'copy {src} to {dst} done')
+    return productAction.succ("更换成功")
 
 
 # 更换jar功能页面
