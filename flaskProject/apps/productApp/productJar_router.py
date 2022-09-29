@@ -346,6 +346,21 @@ def exchange_junit_exp():
     return productAction.succ("更换成功")
 
 
+@productJar_operate.route('/junitdisexp', methods=['POST'])
+@authentication_user
+def exchange_junit_dis_exp():
+    data = loads(request.get_data())
+    exp_path = f'/mnt/192/junit_test/{data["version"]}_test/assetExecute/testcases'
+    for case in data["cases"]:
+        src = join(exp_path, case)
+        dst = src.replace('res', 'exp_dis')
+        # product_logger.info(src)
+        # product_logger.info(dst)
+        copy2(src, dst)
+        product_logger.info(f'copy {src} to {dst} done')
+    return productAction.succ("更换成功")
+
+
 # 更换jar功能页面
 @productJar_operate.route('/exchange', methods=['POST', 'GET'])
 def exchange():
