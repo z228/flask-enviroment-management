@@ -335,7 +335,7 @@ def get_junit_fail_list():
 @authentication_user
 def exchange_junit_exp():
     data = loads(request.get_data())
-    exp_path = f'/home/share/junit_test/{data["version"]}_test/assetExecute/testcases'
+    exp_path = f'/mnt/192/junit_test/{data["version"]}_test/assetExecute/testcases'
     for case in data["cases"]:
         src = join(exp_path, case)
         dst = src.replace('res', 'exp')
