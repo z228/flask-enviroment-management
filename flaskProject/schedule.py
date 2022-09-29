@@ -51,13 +51,13 @@ class APSchedulerJobConfig(object):
             'func': 'apps.productApp.task:get_jar_list',
             'args': None,  # 如果function需要参数，就在这里添加
             'trigger': 'interval',
-            'seconds': 7200
+            'seconds': 300
         },
-        {
-            'id': 'No8',  # 任务唯一ID
-            'func': 'apps.productApp.task:commit_junit_exp',
-            'args': None,  # 如果function需要参数，就在这里添加
-            'trigger': 'interval',
-            'seconds': 60
-        }
+        # {
+        #     'id': 'No8',  # 任务唯一ID
+        #     'func': 'apps.productApp.task:commit_junit_exp',
+        #     'args': None,  # 如果function需要参数，就在这里添加
+        #     'trigger': 'interval',
+        #     'seconds': 120
+        # }
     ]
