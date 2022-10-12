@@ -21,20 +21,26 @@ log_path = getcwd()
 task_logging = getLogger("task")
 root_logging = getLogger("")
 product_logging = getLogger("product")
+junit_logging = getLogger("junit")
 
 task_logging.setLevel(10)
 root_logging.setLevel(10)
 product_logging.setLevel(10)
+junit_logging.setLevel(10)
 
 info_log_path = f'{log_path}/logs/flask.log'
 debug_log_path = f'{log_path}/logs/debug.log'
 task_log_path = f'{log_path}/logs/task.log'
+junit_log_path = f'{log_path}/logs/junit.log'
 info_handler = TimedRotatingFileHandler(info_log_path, when="MIDNIGHT", interval=1, backupCount=7,
                                         encoding='utf-8')  # 设置日志字符集和存储路径名字
 debug_handler = TimedRotatingFileHandler(debug_log_path, when="MIDNIGHT", interval=1, backupCount=2,
                                          encoding='utf-8')  # 设置日志字符集和存储路径名字
 task_handler = TimedRotatingFileHandler(task_log_path, when="MIDNIGHT", interval=1, backupCount=5,
                                         encoding='utf-8')  # 设置日志字符集和存储路径名字
+
+junit_handler = TimedRotatingFileHandler(junit_log_path, when="MIDNIGHT", interval=30, backupCount=6,
+                                         encoding='utf-8')  # 设置日志字符集和存储路径名字
 remote_ip_format = RequestFormatter(
     '%(asctime)s - %(remote_addr)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s - '
     '%(message)s')
@@ -43,14 +49,19 @@ debug_format = RequestFormatter(
     '%(message)s')
 task_log_format = Formatter(
     "%(asctime)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s - %(message)s")
+junit_log_format = Formatter(
+    "%(asctime)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s - %(message)s")
 info_handler.setFormatter(remote_ip_format)
 debug_handler.setFormatter(debug_format)
 task_handler.setFormatter(task_log_format)
+junit_handler.setFormatter(junit_log_format)
 
 info_handler.setLevel(20)
 debug_handler.setLevel(10)
 task_handler.setLevel(20)
+junit_handler.setLevel(20)
 
 task_logging.addHandler(task_handler)
 root_logging.addHandler(debug_handler)
 product_logging.addHandler(info_handler)
+junit_logging.addHandler(junit_handler)

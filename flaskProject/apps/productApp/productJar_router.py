@@ -16,6 +16,7 @@ ALLOWED_EXTENSIONS = {'jar'}
 
 productJar_operate = Blueprint('productJar', __name__)
 product_logger = getLogger("product")
+junit_logger = getLogger("junit")
 productAction = ProductAction()
 VERSION = list(productAction.config.keys())
 
@@ -339,10 +340,8 @@ def exchange_junit_exp():
     for case in data["cases"]:
         src = join(exp_path, case)
         dst = src.replace('res', 'exp')
-        # product_logger.info(src)
-        # product_logger.info(dst)
         copy2(src, dst)
-        product_logger.info(f'copy {src} to {dst} done')
+    junit_logger.info(f'[{data["user"]}]-{data["cases"]} exchanged')
     return productAction.succ("更换成功")
 
 
@@ -354,10 +353,8 @@ def exchange_junit_dis_exp():
     for case in data["cases"]:
         src = join(exp_path, case)
         dst = src.replace('res', 'exp_dis')
-        # product_logger.info(src)
-        # product_logger.info(dst)
         copy2(src, dst)
-        product_logger.info(f'copy {src} to {dst} done')
+    junit_logger.info(f'[{data["user"]}]-{data["cases"]} exchanged')
     return productAction.succ("更换成功")
 
 
