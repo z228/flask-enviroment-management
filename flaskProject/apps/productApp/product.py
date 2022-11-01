@@ -160,15 +160,19 @@ class ProductAction:
             branch = self.config[key]["branch"]
             if key in status.keys():
                 self.config[key] = status[key]
-                self.config[key]["st"] = '' if "st" not in status[key].keys() else status[key]["st"]
-                self.config[key]["sts"] = 0 if "sts" not in status[key].keys() else status[key]["sts"]
+                self.config[key]["st"] = '' if "st" not in status[key].keys(
+                ) else status[key]["st"]
+                self.config[key]["sts"] = 0 if "sts" not in status[key].keys(
+                ) else status[key]["sts"]
             else:
                 self.config[key]["port"] = self.get_bi_port(key)
                 self.config[key]["bihome"] = self.get_bi_home(key)
                 if 'dis' in key.lower():
-                    self.config[key]["url"] = self.config[key]["port"] + '/bi/?showOthers=true'
+                    self.config[key]["url"] = self.config[key]["port"] + \
+                        '/bi/?showOthers=true&proc=0&action=index'
                 else:
-                    self.config[key]["url"] = self.config[key]["port"] + '/bi'
+                    self.config[key]["url"] = self.config[key]["port"] + \
+                        '/bi?proc=0&action=index'
                 self.config[key]["debug"] = self.get_debug_port(key)
                 self.config[key]["startUser"] = ''
                 self.config[key]["st"] = ''
@@ -398,7 +402,8 @@ class ProductAction:
             if self.is_port_used_fast(host_port):
                 if self.config[v]["startUser"] != '':
                     self.change_status(v, "startup")
-                    product_logger.info(f'[{user}] {self.config[v]["startUser"]}已启动{v} tomcat服务')
+                    product_logger.info(
+                        f'[{user}] {self.config[v]["startUser"]}已启动{v} tomcat服务')
                     return f'{self.config[v]["startUser"]}已启动{v} tomcat服务'
                 else:
                     product_logger.info('[{user}] tomcat正在停止中')
@@ -522,7 +527,8 @@ class ProductAction:
                 from_file = join(path, file_name)
                 to_file = join(to_path_in, "product", file_name)
                 if not exists(to_file):
-                    self.rename_product_jar(file_name, join(to_path_in, "product"))
+                    self.rename_product_jar(
+                        file_name, join(to_path_in, "product"))
                 try:
                     # from_134_file = from_file.replace(self.ip, self.ip_134)
                     # if exists(from_134_file):
@@ -530,11 +536,13 @@ class ProductAction:
                     #         from_file = from_134_file
                     if not exists(to_file) or not cmp(from_file, to_file):
                         copy2(from_file, to_file)
-                        product_logger.info(f"[{user}] {file_name}更新完毕,时间：{self.current_time()}")
+                        product_logger.info(
+                            f"[{user}] {file_name}更新完毕,时间：{self.current_time()}")
                         continue
                 except PermissionError:
                     self.change_status(version, "update")
-                    product_logger.info(f"[{user}] {path}下{file_name}正在被占用，请稍等...time{self.current_time()}")
+                    product_logger.info(
+                        f"[{user}] {path}下{file_name}正在被占用，请稍等...time{self.current_time()}")
         except FileNotFoundError as err:
             self.change_status(version, "update")
             product_logger.info(f'[{user}] file error:{err}')
@@ -576,10 +584,12 @@ class ProductAction:
         :param v: 环境版本
         :return:
         """
-        product_path = join(self.config[v]["path"] + self.YongHong_path, 'product')
+        product_path = join(
+            self.config[v]["path"] + self.YongHong_path, 'product')
         info_list = []
         for i in listdir(product_path):
-            change_time = strftime("日期:%Y%m%d 时间:%H:%M:%S", localtime(stat(join(product_path, i)).st_mtime))
+            change_time = strftime("日期:%Y%m%d 时间:%H:%M:%S", localtime(
+                stat(join(product_path, i)).st_mtime))
             info_list.append(f"{i}:{change_time}")
         return info_list
 
@@ -591,7 +601,8 @@ class ProductAction:
         jar_list = {}
         for key in self.config.keys():
             branch = self.config[key]["branch"]
-            dir_187 = listdir(f'{self.ip_187}{branch}') if exists(f'{self.ip_187}{branch}') else []
+            dir_187 = listdir(f'{self.ip_187}{branch}') if exists(
+                f'{self.ip_187}{branch}') else []
             dir_134 = listdir(f'{self.ip_134}{branch}')
             dir_134.extend(dir_187)
             dir_list = self.clear_list_dumplicate(dir_134)
@@ -697,7 +708,7 @@ class ProductAction:
             if self.get_user_by_username(username) and user.username != username:
                 return self.info("用户名已存在")
             change = (user.username != username) | (user.password != password) | (user.alias != alias) | (
-                    user.email != email)
+                user.email != email)
             if change:
                 user.username = username
                 user.password = password
