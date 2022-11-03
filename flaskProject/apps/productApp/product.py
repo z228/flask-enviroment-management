@@ -181,7 +181,7 @@ class ProductAction:
                 self.config[key]["bihome"] = self.get_bi_home(key)
                 if 'dis' in key.lower():
                     self.config[key]["url"] = self.config[key]["port"] + \
-                        '/bi/?showOthers=true&proc=0&action=index'
+                        '/bi/?showOthers=true'
                 else:
                     self.config[key]["url"] = self.config[key]["port"] + \
                         '/bi?proc=0&action=index'
