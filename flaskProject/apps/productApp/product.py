@@ -45,6 +45,18 @@ class ProductAction:
         self.read_config()
         self.users = User.query.filter().all()
 
+    @staticmethod
+    def read_command(cmd):
+        with popen(cmd) as p:
+            res = p.read()
+        return res
+
+    @staticmethod
+    def readlines_command(cmd):
+        with popen(cmd) as p:
+            res = p.readlines()
+        return res
+
     # 向某个进程发送ctrl+c指令
     @staticmethod
     def send_ctrl_c(pid):
@@ -292,8 +304,7 @@ class ProductAction:
             s.close()
 
     def is_port_used_fast(self, c_port):
-        res = popen(f'netstat -ano |findstr {c_port}').read() if self.current_system == "Windows" else popen(
-            f'lsof -i:{c_port}').read()
+        res = self.read_command(f'lsof -i:{c_port}')
         if "LISTENING" in res or "LISTEN" in res:
             return True
         return False
@@ -325,14 +336,13 @@ class ProductAction:
         self.config[v]["startUser"] = user
         return f'{v} tomcat重启成功！'
 
-    @staticmethod
-    def get_pid_by_port(port):
+    def get_pid_by_port(self, port):
         """
         get the pid by port
         :param port: 端口
         :return:
         """
-        res = popen(f'lsof -i:{port}').readlines()
+        res = self.readlines_command(f'lsof -i:{port}')
         res.pop(0)
         pid = [i.split()[1] for i in res]
         # for i in res:

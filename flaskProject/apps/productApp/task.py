@@ -3,7 +3,7 @@ import os
 from filecmp import cmpfiles
 from re import S
 from shutil import rmtree, copytree
-from time import strftime, strptime, localtime
+from time import strftime, strptime, localtime, sleep
 from . import product
 from logging import getLogger
 from apps.lib.send_mail import send
@@ -27,6 +27,15 @@ file_list = ['api.jar', 'product.jar', 'thirds.jar']
 task_logger = getLogger("task")
 jar_list = {}
 
+def read_command(cmd):
+    with os.popen(cmd) as p:
+        res = p.read()
+    return res
+
+def readlines_command(cmd):
+    with os.popen(cmd) as p:
+        res = p.readlines()
+    return res
 
 def get_jar_list():
     """
@@ -108,8 +117,8 @@ def diff_day(ftime, fmt):
 def clean_backup_jar():
     os.system(f"rm {os.path.join(product_path, 'cache.txt')}")
     for i in version:
-        backup_folders = os.popen(
-            f"ls {os.path.join(product_path, i)}").read().split()
+        backup_folders = read_command(
+            f"ls {os.path.join(product_path, i)}").split()
         if len(backup_folders) <= 5:
             continue
         for j in backup_folders:
@@ -179,8 +188,14 @@ def get_now_format_time():
 
 
 def copy_jacoco_to_192():
-    os.popen(
+    read_command(
         f'\mv -f {jacoco_local_path}/*zengchenglong3.exec {jacoco_192_path}')
+
+
+def test_svn():
+    status = read_command(
+        f'svn st /home/share/junit_test/v9.0_test/assetExecute/testcases/Chart/exp')
+    task_logger.info(status)
 
 
 def commit_junit_exp():
@@ -191,23 +206,24 @@ def commit_junit_exp():
     msg = 'change exp of junit'
     for branch in branchs:
         task_logger.info(branch)
-        exp_path = f'/home/share/junit_test/{branch}/assetExecute/testcases'
         for suite in visualcd_suites:
-            svn_exp_path = os.path.join(exp_path, suite, 'exp')
-            # task_logger.info(svn_exp_path)
+            svn_exp_path = f'/home/share/junit_test/{branch}/assetExecute/testcases/{suite}/exp'
             # os.chdir(svn_exp_path)
             os.popen(f'svn up {svn_exp_path}')
+            sleep(10)
             os.popen(f'svn cleanup {svn_exp_path}')
+            sleep(10)
             task_logger.info(f'svn st {svn_exp_path}')
-            status = os.popen(f'svn st {svn_exp_path}').read()
+            status = os.popen(f'svn st {svn_exp_path}').readlines()
             if not status:
                 task_logger.info(f"{branch}的{suite}没有修改")
                 continue
             task_logger.info(status)
-            for statu in status.split('\n'):
-                # task_logger.info(statu.split())
-                if statu.split()[0] == '?':
-                    log = os.popen(f'svn add {statu.split()[1]}').read()
+            for statu in status:
+                st = statu.split()[0]
+                file = statu.split()[1].replace('\n', '')
+                if st == '?':
+                    log = os.popen(f'svn add {file}').read()
                     task_logger.info(log)
             log = os.popen(f'svn ci {svn_exp_path} -m "{msg}"').read()
             task_logger.info(log)
