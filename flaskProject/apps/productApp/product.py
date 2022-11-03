@@ -179,16 +179,16 @@ class ProductAction:
             else:
                 self.config[key]["port"] = self.get_bi_port(key)
                 self.config[key]["bihome"] = self.get_bi_home(key)
-                if 'dis' in key.lower():
-                    self.config[key]["url"] = self.config[key]["port"] + \
-                        '/bi/?showOthers=true'
-                else:
-                    self.config[key]["url"] = self.config[key]["port"] + \
-                        '/bi?proc=0&action=index'
                 self.config[key]["debug"] = self.get_debug_port(key)
                 self.config[key]["startUser"] = ''
                 self.config[key]["st"] = ''
                 self.config[key]["sts"] = 0
+            if 'dis' in key.lower():
+                self.config[key]["url"] = self.config[key]["port"] + \
+                    '/bi/?showOthers=true'
+            else:
+                self.config[key]["url"] = self.config[key]["port"] + \
+                    '/bi?proc=0&action=index'
             if not self.is_port_used_fast(self.config[key]["port"]):
                 self.config[key]["startUser"] = ''
             self.config[key]["branch"] = branch
