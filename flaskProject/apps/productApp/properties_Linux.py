@@ -24,12 +24,6 @@ env_list = {
             "bihomes": "bihome",
             "branch": "v9.2.1"
         },
-        "926发版测试用": {
-            "path": "/opt/926",
-            "port": "8926",
-            "bihomes": "bihome",
-            "branch": "v9.2.1"
-        },
         "v9.4": {
             "path": "/opt/94",
             "port": "8921",
