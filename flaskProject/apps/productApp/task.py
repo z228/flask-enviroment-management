@@ -13,7 +13,7 @@ to_path = ['D:/old_version/8.6/', 'D:/old_version/8.8/', 'D:/old_version/9.0/', 
 path = 'Yonghong_Z-Suite/Yonghong'
 productAction = product.ProductAction()
 config = productAction.config
-version = []
+version = ['custom_v9.4.1_icbc']
 for i in config.keys():
     if config[i]['branch'] not in version:
         version.append(config[i]['branch'])
@@ -27,15 +27,18 @@ file_list = ['api.jar', 'product.jar', 'thirds.jar']
 task_logger = getLogger("task")
 jar_list = {}
 
+
 def read_command(cmd):
     with os.popen(cmd) as p:
         res = p.read()
     return res
 
+
 def readlines_command(cmd):
     with os.popen(cmd) as p:
         res = p.readlines()
     return res
+
 
 def get_jar_list():
     """
