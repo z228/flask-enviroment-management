@@ -42,6 +42,12 @@ env_list = {
             "bihomes": "bihome Export",
             "branch": "custom_v9.4_dis_M3"
         },
+        "10_huaweiDIS": {
+            "path": "/opt/10_huaweiDIS",
+            "port": "8941",
+            "bihomes": "bihome",
+            "branch": "custom_v10.0_huaweiDIS"
+        },
         "trunk": {
             "path": "/opt/trunk",
             "port": "8080",
