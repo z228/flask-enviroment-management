@@ -174,8 +174,10 @@ def try_copy(v, ip_today, ip_134_today):
         content = f"{path0} update to {path1}"
         content0 = "</p><p><small>取包的路径：</small><br><small>#1.\\\\192.168.0.187\share（账户密码：<b>tkl-share/9926</b>）</small><br><small>#2.\\\\192.168.0.141\productJar（账户密码：<b>cdqa/yonghong@123</b>）</small></p>"
         task_logger.info(content)
-        send("qa-visualcd@yonghongtech.com", subject,
-             part0 + content + content0 + part2)
+        hour = int(strftime("%H", localtime()))
+        if hour >= 9 and hour <= 22:
+            send("qa-visualcd@yonghongtech.com", subject,
+                 part0 + content + content0 + part2)
     except PermissionError:
         bash = f"echo '{ip_134_today}/{v}be tied up,please wait...time{get_now_format_time()}\n'>> {cache_path}"
         os.system(bash)
