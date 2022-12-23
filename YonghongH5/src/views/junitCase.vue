@@ -20,6 +20,8 @@
           placeholder="输入关键字进行过滤"
           v-model="filterText"
           style="width: 500px"
+          prefix-icon="el-icon-search"
+          clearable
         >
         </el-input>
       </div>
@@ -34,7 +36,6 @@
           class="filter-tree"
           :data="junitCases"
           show-checkbox
-          check-strictly
           :props="defaultProps"
           :filter-node-method="filterNode"
           ref="tree"
@@ -76,12 +77,16 @@ export default {
       return this.checkBelongToChooseNode(value, data, node);
     },
     exchangExp() {
-      let form = { version: this.version, cases: [] };
+      let form = {
+        version: this.version,
+        cases: [],
+        user: this.$store.state.userInfo,
+      };
       for (let i of this.$refs.tree.getCheckedNodes(false, false)) {
         if (i.path !== undefined) form.cases.push(i.path);
       }
       this.$axios
-        .post("http://192.168.0.187:5555/productJar/junitexp", form, {
+        .post("http://192.168.0.187:5000/productJar/junitexp", form, {
           headers: {
             Authorization: sessionStorage.getItem("username"),
           },
@@ -98,13 +103,17 @@ export default {
           console.log(err);
         });
     },
-    exchangExp() {
-      let form = { version: this.version, cases: [] };
+    exchangExpDis() {
+      let form = {
+        version: this.version,
+        cases: [],
+        user: this.$store.state.userInfo,
+      };
       for (let i of this.$refs.tree.getCheckedNodes(false, false)) {
         if (i.path !== undefined) form.cases.push(i.path);
       }
       this.$axios
-        .post("http://192.168.0.187:5555/productJar/junitdisexp", form, {
+        .post("http://192.168.0.187:5000/productJar/junitdisexp", form, {
           headers: {
             Authorization: sessionStorage.getItem("username"),
           },
@@ -127,7 +136,7 @@ export default {
         version: _this.version,
       };
       this.$axios
-        .post("http://192.168.0.187:5555/productJar/junitdiff", form, {
+        .post("http://192.168.0.187:5000/productJar/junitdiff", form, {
           headers: {
             Authorization: sessionStorage.getItem("username"),
           },

@@ -3,7 +3,7 @@
     <div class="crumbs">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item>
-          <i class="el-icon-apple"></i>mac188(服务器ip：192.168.0.188)
+          <i class="el-icon-apple"></i>mac168(服务器ip：192.168.0.168)
           <el-button
             type="success"
             icon="el-icon-refresh"
@@ -37,11 +37,7 @@
           </el-table-column>
           <el-table-column prop="path" label="url路径" width="300"
             ><template slot-scope="scope">
-              <a
-                target="_blank"
-                :href="scope.row.url"
-                >{{ scope.row.url }}</a
-              >
+              <a target="_blank" :href="scope.row.url">{{ scope.row.url }}</a>
             </template>
           </el-table-column>
           <el-table-column prop="path" label="状态" width="150">
@@ -155,24 +151,27 @@
               </el-select>
               <el-upload
                 class="upload-demo"
-                action="http://192.168.0.188:5000/productJar/uploadJar"
+                action="http://192.168.0.168:5000/productJar/uploadJar"
                 :show-file-list="false"
-                :on-success="(response,file,filelist)=> handleAvatarSuccess(scope.row, response,file,filelist)"
+                :on-success="
+                  (response, file, filelist) =>
+                    handleAvatarSuccess(scope.row, response, file, filelist)
+                "
                 :data="{ version: scope.row.version }"
                 style="width: 150px; margin-left: 10px"
               >
                 <el-button
-                @click="uploadJar(scope.row)"
+                  @click="uploadJar(scope.row)"
                   size="small"
                   type="info"
                   icon="el-icon-upload2"
                   @disabled="scope.row.updateAndReload"
-                v-loading="scope.row.updateAndReload"
-                element-loading-text="jar包正在更换中"
-                element-loading-spinner="el-icon-loading"
-                element-loading-background="rgba(0, 0, 0, 0.8)"
-                element-loading-custom-class="updateLoading"
-                plain
+                  v-loading="scope.row.updateAndReload"
+                  element-loading-text="jar包正在更换中"
+                  element-loading-spinner="el-icon-loading"
+                  element-loading-background="rgba(0, 0, 0, 0.8)"
+                  element-loading-custom-class="updateLoading"
+                  plain
                   >上传自定义jar包</el-button
                 >
               </el-upload>
@@ -258,9 +257,9 @@ export default {
       clearInterval(timer);
     });
   },
-  created() {
+  async created() {
     this.$set(this.status, "hasFound", false);
-    this.getAllProduct();
+    await this.getAllProduct();
     this.get141Jar();
     this.getAllBihome();
     this.checkStatus();
@@ -286,7 +285,7 @@ export default {
     getJarInfo() {
       let _this = this;
       this.$axios
-        .get("http://192.168.0.188:5000/productJar/jarInfo")
+        .get("http://192.168.0.168:5000/productJar/jarInfo")
         .then((res) => {
           for (let v in res.data.data) {
             if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
@@ -301,7 +300,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -310,7 +309,7 @@ export default {
     getAllProduct() {
       let _this = this;
       this.$axios
-        .get("http://192.168.0.188:5000/productJar/all")
+        .get("http://192.168.0.168:5000/productJar/all")
         .then((res) => {
           for (let v in res.data.data) {
             if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
@@ -330,7 +329,7 @@ export default {
         .catch((err) => {
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -340,7 +339,7 @@ export default {
     get141Jar() {
       let _this = this;
       this.$axios
-        .get("http://192.168.0.188:5000/productJar/141jar")
+        .get("http://192.168.0.168:5000/productJar/141jar")
         .then((res) => {
           for (let v in res.data.data) {
             if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
@@ -356,7 +355,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -365,7 +364,7 @@ export default {
     getAllBihome() {
       let _this = this;
       this.$axios
-        .get("http://192.168.0.188:5000/productJar/allBihome")
+        .get("http://192.168.0.168:5000/productJar/allBihome")
         .then((res) => {
           for (let v in res.data.data) {
             if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
@@ -380,7 +379,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -389,7 +388,7 @@ export default {
     getCurrentBihome() {
       let _this = this;
       this.$axios
-        .get("http://192.168.0.188:5000/productJar/currentBihome")
+        .get("http://192.168.0.168:5000/productJar/currentBihome")
         .then((res) => {
           for (let v in res.data.data) {
             _this.$set(_this.bihome, v, res.data.data[v]);
@@ -399,7 +398,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -408,7 +407,7 @@ export default {
     getURL() {
       let _this = this;
       this.$axios
-        .get("http://192.168.0.188:5000/productJar/url")
+        .get("http://192.168.0.168:5000/productJar/url")
         .then((res) => {
           for (let v in res.data.data) {
             if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
@@ -417,7 +416,7 @@ export default {
                   _this.$set(
                     _this.tableData[i],
                     "url",
-                    "http://192.168.0.188:" + res.data.data[v]
+                    "http://192.168.0.168:" + res.data.data[v]
                   );
               }
             }
@@ -427,7 +426,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -436,7 +435,7 @@ export default {
     checkStatus() {
       let _this = this;
       this.$axios
-        .get("http://192.168.0.188:5000/productJar/check")
+        .get("http://192.168.0.168:5000/productJar/check")
         .then((res) => {
           for (let v in res.data.data) {
             if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
@@ -491,7 +490,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -500,7 +499,7 @@ export default {
     getDebugPort() {
       let _this = this;
       this.$axios
-        .get("http://192.168.0.188:5000/productJar/port")
+        .get("http://192.168.0.168:5000/productJar/port")
         .then((res) => {
           for (let v in res.data.data) {
             if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
@@ -515,7 +514,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -524,7 +523,7 @@ export default {
     getViewPort() {
       let _this = this;
       this.$axios
-        .get("http://192.168.0.188:5000/productJar/bi")
+        .get("http://192.168.0.168:5000/productJar/bi")
         .then((res) => {
           for (let v in res.data.data) {
             if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
@@ -539,7 +538,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -549,7 +548,7 @@ export default {
       let _this = this;
       this.changeTableData(row.version, "shutdown", true);
       this.$axios
-        .post("http://192.168.0.188:5000/productJar/shutdown", {
+        .post("http://192.168.0.168:5000/productJar/shutdown", {
           version: row.version,
           user: this.$store.state.userInfo,
         })
@@ -561,7 +560,7 @@ export default {
           if (res.data.code === 200) {
             this.$message({
               message: res.data.data,
-              duration: 600000,
+              duration: 10 * 1000,
               showClose: true,
               type: "success",
             });
@@ -570,7 +569,7 @@ export default {
             console.log(res.data);
             this.$message({
               message: res.data.data,
-              duration: 600000,
+              duration: 10 * 1000,
               showClose: true,
               type: "warning",
             });
@@ -580,7 +579,7 @@ export default {
         .catch((err) => {
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -592,7 +591,7 @@ export default {
       let _this = this;
       this.changeTableData(row.version, "start", true);
       this.$axios
-        .post("http://192.168.0.188:5000/productJar/startup", {
+        .post("http://192.168.0.168:5000/productJar/startup", {
           version: row.version,
           user: this.$store.state.userInfo,
         })
@@ -608,7 +607,7 @@ export default {
             }
             this.$message({
               message: res.data.data,
-              duration: 600000,
+              duration: 10 * 1000,
               showClose: true,
               type: "success",
             });
@@ -617,7 +616,7 @@ export default {
             console.log(res.data);
             this.$message({
               message: res.data.data,
-              duration: 600000,
+              duration: 10 * 1000,
               showClose: true,
               type: "warning",
             });
@@ -627,7 +626,7 @@ export default {
         .catch((err) => {
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -651,12 +650,12 @@ export default {
           user: this.$store.state.userInfo,
         };
       this.$axios
-        .post("http://192.168.0.188:5000/productJar/update", form)
+        .post("http://192.168.0.168:5000/productJar/update", form)
         .then((res) => {
           if (res.data.code === 200) {
             this.$message({
               message: res.data.data,
-              duration: 600000,
+              duration: 10 * 1000,
               showClose: true,
               type: "success",
             });
@@ -665,7 +664,7 @@ export default {
             console.log(res.data);
             this.$message({
               message: res.data.data,
-              duration: 600000,
+              duration: 10 * 1000,
               showClose: true,
               type: "warning",
             });
@@ -676,7 +675,7 @@ export default {
         .catch((err) => {
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -688,7 +687,7 @@ export default {
       let _this = this;
       this.changeTableData(row.version, "reload", true);
       this.$axios
-        .post("http://192.168.0.188:5000/productJar/reload_product", {
+        .post("http://192.168.0.168:5000/productJar/reload_product", {
           version: row.version,
           user: this.$store.state.userInfo,
         })
@@ -704,7 +703,7 @@ export default {
             }
             this.$message({
               message: res.data.data,
-              duration: 600000,
+              duration: 10 * 1000,
               showClose: true,
               type: "success",
             });
@@ -713,7 +712,7 @@ export default {
             console.log(res.data);
             this.$message({
               message: res.data.data,
-              duration: 600000,
+              duration: 10 * 1000,
               showClose: true,
               type: "warning",
             });
@@ -723,7 +722,7 @@ export default {
         .catch((err) => {
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -748,7 +747,7 @@ export default {
         };
       this.changeTableData(row.version, "updateAndReload", true);
       this.$axios
-        .post("http://192.168.0.188:5000/productJar/updateReload", form)
+        .post("http://192.168.0.168:5000/productJar/updateReload", form)
         .then((res) => {
           if (res.data.code === 200) {
             for (let i = 0; i < _this.tableData.length; i++) {
@@ -761,7 +760,7 @@ export default {
             }
             this.$message({
               message: res.data.data,
-              duration: 600000,
+              duration: 10 * 1000,
               showClose: true,
               type: "success",
             });
@@ -770,7 +769,7 @@ export default {
             console.log(res.data);
             this.$message({
               message: res.data.data,
-              duration: 600000,
+              duration: 10 * 1000,
               showClose: true,
               type: "warning",
             });
@@ -781,7 +780,7 @@ export default {
         .catch((err) => {
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -791,7 +790,7 @@ export default {
     },
     exchangeBihome(row, key) {
       this.$axios
-        .post("http://192.168.0.188:5000/productJar/changeBihome", {
+        .post("http://192.168.0.168:5000/productJar/changeBihome", {
           version: row.version,
           bihome: key,
           user: this.$store.state.userInfo,
@@ -800,7 +799,7 @@ export default {
           if (res.data.code === 200) {
             this.$message({
               message: res.data.data,
-              duration: 600000,
+              duration: 10 * 1000,
               showClose: true,
               type: "success",
             });
@@ -809,7 +808,7 @@ export default {
         .catch((err) => {
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -835,7 +834,7 @@ export default {
       if (res.code === 200) {
         this.$message({
           message: res.data,
-          duration: 600000,
+          duration: 10 * 1000,
           showClose: true,
           type: "success",
         });
@@ -843,15 +842,15 @@ export default {
       } else {
         this.$message({
           message: res.data,
-          duration: 600000,
+          duration: 10 * 1000,
           showClose: true,
           type: "error",
         });
       }
     },
-    uploadJar(row){
+    uploadJar(row) {
       this.changeTableData(row.version, "updateAndReload", true);
-    }
+    },
   },
 };
 </script>
