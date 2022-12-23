@@ -48,7 +48,7 @@ env_list = {
             "bihomes": "bihome",
             "branch": "custom_v10.0_huaweiDIS"
         },
-        "10": {
+        "v10.0": {
             "path": "/opt/10",
             "port": "8941",
             "bihomes": "bihome",
