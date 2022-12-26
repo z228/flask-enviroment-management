@@ -179,7 +179,6 @@ class ProductAction:
             else:
                 self.config[key]["port"] = self.get_bi_port(key)
                 self.config[key]["bihome"] = self.get_bi_home(key)
-                self.config[key]["debug"] = self.get_debug_port(key)
                 self.config[key]["startUser"] = ''
                 self.config[key]["st"] = ''
                 self.config[key]["sts"] = 0
@@ -191,6 +190,7 @@ class ProductAction:
                     '/bi?proc=0&action=index'
             if not self.is_port_used_fast(self.config[key]["port"]):
                 self.config[key]["startUser"] = ''
+            self.config[key]["debug"] = self.get_debug_port(key)
             self.config[key]["branch"] = branch
             self.config[key]["opUser"] = ''
             self.config[key]["startup"] = False
