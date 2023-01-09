@@ -161,7 +161,8 @@ class ProductAction:
             self.config[key]["port"] = self.get_bi_port(key)
             self.config[key]["bihome"] = self.get_bi_home(key)
             if 'dis' in key:
-                self.config[key]["url"] = self.config[key]["port"] + '/bi/?showOthers=true'
+                self.config[key]["url"] = self.config[key]["port"] + \
+                    '/bi/?showOthers=true'
             else:
                 self.config[key]["url"] = self.config[key]["port"] + '/bi'
             self.config[key]["debug"] = self.get_debug_port(key)
@@ -172,7 +173,8 @@ class ProductAction:
             self.config[key]["updateAndReload"] = False
             self.config[key]["changeBihome"] = False
             self.config[key]["opUser"] = ''
-            self.config[key]["startUser"] = status[key]["startUser"] if key in status.keys() else ''
+            self.config[key]["startUser"] = status[key]["startUser"] if key in status.keys(
+            ) else ''
         self.update_product_status()
 
     def get_debug_port(self, version):
@@ -295,19 +297,23 @@ class ProductAction:
         if self.is_port_used(self.host_ip, host_port):
             if self.current_system == "Windows":
                 product_logger.info(f'[{user}]停止trunk tomcat进程')
-                os.system(f'python {self.script_path}/stopTrunk.py {host_port} > stopTomcat.txt')
+                os.system(
+                    f'python {self.script_path}/stopTrunk.py {host_port} > stopTomcat.txt')
             else:
                 work_dir = self.config[v]["path"] + self.tomcat_path
                 os.chdir(work_dir)
                 if v == "develop":
-                    os.system(f'sh  {self.config[v]["path"]}/tomcat/bin/shutdown.sh')
+                    os.system(
+                        f'sh  {self.config[v]["path"]}/tomcat/bin/shutdown.sh')
                 else:
-                    os.system(f'kill -9 {self.get_pid_by_port(str(host_port))}')
+                    os.system(
+                        f'kill -9 {self.get_pid_by_port(str(host_port))}')
             count = 1
             while 1:
                 if count % 10 == 0:
                     product_logger.info(f'[{user}]{v} 再次运行停止tomcat命令')
-                    os.system(f'sh  {self.config[v]["path"]}/tomcat/bin/shutdown.sh')
+                    os.system(
+                        f'sh  {self.config[v]["path"]}/tomcat/bin/shutdown.sh')
                     sleep(2)
                 if self.is_port_used(self.host_ip, host_port):
                     product_logger.info(f'[{user}]{v} tomcat服务停止中')
@@ -336,7 +342,8 @@ class ProductAction:
             if self.is_port_used(self.host_ip, host_port):
                 if self.config[v]["startUser"] != '':
                     self.change_status(v, "startup")
-                    product_logger.info(f'[{user}] {self.config[v]["startUser"]}已启动{v} tomcat服务')
+                    product_logger.info(
+                        f'[{user}] {self.config[v]["startUser"]}已启动{v} tomcat服务')
                     return f'{self.config[v]["startUser"]}已启动{v} tomcat服务'
                 else:
                     product_logger.info('[{user}] tomcat正在停止中')
@@ -365,7 +372,8 @@ class ProductAction:
         git_branch = self.config[version]["branch"]
         from_path_in = f'{self.ip}{git_branch}'
         path0 = strftime("%Y%m%d", localtime())
-        product_logger.info(f'当天的{version}jar包地址：{os.path.join(from_path_in, path0)}')
+        product_logger.info(
+            f'当天的{version}jar包地址：{os.path.join(from_path_in, path0)}')
         # 检测是否有当天的新Jar，否则往前推一天
         while 1:
             if not os.path.exists(os.path.join(from_path_in, path0)):
@@ -439,7 +447,8 @@ class ProductAction:
                 from_file = os.path.join(path, file_name)
                 to_file = os.path.join(to_path_in, "product", file_name)
                 if not os.path.exists(to_file):
-                    self.rename_product_jar(file_name, os.path.join(to_path_in, "product"))
+                    self.rename_product_jar(
+                        file_name, os.path.join(to_path_in, "product"))
                 # backup_file = os.path.join(backup_path, file_name)
                 try:
                     from_134_file = from_file.replace(self.ip, self.ip_134)
@@ -448,14 +457,17 @@ class ProductAction:
                     #         from_file = from_134_file
                     if not os.path.exists(to_file):
                         copy2(from_file, to_file)
-                        product_logger.info(f"[{user}] {file_name}更新完毕,时间：{self.current_time()}")
+                        product_logger.info(
+                            f"[{user}] {file_name}更新完毕,时间：{self.current_time()}")
                         continue
                     if not cmp(from_file, to_file):
                         copy2(from_file, to_file)
-                        product_logger.info(f"[{user}] {file_name}更新完毕,时间：{self.current_time()}")
+                        product_logger.info(
+                            f"[{user}] {file_name}更新完毕,时间：{self.current_time()}")
                 except PermissionError:
                     self.change_status(version, "update")
-                    product_logger.info(f"[{user}] {path}下{file_name}正在被占用，请稍等...time{self.current_time()}")
+                    product_logger.info(
+                        f"[{user}] {path}下{file_name}正在被占用，请稍等...time{self.current_time()}")
         except FileNotFoundError as err:
             self.change_status(version, "update")
             product_logger.info(f'[{user}] file error:{err}')
@@ -489,10 +501,12 @@ class ProductAction:
         return f'{v}已更换{self.format_date_str(date)} jar包并重启Tomcat成功'
 
     def get_jar_info(self, v):
-        product_path = os.path.join(self.config[v]["path"] + self.YongHong_path, 'product')
+        product_path = os.path.join(
+            self.config[v]["path"] + self.YongHong_path, 'product')
         info_list = []
         for i in os.listdir(product_path):
-            change_time = strftime("日期:%Y%m%d 时间:%H:%M:%S", localtime(os.stat(os.path.join(product_path, i)).st_mtime))
+            change_time = strftime("日期:%Y%m%d 时间:%H:%M:%S", localtime(
+                os.stat(os.path.join(product_path, i)).st_mtime))
             info_list.append(f"{i}:{change_time}")
         return info_list
 
@@ -504,8 +518,15 @@ class ProductAction:
         jar_list = {}
         for key in self.config.keys():
             branch = self.config[key]["branch"]
-            dir_187 = os.listdir(f'{self.ip_187}{branch}') if os.path.exists(f'{self.ip_187}{branch}') else []
-            dir_134 = os.listdir(f'{self.ip_134}{branch}')
+            dir_187 = os.listdir(f'{self.ip_187}{branch}') if os.path.exists(
+                f'{self.ip_187}{branch}') else []
+            try:
+                dir_134 = os.listdir(f'{self.ip_134}{branch}')
+            except FileNotFoundError:
+                pass
+            finally:
+                product_logger.info("134服务器暂时无法连接")
+                dir_134 = []
             dir_134.extend(dir_187)
             dir_list = self.clear_list_dumplicate(dir_134)
             jar_list[key] = dir_list
