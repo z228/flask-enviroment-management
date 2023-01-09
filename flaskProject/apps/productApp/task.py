@@ -52,8 +52,6 @@ def get_jar_list():
         try:
             dir_134 = os.listdir(f'{productAction.ip_134}{branch}')
         except FileNotFoundError:
-            pass
-        finally:
             task_logger.info("134服务器暂时无法连接")
             dir_134 = []
         dir_134.extend(dir_187)
