@@ -49,7 +49,13 @@ def get_jar_list():
         branch = config[key]["branch"]
         dir_187 = os.listdir(f'{productAction.ip_187}{branch}') if os.path.exists(
             f'{productAction.ip_187}{branch}') else []
-        dir_134 = os.listdir(f'{productAction.ip_134}{branch}')
+        try:
+            dir_134 = os.listdir(f'{productAction.ip_134}{branch}')
+        except FileNotFoundError:
+            pass
+        finally:
+            task_logger.info("134服务器暂时无法连接")
+            dir_134 = []
         dir_134.extend(dir_187)
         dir_list = productAction.clear_list_dumplicate(dir_134)
         jar_list[key] = dir_list
