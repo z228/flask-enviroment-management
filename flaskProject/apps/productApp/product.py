@@ -523,8 +523,6 @@ class ProductAction:
             try:
                 dir_134 = os.listdir(f'{self.ip_134}{branch}')
             except FileNotFoundError:
-                pass
-            finally:
                 product_logger.info("134服务器暂时无法连接")
                 dir_134 = []
             dir_134.extend(dir_187)
