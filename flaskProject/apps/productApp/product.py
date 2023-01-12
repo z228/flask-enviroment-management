@@ -160,12 +160,14 @@ class ProductAction:
         for key in self.config.keys():
             self.config[key]["port"] = self.get_bi_port(key)
             self.config[key]["bihome"] = self.get_bi_home(key)
-            if 'dis' in key:
+            branch = self.config[key]["branch"]
+            if 'dis' in key.lower():
                 self.config[key]["url"] = self.config[key]["port"] + \
                     '/bi/?showOthers=true'
             else:
                 self.config[key]["url"] = self.config[key]["port"] + '/bi'
             self.config[key]["debug"] = self.get_debug_port(key)
+            self.config[key]["branch"] = branch
             self.config[key]["startup"] = False
             self.config[key]["shutdown"] = False
             self.config[key]["update"] = False
