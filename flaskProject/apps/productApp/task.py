@@ -126,13 +126,15 @@ def clean_backup_jar():
     for i in version:
         backup_folders = read_command(
             f"ls {os.path.join(product_path, i)}").split()
-        if len(backup_folders) <= 5:
-            continue
+        folder_count = len(backup_folders)
         for j in backup_folders:
+            if folder_count <= 5:
+                break
             if diff_day(j, "%Y%m%d") > 5 or j[0:4] != strftime("%Y", localtime()):
                 bash = f"rm -R {os.path.join(product_path, i, j)}"
                 os.system(bash)
                 os.system(f"echo {bash} >>{product_path}/cache.txt")
+                folder_count -= 1
                 task_logger.info(bash)
 
 

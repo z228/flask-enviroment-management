@@ -32,10 +32,10 @@ class APSchedulerJobConfig(object):
             'id': 'No5',  # 任务唯一ID
             'func': 'apps.productApp.task:clean_backup_jar',
             'args': None,  # 如果function需要参数，就在这里添加
-            'trigger': 'interval',
-            # 'hour': 0,
-            # 'minute': 30,
-            'seconds': 30
+            'trigger': 'cron',
+            'hour': 0,
+            'minute': 30,
+            'second': 30
         },
         {
             'id': 'No6',  # 任务唯一ID
