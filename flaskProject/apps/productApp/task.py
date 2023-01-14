@@ -129,7 +129,7 @@ def clean_backup_jar():
         if len(backup_folders) <= 5:
             continue
         for j in backup_folders:
-            if diff_day(j, "%Y%m%d") > 5:
+            if diff_day(j, "%Y%m%d") > 5 or j[0:4] != strftime("%Y", localtime()):
                 bash = f"rm -R {os.path.join(product_path, i, j)}"
                 os.system(bash)
                 os.system(f"echo {bash} >>{product_path}/cache.txt")
