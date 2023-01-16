@@ -245,18 +245,27 @@ def commit_junit_exp():
 
 
 def matchLog(file):
-    pattern1 = compile(r'20[0-9]{2}-[01][0-9]-[0123][0-9]')
+    pattern1 = compile(r'20[0-9]{2}[^0-9]?[01][0-9][^0-9]?[0123][0-9]')
     pattern2 = compile(r'20[0-9]{2}\.[01][0-9]\.[0123][0-9]')
     pattern3 = compile(r'20[0-9]{2}[01][0-9][0123][0-9]')
     file_date = ''
     days3 = False
-    if pattern1.findall(file):
-        file_date += pattern1.findall(file)[0].replace('-', '')
-    if pattern2.findall(file):
-        file_date += pattern2.findall(file)[0].replace('.', '')
-    if pattern3.findall(file):
-        file_date += pattern3.findall(file)[0]
-        days3 = True
+    res = pattern1.findall(file)[0] if pattern1.findall(file) else ''
+    if res:
+        if '-' in res:
+            file_date += res.replace('-','')
+        elif '.' in res:
+            file_date += res.replace('.','')
+        else:
+            days3 = True
+            file_date += res
+    # if pattern1.findall(file):
+    #     file_date += pattern1.findall(file)[0].replace('-', '')
+    # if pattern2.findall(file):
+    #     file_date += pattern2.findall(file)[0].replace('.', '')
+    # if pattern3.findall(file):
+    #     file_date += pattern3.findall(file)[0]
+    #     days3 = True
     count = 3 if days3 else 15
     if file_date:
         if diff_day(file_date, "%Y%m%d") > count:
@@ -282,14 +291,12 @@ def clean_backup_logs():
         for log in tomcat_log_files:
             if matchLog(log):
                 task_logger.info(f'rm {tomcat_log_path}/{log}')
-                
         for log in bi_log_files:
             if matchLog(log):
                 task_logger.info(f'rm {bi_log_path}/{log}')
-
         for file in backup_files:
             if matchLog(file):
-                task_logger.info(f'rm {backup_file_path}/{log}')
+                task_logger.info(f'rm {backup_file_path}/{file}')
 
 
 get_jar_list()
