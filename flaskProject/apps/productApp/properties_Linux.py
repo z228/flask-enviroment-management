@@ -67,11 +67,11 @@ env_list = {
             "bihomes": "bihome",
             "branch": "v10.0"
         },
-        "10.01冒烟环境": {
-            "path": "/opt/1001",
+        "9.4.5冒烟环境": {
+            "path": "/opt/release/945",
             "port": "8101",
             "bihomes": "bihome",
-            "branch": "v10.0"
+            "branch": "v9.4"
         },
         "trunk": {
             "path": "/opt/trunk",
