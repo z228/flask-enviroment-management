@@ -42,8 +42,8 @@ class APSchedulerJobConfig(object):
             'func': 'apps.productApp.task:clean_backup_logs',
             'args': None,  # 如果function需要参数，就在这里添加
             'trigger': 'cron',
-            'hour': 16,
-            'minute': 40,
+            'hour': 1,
+            'minute': 30,
             'second': 30
         },
         {

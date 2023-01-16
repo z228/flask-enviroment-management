@@ -292,13 +292,21 @@ def clean_backup_logs():
         print(v)
         for log in tomcat_log_files:
             if matchLog(log):
-                task_logger.info(f'rm {tomcat_log_path}/{log}')
+                bash = f'rm -f "{tomcat_log_path}/{log}"'
+                os.system(bash)
+                task_logger.info(bash)
         for log in bi_log_files:
             if matchLog(log):
-                task_logger.info(f'rm {bi_log_path}/{log}')
+                bash = f'rm -f "{bi_log_path}/{log}"'
+                os.system(bash)
+                task_logger.info(bash)
+        if len(backup_files) <= 3:
+            continue
         for file in backup_files:
             if matchLog(file):
-                task_logger.info(f'rm {backup_file_path}/{file}')
+                bash = f'rm -f "{backup_file_path}/{file}"'
+                os.system(bash)
+                task_logger.info(bash)
 
 
 get_jar_list()
