@@ -38,6 +38,15 @@ class APSchedulerJobConfig(object):
             'second': 30
         },
         {
+            'id': 'No5',  # 任务唯一ID
+            'func': 'apps.productApp.task:clean_backup_logs',
+            'args': None,  # 如果function需要参数，就在这里添加
+            'trigger': 'cron',
+            'hour': 15,
+            'minute': 20,
+            'second': 30
+        },
+        {
             'id': 'No6',  # 任务唯一ID
             'func': 'apps.productApp.task:copy_jacoco_to_192',
             'args': None,  # 如果function需要参数，就在这里添加

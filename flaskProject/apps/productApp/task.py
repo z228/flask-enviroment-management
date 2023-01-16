@@ -1,7 +1,7 @@
 from cmath import exp
 import os
 from filecmp import cmpfiles
-from re import S
+from re import S, compile
 from shutil import rmtree, copytree
 from time import strftime, strptime, localtime, sleep
 from . import product
@@ -117,7 +117,11 @@ def diff_day(ftime, fmt):
     :return:
     """
     now_day = eval(strftime("%j", localtime()).lstrip("0"))
+    last_day = eval(strftime("%j", strptime(
+        ftime[0:4]+'1231', fmt)).lstrip("0"))
     p_day = eval(strftime("%j", strptime(ftime, fmt)).lstrip("0"))
+    if ftime[0:4] != strftime("%Y", localtime()):
+        return now_day + last_day - p_day
     return now_day - p_day
 
 
@@ -238,6 +242,54 @@ def commit_junit_exp():
                     task_logger.info(log)
             log = os.popen(f'svn ci {svn_exp_path} -m "{msg}"').read()
             task_logger.info(log)
+
+
+def matchLog(file):
+    pattern1 = compile(r'20[0-9]{2}-[01][0-9]-[0123][0-9]')
+    pattern2 = compile(r'20[0-9]{2}\.[01][0-9]\.[0123][0-9]')
+    pattern3 = compile(r'20[0-9]{2}[01][0-9][0123][0-9]')
+    file_date = ''
+    days3 = False
+    if pattern1.findall(file):
+        file_date += pattern1.findall(file)[0].replace('-', '')
+    if pattern2.findall(file):
+        file_date += pattern2.findall(file)[0].replace('.', '')
+    if pattern3.findall(file):
+        file_date += pattern3.findall(file)[0]
+        days3 = True
+    count = 3 if days3 else 15
+    if file_date:
+        if diff_day(file_date, "%Y%m%d") > count:
+            return True
+    return False
+
+
+def clean_backup_logs():
+    tomcat_log = 'tomcat/logs'
+    bi_log = 'Yonghong/log'
+    backup_path = 'Yonghong/backup'
+    today = strftime("%Y%m%d", localtime())
+    print("今天是"+today)
+    for v in config.keys():
+        path0 = config[v]['path']
+        tomcat_log_path = os.path.join(path0, tomcat_log)
+        bi_log_path = os.path.join(path0, bi_log)
+        backup_file_path = os.path.join(path0, backup_path)
+        tomcat_log_files = os.listdir(tomcat_log_path)
+        bi_log_files = os.listdir(bi_log_path)
+        backup_files = os.listdir(backup_file_path)
+        print(v)
+        for log in tomcat_log_files:
+            if matchLog(log):
+                task_logger.info(f'rm {tomcat_log_path}/{log}')
+                
+        for log in bi_log_files:
+            if matchLog(log):
+                task_logger.info(f'rm {bi_log_path}/{log}')
+
+        for file in backup_files:
+            if matchLog(file):
+                task_logger.info(f'rm {backup_file_path}/{log}')
 
 
 get_jar_list()
