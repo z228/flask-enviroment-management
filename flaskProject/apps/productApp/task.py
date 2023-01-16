@@ -245,7 +245,7 @@ def commit_junit_exp():
 
 
 def matchLog(file):
-    pattern1 = compile(r'20[0-9]{2}[^0-9]?[01][0-9][^0-9]?[0123][0-9]')
+    pattern1 = compile(r'20[0-9]{2}[.\- ]?[01][0-9][.\- ]?[0123][0-9]')
     pattern2 = compile(r'20[0-9]{2}\.[01][0-9]\.[0123][0-9]')
     pattern3 = compile(r'20[0-9]{2}[01][0-9][0123][0-9]')
     file_date = ''
@@ -253,9 +253,11 @@ def matchLog(file):
     res = pattern1.findall(file)[0] if pattern1.findall(file) else ''
     if res:
         if '-' in res:
-            file_date += res.replace('-','')
+            file_date += res.replace('-', '')
         elif '.' in res:
-            file_date += res.replace('.','')
+            file_date += res.replace('.', '')
+        elif ' ' in res:
+            file_date += res.replace(' ', '')
         else:
             days3 = True
             file_date += res
