@@ -43,7 +43,7 @@ class APSchedulerJobConfig(object):
             'args': None,  # 如果function需要参数，就在这里添加
             'trigger': 'cron',
             'hour': 15,
-            'minute': 20,
+            'minute': 40,
             'second': 30
         },
         {
