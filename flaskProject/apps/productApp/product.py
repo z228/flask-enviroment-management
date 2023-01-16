@@ -177,19 +177,11 @@ class ProductAction:
                 self.config[key]["sts"] = 0 if "sts" not in status[key].keys(
                 ) else status[key]["sts"]
             else:
-                self.config[key]["port"] = self.get_bi_port(key)
-                self.config[key]["bihome"] = self.get_bi_home(key)
                 self.config[key]["startUser"] = ''
                 self.config[key]["st"] = ''
                 self.config[key]["sts"] = 0
-            if 'dis' in key.lower():
-                self.config[key]["url"] = self.config[key]["port"] + \
-                    '/bi/?showOthers=true'
-            else:
-                self.config[key]["url"] = self.config[key]["port"] + \
-                    '/bi?proc=0&action=index'
-            if not self.is_port_used_fast(self.config[key]["port"]):
-                self.config[key]["startUser"] = ''
+            self.config[key]["bihome"] = self.get_bi_home(key)
+            self.config[key]["port"] = self.get_bi_port(key)
             self.config[key]["debug"] = self.get_debug_port(key)
             self.config[key]["branch"] = branch
             self.config[key]["opUser"] = ''
@@ -199,6 +191,14 @@ class ProductAction:
             self.config[key]["reload"] = False
             self.config[key]["updateAndReload"] = False
             self.config[key]["changeBihome"] = False
+            if 'dis' in key.lower():
+                self.config[key]["url"] = self.config[key]["port"] + \
+                    '/bi/?showOthers=true'
+            else:
+                self.config[key]["url"] = self.config[key]["port"] + \
+                    '/bi?proc=0&action=index'
+            if not self.is_port_used_fast(self.config[key]["port"]):
+                self.config[key]["startUser"] = ''
         self.update_product_status()
 
     def get_debug_port(self, version):
