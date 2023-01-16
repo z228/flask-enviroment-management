@@ -38,7 +38,7 @@ class APSchedulerJobConfig(object):
             'second': 30
         },
         {
-            'id': 'No5',  # 任务唯一ID
+            'id': 'No8',  # 任务唯一ID
             'func': 'apps.productApp.task:clean_backup_logs',
             'args': None,  # 如果function需要参数，就在这里添加
             'trigger': 'cron',
