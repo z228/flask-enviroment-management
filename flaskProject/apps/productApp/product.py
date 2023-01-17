@@ -331,7 +331,7 @@ class ProductAction:
         self.change_status(v, "reload", True, user)
         self.shut_tomcat(v, user)
         self.start_tomcat(v, user)
-        product_logger.info(f'[{user}]{v} tomcat重启成功')
+        # product_logger.info(f'[{user}]{v} tomcat重启成功')
         self.change_status(v, "reload")
         self.config[v]["startUser"] = user
         return f'{v} tomcat重启成功！'
@@ -375,9 +375,13 @@ class ProductAction:
                     sys(f'kill -9 {self.get_pid_by_port(str(host_port))}')
             count = 1
             while 1:
-                if count % 10 == 0:
+                if not count % 10:
                     product_logger.info(f'[{user}]{v} 再次运行停止tomcat命令')
                     sys(f'sh  {self.config[v]["path"]}/tomcat/bin/shutdown.sh')
+                    sleep(2)
+                if not count % 100:
+                    product_logger.info(f'[{user}]{v} 直接kill tomcat')
+                    sys(f'kill -9 {self.get_pid_by_port(str(host_port))}')
                     sleep(2)
                 if self.is_port_used_fast(host_port):
                     product_logger.info(f'[{user}]{v} tomcat服务停止中')
@@ -516,21 +520,10 @@ class ProductAction:
             if check_res != '0':
                 return check_res
             self.change_status(version, "update", True, user)
-            backup_path = to_path_in + '/backup_product'
             path = self.get_fast_path(version, date)
             if path == "" or date == "":
                 self.change_status(version, "update")
                 return f"{version}没有{'新' if date == '' else date}的jar包"
-            # if date != '':
-            #     if not exists(f'{path}'):
-            #         self.change_status(version, "update")
-            #         product_logger.info(f'{self.format_date_str(date)}的包不存在')
-            #         return f'{self.format_date_str(date)}的包不存在'
-            # else:
-            #     path = self.get_recent_jar(version)
-            # if exists(path_187):
-            #     match, mismatch, errors = cmpfiles(path, path_187, common)
-            #     path = path_187 if not mismatch else path
             dirs = listdir(path)
             # 遍历目标地址中的项目jar
             for file_name in dirs:
@@ -540,10 +533,6 @@ class ProductAction:
                     self.rename_product_jar(
                         file_name, join(to_path_in, "product"))
                 try:
-                    # from_134_file = from_file.replace(self.ip, self.ip_134)
-                    # if exists(from_134_file):
-                    #     if not cmp(from_file, from_134_file):
-                    #         from_file = from_134_file
                     if not exists(to_file) or not cmp(from_file, to_file):
                         copy2(from_file, to_file)
                         product_logger.info(

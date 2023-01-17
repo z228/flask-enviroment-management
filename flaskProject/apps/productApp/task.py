@@ -62,26 +62,6 @@ def get_jar_list():
         jar_list[key].reverse()
 
 
-def clean_jar():
-    for i in to_path:
-        back_path = i + path + '/backup_product'
-        if os.path.exists(back_path):
-            rmtree(back_path)
-        else:
-            continue
-            pass
-
-
-def static_clean():
-    print('clean---')
-    for f in os.listdir('../../static/results'):
-        print('删除文件' + f)
-        os.remove('../../static/results/' + f)
-    for f in os.listdir('../../static/uploads'):
-        print('删除文件' + f)
-        os.remove('../../static/uploads/' + f)
-
-
 def jacoco_change_jar():
     productAction.restart_tomcat('develop')
     work_dir = r'D:\SVN\trunk\test\assetExecute'
@@ -223,13 +203,12 @@ def commit_junit_exp():
         task_logger.info(branch)
         for suite in visualcd_suites:
             svn_exp_path = f'/home/share/junit_test/{branch}/assetExecute/testcases/{suite}/exp'
-            # os.chdir(svn_exp_path)
-            os.popen(f'svn up {svn_exp_path}')
+            read_command(f'svn up {svn_exp_path}')
             sleep(10)
-            os.popen(f'svn cleanup {svn_exp_path}')
+            read_command(f'svn cleanup {svn_exp_path}')
             sleep(10)
             task_logger.info(f'svn st {svn_exp_path}')
-            status = os.popen(f'svn st {svn_exp_path}').readlines()
+            status = readlines_command(f'svn st {svn_exp_path}')
             if not status:
                 task_logger.info(f"{branch}的{suite}没有修改")
                 continue
@@ -238,9 +217,9 @@ def commit_junit_exp():
                 st = statu.split()[0]
                 file = statu.split()[1].replace('\n', '')
                 if st == '?':
-                    log = os.popen(f'svn add {file}').read()
+                    log = read_command(f'svn add {file}')
                     task_logger.info(log)
-            log = os.popen(f'svn ci {svn_exp_path} -m "{msg}"').read()
+            log = read_command(f'svn ci {svn_exp_path} -m "{msg}"')
             task_logger.info(log)
 
 
