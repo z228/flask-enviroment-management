@@ -246,8 +246,6 @@ def commit_junit_exp():
 
 def matchLog(file):
     pattern1 = compile(r'20[0-9]{2}[.\- ]?[01][0-9][.\- ]?[0123][0-9]')
-    pattern2 = compile(r'20[0-9]{2}\.[01][0-9]\.[0123][0-9]')
-    pattern3 = compile(r'20[0-9]{2}[01][0-9][0123][0-9]')
     file_date = ''
     days3 = False
     res = pattern1.findall(file)[0] if pattern1.findall(file) else ''
@@ -261,13 +259,6 @@ def matchLog(file):
         else:
             days3 = True
             file_date += res
-    # if pattern1.findall(file):
-    #     file_date += pattern1.findall(file)[0].replace('-', '')
-    # if pattern2.findall(file):
-    #     file_date += pattern2.findall(file)[0].replace('.', '')
-    # if pattern3.findall(file):
-    #     file_date += pattern3.findall(file)[0]
-    #     days3 = True
     count = 3 if days3 else 15
     if file_date:
         if diff_day(file_date, "%Y%m%d") > count:
@@ -280,16 +271,17 @@ def clean_backup_logs():
     bi_log = 'Yonghong/log'
     backup_path = 'Yonghong/backup'
     today = strftime("%Y%m%d", localtime())
-    print("今天是"+today)
     for v in config.keys():
         path0 = config[v]['path']
         tomcat_log_path = os.path.join(path0, tomcat_log)
         bi_log_path = os.path.join(path0, bi_log)
         backup_file_path = os.path.join(path0, backup_path)
-        tomcat_log_files = os.listdir(tomcat_log_path)
-        bi_log_files = os.listdir(bi_log_path)
-        backup_files = os.listdir(backup_file_path)
-        print(v)
+        tomcat_log_files = os.listdir(
+            tomcat_log_path) if os.path.exists(tomcat_log_path) else []
+        bi_log_files = os.listdir(
+            bi_log_path) if os.path.exists(bi_log_path) else []
+        backup_files = os.listdir(backup_file_path) if os.path.exists(
+            backup_file_path) else []
         for log in tomcat_log_files:
             if matchLog(log):
                 bash = f'rm -f "{tomcat_log_path}/{log}"'
@@ -300,13 +292,15 @@ def clean_backup_logs():
                 bash = f'rm -f "{bi_log_path}/{log}"'
                 os.system(bash)
                 task_logger.info(bash)
-        if len(backup_files) <= 3:
-            continue
+        backup_files_count = len(backup_files)
         for file in backup_files:
             if matchLog(file):
                 bash = f'rm -f "{backup_file_path}/{file}"'
                 os.system(bash)
                 task_logger.info(bash)
+                backup_files_count -= 1
+            if backup_files_count <= 3:
+                break
 
 
 get_jar_list()
