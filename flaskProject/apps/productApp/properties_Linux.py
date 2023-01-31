@@ -67,18 +67,6 @@ env_list = {
             "bihomes": "bihome",
             "branch": "v10.0"
         },
-        "9.4.5冒烟环境": {
-            "path": "/opt/release/945",
-            "port": "8101",
-            "bihomes": "bihome",
-            "branch": "v9.4"
-        },
-        "9.4.5冒烟环境2号": {
-            "path": "/opt/945",
-            "port": "8101",
-            "bihomes": "bihome",
-            "branch": "v9.4"
-        },
         "trunk": {
             "path": "/opt/trunk",
             "port": "8080",
