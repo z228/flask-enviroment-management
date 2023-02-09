@@ -1,9 +1,9 @@
 from json import loads, load
 from os import listdir
-from os.path import join
+from os.path import join, exists
 from shutil import copy2
 
-from flask import Blueprint, request, render_template
+from flask import Blueprint, request, render_template, send_from_directory
 from werkzeug.utils import secure_filename
 from functools import wraps
 
@@ -412,3 +412,12 @@ def backup():
         if flag:
             return '备份或还原成功'
     return render_template('backup.html')
+
+
+# 视频组件，返回视频流测试
+@productJar_operate.route('/video/<name>', methods=['GET'])
+def videoComponentTest(name=None):
+    filePath = r'/home/share/video'
+    if exists(join(filePath, name)):
+        return send_from_directory(filePath, filename=name, as_attachment=False)
+    return productAction.error("视频不存在")
