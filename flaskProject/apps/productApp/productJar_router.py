@@ -419,5 +419,5 @@ def backup():
 def videoComponentTest(name=None):
     filePath = r'/home/share/video'
     if exists(join(filePath, name)):
-        return send_from_directory(directory=filePath, filename=name, as_attachment=False)
+        return send_from_directory(directory=filePath, path=name, as_attachment=False)
     return productAction.error("视频不存在")
