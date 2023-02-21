@@ -362,6 +362,7 @@ class ProductAction:
             return check_res
         self.change_status(v, "shutdown", True, user)
         host_port = self.config[v]["port"]
+        debug_port = self.config[v]["debug"]
         if self.is_port_used_fast(host_port):
             if self.current_system == "Windows":
                 product_logger.info(f'[{user}]停止trunk tomcat进程')
@@ -373,6 +374,8 @@ class ProductAction:
                     sys(f'sh  {self.config[v]["path"]}/tomcat/bin/shutdown.sh')
                 else:
                     sys(f'kill -9 {self.get_pid_by_port(str(host_port))}')
+                    if self.is_port_used_fast(debug_port):
+                        sys(f'kill -9 {self.get_pid_by_port(str(debug_port))}')
             count = 1
             while 1:
                 if not count % 10:

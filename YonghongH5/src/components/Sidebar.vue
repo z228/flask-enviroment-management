@@ -108,9 +108,14 @@ export default {
             title: "cent185环境",
           },
           {
+            icon: "el-icon-windows",
+            index: "win172",
+            title: "北京win172",
+          },
+          {
             icon: "el-icon-apple",
-            index: "mac188",
-            title: "mac188环境",
+            index: "mac168",
+            title: "mac168环境",
           },
           {
             icon: "el-icon-pie-chart",
@@ -159,9 +164,14 @@ export default {
             title: "cent185环境",
           },
           {
+            icon: "el-icon-windows",
+            index: "win172",
+            title: "北京win172",
+          },
+          {
             icon: "el-icon-apple",
-            index: "mac188",
-            title: "mac188环境",
+            index: "mac168",
+            title: "mac168环境",
           },
           {
             icon: "el-icon-script",
