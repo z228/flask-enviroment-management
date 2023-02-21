@@ -6,6 +6,7 @@ from shutil import copy2
 from socket import socket, AF_INET, SOCK_STREAM
 from time import sleep, localtime, strftime
 from xml.dom.minidom import parse
+from functools import wraps
 
 from logging import getLogger
 from app import db, User
@@ -34,6 +35,8 @@ class ProductAction:
     user_info_path = f"{current_path}/apps/productApp/user.json"
     to_path = []
     day_31 = ['02', '04', '06', '08', '09', '11']
+    yonghong_product_jar = ['api.jar', 'product.jar', 'thirds.jar',
+                            'baidu.jar', 'base,jar', 'bi-tests.jar', 'autoNavi.jar']
     port = []
     ubuntu_path = []
     users = []
@@ -68,6 +71,7 @@ class ProductAction:
             con.FreeConsole()
             api.SetConsoleCtrlHandler(None, 0)
 
+
     @staticmethod
     def clear_list_not_num(array=None):
         """
@@ -91,15 +95,14 @@ class ProductAction:
         if date_str == '':
             return date_str
         return f"{date_str[0:4]}-{date_str[4:6]}-{date_str[6:8]}"
-    
+
     @staticmethod
     def clear_list_dumplicate(array=None):
         return list(set(array))
 
     # 通过host+port获取进程pid
-    @staticmethod
-    def get_pid_from_port(port):
-        res = os.popen(f'netstat -ano |findstr "{port}"').readlines()
+    def get_pid_from_port(self, port):
+        res = self.readlines_command(f'netstat -ano |findstr "{port}"')
         for i in res:
             if i.split()[-2] == 'LISTENING':
                 product_logger.info(i)
@@ -112,7 +115,7 @@ class ProductAction:
     @staticmethod
     def error(data=""):
         return dumps({"code": 500, "data": data}, ensure_ascii=False, separators=(',', ':'))
-    
+
     @staticmethod
     def user_not_found(user):
         return dumps({"code": 405, "data": f"{user}用户不存在"}, ensure_ascii=False, separators=(',', ':'))
@@ -169,7 +172,8 @@ class ProductAction:
             self.config[key]["port"] = self.get_bi_port(key)
             self.config[key]["bihome"] = self.get_bi_home(key)
             if 'dis' in key:
-                self.config[key]['url'] = self.config[key]["port"] + '/bi/?showOthers=true'
+                self.config[key]['url'] = self.config[key]["port"] + \
+                    '/bi/?showOthers=true'
             else:
                 self.config[key]['url'] = self.config[key]["port"] + '/bi'
             self.config[key]["debug"] = self.get_debug_port(key)
@@ -179,7 +183,8 @@ class ProductAction:
             self.config[key]["reload"] = False
             self.config[key]["updateAndReload"] = False
             self.config[key]["changeBihome"] = False
-            self.config[key]["status"] = '1' if self.is_port_used_fast(self.config[key]["port"]) else '0'
+            self.config[key]["status"] = '1' if self.is_port_used_fast(
+                self.config[key]["port"]) else '0'
         self.update_product_status()
         # with open(f'{self.current_path}/apps/productApp/user.json', 'r', encoding='utf-8') as user:
         #     self.users = load(user)
@@ -224,20 +229,24 @@ class ProductAction:
         return "bihome修改成功"
 
     def get_bi_home(self, version):
-        if self.current_system == "Windows":
-            split_str = '\\'
-        else:
-            split_str = '/'
-        file_path = f'{self.config[version]["path"]}{self.bi_xml_path}'
-        dom = parse(file_path)
-        root = dom.documentElement
-        param = root.getElementsByTagName('param-value')
-        entry = root.getElementsByTagName('env-entry-value')
-        param_value = param[0].firstChild.data.split(split_str)
-        entry_value = entry[0].firstChild.data.split(split_str)
-        if param_value[-1] == entry_value[-1]:
-            return param_value[-1]
-        return "error bihome"
+        try:
+            if self.current_system == "Windows":
+                split_str = '\\'
+            else:
+                split_str = '/'
+            file_path = f'{self.config[version]["path"]}{self.bi_xml_path}'
+            dom = parse(file_path)
+            root = dom.documentElement
+            param = root.getElementsByTagName('param-value')
+            entry = root.getElementsByTagName('env-entry-value')
+            param_value = param[0].firstChild.data.split(split_str)
+            entry_value = entry[0].firstChild.data.split(split_str)
+            if param_value[-1] == entry_value[-1]:
+                return param_value[-1]
+        except IndexError:
+            pass
+        finally:
+            return "error bihome"
 
     def get_bi_port(self, version):
         file_path = f'{self.config[version]["path"]}{self.server_xml_path}'
@@ -265,9 +274,21 @@ class ProductAction:
         finally:
             s.close()
 
+    @staticmethod
+    def read_command(cmd):
+        with os.popen(cmd) as p:
+            res = p.read()
+        return res
+
+    @staticmethod
+    def readlines_command(cmd):
+        with os.popen(cmd) as p:
+            res = p.readlines()
+        return res
+
     def is_port_used_fast(self, c_port):
-        res = os.popen(f'netstat -ano |findstr {c_port}').read() if self.current_system == "Windows" else os.popen(
-            f'lsof -i:{c_port}').read()
+        cmd = f'netstat -ano |findstr {c_port}'
+        res = self.read_command(cmd)
         if "LISTENING" in res or "LISTEN" in res:
             return True
         return False
@@ -294,7 +315,8 @@ class ProductAction:
 
     @staticmethod
     def get_pid_by_port_linux(port):
-        res = os.popen(f'lsof -i:{port}').readlines()
+        with os.popen(f'lsof -i:{port}') as p:
+            res = p.readlines()
         res.pop(0)
         pid = [i.split()[1] for i in res]
         # for i in res:
@@ -311,13 +333,14 @@ class ProductAction:
         if self.is_port_used(self.host_ip, host_port):
             if self.current_system == "Windows":
                 product_logger.info(f'停止{v} tomcat进程')
-                os.system(f'python {self.script_path}/stopTrunk.py {host_port} > stopTomcat.txt')
+                os.system(
+                    f'python {self.script_path}/stopTrunk.py {host_port} > stopTomcat.txt')
             else:
                 work_dir = self.config[v]["path"] + self.tomcat_path
                 os.chdir(work_dir)
                 product_logger.info(f'进入目录{work_dir}')
                 product_logger.info(f'执行命令：sh {work_dir}shutdown.sh')
-                os.popen(f'sh {work_dir}shutdown.sh')
+                self.read_command(f'sh {work_dir}shutdown.sh')
             while 1:
                 if self.is_port_used(self.host_ip, host_port):
                     product_logger.info(f'{v} tomcat服务停止中')
@@ -376,7 +399,8 @@ class ProductAction:
         branch = self.config[version]["branch"]
         from_path_in = f'{self.ip}{branch}'
         path0 = strftime("%Y%m%d", localtime())
-        product_logger.info(f'当天的{version}jar包地址：{os.path.join(from_path_in, path0)}')
+        product_logger.info(
+            f'当天的{version}jar包地址：{os.path.join(from_path_in, path0)}')
         # 检测是否有当天的新Jar，否则往前推一天
         while 1:
             if not os.path.exists(os.path.join(from_path_in, path0)):
@@ -452,12 +476,13 @@ class ProductAction:
             dirs = os.listdir(path)
             common = ['api.jar', 'product.jar', 'thirds.jar']
             for file_name in dirs:
-                if branch == 'develop' and file_name not in common:
+                if branch == 'develop' and file_name not in self.yonghong_product_jar:
                     continue
                 from_file = os.path.join(path, file_name)
                 to_file = os.path.join(to_path_in, "product", file_name)
                 if not os.path.exists(to_file):
-                    self.rename_product_jar(file_name, os.path.join(to_path_in, "product"))
+                    self.rename_product_jar(
+                        file_name, os.path.join(to_path_in, "product"))
                 try:
                     # from_134_file = from_file.replace(self.ip, self.ip_134)
                     # if os.path.exists(from_134_file):
@@ -465,14 +490,16 @@ class ProductAction:
                     #         from_file = from_134_file
                     if not os.path.exists(to_file) or not cmp(from_file, to_file):
                         copy2(from_file, to_file)
-                        product_logger.info(f"{file_name}更新完毕,时间：{self.current_time()}")
+                        product_logger.info(
+                            f"{file_name}更新完毕,时间：{self.current_time()}")
                         continue
                     # if not cmp(from_file, to_file):
                     #     copy2(from_file, to_file)
                     #     product_logger.info(f"{file_name}更新完毕,时间：{self.current_time()}")
                 except PermissionError:
                     self.change_status(version, 'update')
-                    product_logger.info(f"{path}下{file_name}正在被占用，请稍等...time{self.current_time()}")
+                    product_logger.info(
+                        f"{path}下{file_name}正在被占用，请稍等...time{self.current_time()}")
         except FileNotFoundError as err:
             self.change_status(version, 'update')
             product_logger.info(f'file error:{err}')
@@ -506,7 +533,8 @@ class ProductAction:
         return res
 
     def get_jar_info(self, v):
-        product_path = os.path.join(self.config[v]["path"] + self.YongHong_path, 'product')
+        product_path = os.path.join(
+            self.config[v]["path"] + self.YongHong_path, 'product')
         info_list = []
         for i in os.listdir(product_path):
             change_time = strftime("日期:%Y%m%d 时间:%H:%M:%S",
@@ -518,8 +546,15 @@ class ProductAction:
         jar_list = {}
         for key in self.config.keys():
             branch = self.config[key]["branch"]
-            dir_187 = os.listdir(f'{self.ip_187}{branch}') if os.path.exists(f'{self.ip_187}{branch}') else []
-            dir_134 = os.listdir(f'{self.ip_134}{branch}')
+            dir_187 = os.listdir(f'{self.ip_187}{branch}') if os.path.exists(
+                f'{self.ip_187}{branch}') else []
+            try:
+                dir_134 = os.listdir(f'{self.ip_134}{branch}')
+            except FileNotFoundError:
+                product_logger.info("134服务器暂时无法连接")
+                dir_134 = []
+            finally:
+                pass
             dir_134.extend(dir_187)
             dir_list = self.clear_list_dumplicate(dir_134)
             jar_list[key] = dir_list
@@ -558,32 +593,34 @@ class ProductAction:
 
     def update_product_status(self):
         with open(f'{self.status_path}/status.json', 'w', encoding='utf-8') as status:
-            dump(self.config, status, indent=4, ensure_ascii =False)
-            
-    def change_junit_exp(self,case_list):
-        branchs = {'branch/v8.6':'v8.6_test','branch/v9.0':'v9.0_test','branch/v9.2.1':'v9.2.1_test','branch/v9.4':'v9.4_test','trunk':'trunk_test'}
+            dump(self.config, status, indent=4, ensure_ascii=False)
+
+    def change_junit_exp(self, case_list):
+        branchs = {'branch/v8.6': 'v8.6_test', 'branch/v9.0': 'v9.0_test',
+                   'branch/v9.2.1': 'v9.2.1_test', 'branch/v9.4': 'v9.4_test', 'trunk': 'trunk_test'}
         module = case_list['module']
         local_path = r'D:\SVN'
-        version  = case_list['version']
+        version = case_list['version']
         cases = case_list['cases']
         testcase = r"assetExecute/testcases"
-        for local,remote in branchs.items():
+        for local, remote in branchs.items():
             if version not in remote:
                 continue
-            patha = os.path.join(self.ip_199,remote,testcase,module,'res')
-            pathb = os.path.join(local_path,local,'test',testcase,module,'exp')
+            patha = os.path.join(self.ip_199, remote, testcase, module, 'res')
+            pathb = os.path.join(local_path, local, 'test',
+                                 testcase, module, 'exp')
             os.chdir(pathb)
-            os.popen('svn cleanup')
-            res = os.popen('svn update').read()
+            self.read_command('svn cleanup')
+            res = self.read_command('svn update')
             product_logger.info(res)
             for case in cases:
                 dos = f'copy "{patha}/{case}*" "{pathb}/{"/".join(case.split("/")[0:-1])}"'
                 product_logger.info(dos)
-                res = os.popen(dos).read()
+                res = self.read_command(dos)
                 product_logger.info(res)
         # with open(f'{self.status_path}/cases.json', 'w', encoding='utf-8') as cases:
         #     dump(case_list, cases, indent=4, ensure_ascii=False)
-        
+
     def user_validation(self, userinfo):
         username = userinfo['username'].strip().lower()
         passwd = userinfo['password']
@@ -591,24 +628,25 @@ class ProductAction:
         if user:
             return self.succ("登录成功") if passwd == user.password else self.info("密码错误")
         return self.info("用户不存在")
-    
+
     def get_user_by_username(self, username):
         for user in self.users:
             if username.strip().lower() in user.username + user.alias:
                 return user
         return ""
-    
+
     def update_userlist(self):
         self.users = User.query.filter().all()
-        
-    def update_userinfo(self,userinfo):
+
+    def update_userinfo(self, userinfo):
         username = userinfo["username"]
         password = userinfo["password"]
         alias = userinfo["alias"]
         email = userinfo["email"]
         user = User.query.filter(User.username == username).first()
         if user:
-            change = (user.username!=username) | (user.password!=password) | (user.alias!=alias) | (user.email!=email)
+            change = (user.username != username) | (user.password != password) | (
+                user.alias != alias) | (user.email != email)
             if change:
                 user.username = username
                 user.password = password
@@ -620,9 +658,8 @@ class ProductAction:
                 return self.succ("用户信息修改成功")
             return self.info("用户信息无变化")
         return self.info("用户不存在")
-            
-        
-    def create_new_user(self,userinfo):
+
+    def create_new_user(self, userinfo):
         username = userinfo["username"]
         password = userinfo["password"]
         alias = userinfo["alias"]
@@ -635,9 +672,8 @@ class ProductAction:
             self.update_userlist()
             return self.succ("用户添加成功")
         return self.info("用户已存在")
-        
-        
-    def delete_user(self,username):
+
+    def delete_user(self, username):
         user = User.query.filter(User.username == username).first()
         if user:
             db.session.delete(user)

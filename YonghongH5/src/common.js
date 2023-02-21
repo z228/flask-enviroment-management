@@ -77,4 +77,6 @@ globalObj.formatDateStr = (str => {
           str.substring(6, 8)
       );
     });
+
+
 export default globalObj
