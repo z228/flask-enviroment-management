@@ -6,7 +6,7 @@ def send(receiver,subject,text):
     # 第三方 SMTP 服务
     mail_host = "smtp.exmail.qq.com"  # 设置服务器
     mail_user = "zengchenglong@yonghongtech.com"  # 用户名
-    mail_pass = "wan520Zcl"  # 口令
+    mail_pass = "wan520@Zcl"  # 口令
 
     sender = 'zengchenglong@yonghongtech.com'
     receivers =receiver # 接收邮件，可设置为你的QQ邮箱或者其他邮箱

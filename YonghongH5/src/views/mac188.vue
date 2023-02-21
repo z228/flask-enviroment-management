@@ -3,7 +3,7 @@
     <div class="crumbs">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item>
-          <i class="el-icon-centos"></i>cent185(服务器ip：192.168.0.185)
+          <i class="el-icon-apple"></i>cent185(服务器ip：192.168.0.188)
           <el-button
             type="success"
             icon="el-icon-refresh"
@@ -44,12 +44,13 @@
               >
             </template>
           </el-table-column>
-          <el-table-column prop="path" label="状态" width="120">
+          <el-table-column prop="path" label="状态" width="150">
             <template slot-scope="scope">
               <el-tag
                 :type="scope.row.msg === '空闲中' ? 'info' : ''"
                 effect="plain"
                 class="status-tag"
+                style="display: flex justify-content: center"
                 >{{ scope.row.msg }}</el-tag
               >
             </template>
@@ -154,7 +155,7 @@
               </el-select>
               <el-upload
                 class="upload-demo"
-                action="http://192.168.0.185:5000/productJar/uploadJar"
+                action="http://192.168.0.188:5000/productJar/uploadJar"
                 :show-file-list="false"
                 :on-success="(response,file,filelist)=> handleAvatarSuccess(scope.row, response,file,filelist)"
                 :data="{ version: scope.row.version }"
@@ -248,18 +249,6 @@ export default {
       checkRes: {},
     };
   },
-  async created() {
-    this.$set(this.status, "hasFound", false);
-    await this.getAllProduct();
-    this.get141Jar();
-    this.getAllBihome();
-    this.checkStatus();
-    this.getDebugPort();
-    this.getViewPort();
-    this.getCurrentBihome();
-    this.getURL();
-    this.getJarInfo();
-  },
   mounted() {
     const timer = setInterval(() => {
       this.refresh();
@@ -268,6 +257,18 @@ export default {
     this.$once("hook:beforeDestroy", () => {
       clearInterval(timer);
     });
+  },
+  created() {
+    this.$set(this.status, "hasFound", false);
+    this.getAllProduct();
+    this.get141Jar();
+    this.getAllBihome();
+    this.checkStatus();
+    this.getDebugPort();
+    this.getViewPort();
+    this.getCurrentBihome();
+    this.getURL();
+    this.getJarInfo();
   },
   methods: {
     refresh() {
@@ -285,7 +286,7 @@ export default {
     getJarInfo() {
       let _this = this;
       this.$axios
-        .get("http://192.168.0.185:5000/productJar/jarInfo")
+        .get("http://192.168.0.188:5000/productJar/jarInfo")
         .then((res) => {
           for (let v in res.data.data) {
             if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
@@ -309,7 +310,7 @@ export default {
     getAllProduct() {
       let _this = this;
       this.$axios
-        .get("http://192.168.0.185:5000/productJar/all")
+        .get("http://192.168.0.188:5000/productJar/all")
         .then((res) => {
           for (let v in res.data.data) {
             if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
@@ -339,7 +340,7 @@ export default {
     get141Jar() {
       let _this = this;
       this.$axios
-        .get("http://192.168.0.185:5000/productJar/141jar")
+        .get("http://192.168.0.188:5000/productJar/141jar")
         .then((res) => {
           for (let v in res.data.data) {
             if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
@@ -364,7 +365,7 @@ export default {
     getAllBihome() {
       let _this = this;
       this.$axios
-        .get("http://192.168.0.185:5000/productJar/allBihome")
+        .get("http://192.168.0.188:5000/productJar/allBihome")
         .then((res) => {
           for (let v in res.data.data) {
             if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
@@ -388,7 +389,7 @@ export default {
     getCurrentBihome() {
       let _this = this;
       this.$axios
-        .get("http://192.168.0.185:5000/productJar/currentBihome")
+        .get("http://192.168.0.188:5000/productJar/currentBihome")
         .then((res) => {
           for (let v in res.data.data) {
             _this.$set(_this.bihome, v, res.data.data[v]);
@@ -407,7 +408,7 @@ export default {
     getURL() {
       let _this = this;
       this.$axios
-        .get("http://192.168.0.185:5000/productJar/url")
+        .get("http://192.168.0.188:5000/productJar/url")
         .then((res) => {
           for (let v in res.data.data) {
             if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
@@ -416,7 +417,7 @@ export default {
                   _this.$set(
                     _this.tableData[i],
                     "url",
-                    "http://192.168.0.185:" + res.data.data[v]
+                    "http://192.168.0.188:" + res.data.data[v]
                   );
               }
             }
@@ -435,7 +436,7 @@ export default {
     checkStatus() {
       let _this = this;
       this.$axios
-        .get("http://192.168.0.185:5000/productJar/check")
+        .get("http://192.168.0.188:5000/productJar/check")
         .then((res) => {
           for (let v in res.data.data) {
             if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
@@ -499,7 +500,7 @@ export default {
     getDebugPort() {
       let _this = this;
       this.$axios
-        .get("http://192.168.0.185:5000/productJar/port")
+        .get("http://192.168.0.188:5000/productJar/port")
         .then((res) => {
           for (let v in res.data.data) {
             if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
@@ -523,7 +524,7 @@ export default {
     getViewPort() {
       let _this = this;
       this.$axios
-        .get("http://192.168.0.185:5000/productJar/bi")
+        .get("http://192.168.0.188:5000/productJar/bi")
         .then((res) => {
           for (let v in res.data.data) {
             if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
@@ -548,7 +549,7 @@ export default {
       let _this = this;
       this.changeTableData(row.version, "shutdown", true);
       this.$axios
-        .post("http://192.168.0.185:5000/productJar/shutdown", {
+        .post("http://192.168.0.188:5000/productJar/shutdown", {
           version: row.version,
           user: this.$store.state.userInfo,
         })
@@ -591,7 +592,7 @@ export default {
       let _this = this;
       this.changeTableData(row.version, "start", true);
       this.$axios
-        .post("http://192.168.0.185:5000/productJar/startup", {
+        .post("http://192.168.0.188:5000/productJar/startup", {
           version: row.version,
           user: this.$store.state.userInfo,
         })
@@ -650,7 +651,7 @@ export default {
           user: this.$store.state.userInfo,
         };
       this.$axios
-        .post("http://192.168.0.185:5000/productJar/update", form)
+        .post("http://192.168.0.188:5000/productJar/update", form)
         .then((res) => {
           if (res.data.code === 200) {
             this.$message({
@@ -687,7 +688,7 @@ export default {
       let _this = this;
       this.changeTableData(row.version, "reload", true);
       this.$axios
-        .post("http://192.168.0.185:5000/productJar/reload_product", {
+        .post("http://192.168.0.188:5000/productJar/reload_product", {
           version: row.version,
           user: this.$store.state.userInfo,
         })
@@ -747,7 +748,7 @@ export default {
         };
       this.changeTableData(row.version, "updateAndReload", true);
       this.$axios
-        .post("http://192.168.0.185:5000/productJar/updateReload", form)
+        .post("http://192.168.0.188:5000/productJar/updateReload", form)
         .then((res) => {
           if (res.data.code === 200) {
             for (let i = 0; i < _this.tableData.length; i++) {
@@ -790,7 +791,7 @@ export default {
     },
     exchangeBihome(row, key) {
       this.$axios
-        .post("http://192.168.0.185:5000/productJar/changeBihome", {
+        .post("http://192.168.0.188:5000/productJar/changeBihome", {
           version: row.version,
           bihome: key,
           user: this.$store.state.userInfo,
@@ -865,7 +866,7 @@ export default {
 .upload-demo {
   display: inline;
 }
-.status-tag{
+.status-tag {
   display: flex;
   justify-content: center;
 }

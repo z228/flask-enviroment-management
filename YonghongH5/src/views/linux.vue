@@ -137,7 +137,7 @@
               >
             </template>
           </el-table-column>
-          <el-table-column label="可更换bihome">
+          <!-- <el-table-column label="可更换bihome">
             <template slot-scope="scope">
               <el-button
                 v-for="tag in bihomes[scope.row.version]"
@@ -154,7 +154,7 @@
                 {{ tag }}</el-button
               >
             </template>
-          </el-table-column>
+          </el-table-column> -->
         </el-table>
       </el-card>
     </div>
@@ -177,9 +177,9 @@ export default {
       bihomes: {},
     };
   },
-  created() {
+  async created() {
     this.$set(this.status, "hasFound", false);
-    this.getAllProduct();
+    await this.getAllProduct();
     // this.get141Jar();
     this.getAllBihome();
     this.checkStatus();
@@ -218,7 +218,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 6 * 1000,
             showClose: true,
             type: "error",
           });
@@ -247,7 +247,7 @@ export default {
         .catch((err) => {
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 6 * 1000,
             showClose: true,
             type: "error",
           });
@@ -273,7 +273,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 6 * 1000,
             showClose: true,
             type: "error",
           });
@@ -297,7 +297,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 6 * 1000,
             showClose: true,
             type: "error",
           });
@@ -328,7 +328,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 6 * 1000,
             showClose: true,
             type: "error",
           });
@@ -352,7 +352,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 6 * 1000,
             showClose: true,
             type: "error",
           });
@@ -376,7 +376,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 6 * 1000,
             showClose: true,
             type: "error",
           });
@@ -392,7 +392,7 @@ export default {
           if (res.data.code === 200) {
             this.$message({
               message: res.data.data,
-              duration: 600000,
+              duration: 6 * 1000,
               showClose: true,
               type: "success",
             });
@@ -413,7 +413,7 @@ export default {
         .catch((err) => {
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 6 * 1000,
             showClose: true,
             type: "error",
           });
@@ -436,7 +436,7 @@ export default {
           if (res.data.code === 200) {
             this.$message({
               message: res.data.data,
-              duration: 600000,
+              duration: 6 * 1000,
               showClose: true,
               type: "success",
             });
@@ -457,7 +457,7 @@ export default {
         .catch((err) => {
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 6 * 1000,
             showClose: true,
             type: "error",
           });
@@ -480,7 +480,7 @@ export default {
           if (res.data.code === 200) {
             this.$message({
               message: res.data.data,
-              duration: 600000,
+              duration: 6 * 1000,
               showClose: true,
               type: "success",
             });
@@ -496,7 +496,7 @@ export default {
         .catch((err) => {
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 6 * 1000,
             showClose: true,
             type: "error",
           });
@@ -519,7 +519,7 @@ export default {
           if (res.data.code === 200) {
             this.$message({
               message: res.data.data,
-              duration: 600000,
+              duration: 6 * 1000,
               showClose: true,
               type: "success",
             });
@@ -540,7 +540,7 @@ export default {
         .catch((err) => {
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 6 * 1000,
             showClose: true,
             type: "error",
           });
@@ -570,7 +570,7 @@ export default {
           if (res.data.code === 200) {
             this.$message({
               message: res.data.data,
-              duration: 600000,
+              duration: 6 * 1000,
               showClose: true,
               type: "success",
             });
@@ -587,7 +587,7 @@ export default {
         .catch((err) => {
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 6 * 1000,
             showClose: true,
             type: "error",
           });
@@ -616,7 +616,7 @@ export default {
           if (res.data.code === 200) {
             this.$message({
               message: res.data.data,
-              duration: 600000,
+              duration: 6 * 1000,
               showClose: true,
               type: "success",
             });
@@ -625,7 +625,7 @@ export default {
         .catch((err) => {
           this.$message({
             message: err,
-            duration: 600000,
+            duration: 6 * 1000,
             showClose: true,
             type: "error",
           });

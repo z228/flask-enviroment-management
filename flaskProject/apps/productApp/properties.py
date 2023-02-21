@@ -34,7 +34,7 @@ env_list = {
             "path": "D:/old_version/9.2/",
             "port": "8092",
             "bihomes": "bihome",
-            "branch": "v9.2"
+            "branch": "custom_v9.2_xian_huawei"
         },
         "v9.2.1": {
             "path": "D:/old_version/9.2.1/",
@@ -59,6 +59,12 @@ env_list = {
             "port": "8941",
             "bihomes": "bihome UIauto Export",
             "branch": "v9.4"
+        },
+        "10.0_dis": {
+            "path": "D:/old_version/10.0/",
+            "port": "8080",
+            "bihomes": "bihome",
+            "branch": "custom_v10.0_huaweiDIS"
         },
         "trunk": {
             "path": "D:/old_version/trunk/",

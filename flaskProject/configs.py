@@ -1,8 +1,8 @@
-HOST = '192.168.0.145'
-PORT = '3306'
+HOST = '192.168.0.187'
+PORT = '3357'
 DATABASE = 'flask1'
-USERNAME = 'root'
-PASSWORD = '123456'
+USERNAME = '228'
+PASSWORD = '9926'
 
 DB_URI = "mysql+pymysql://{username}:{password}@{host}:{port}/{db}?charset=utf8".format(username=USERNAME,
                                                                                         password=PASSWORD, host=HOST,

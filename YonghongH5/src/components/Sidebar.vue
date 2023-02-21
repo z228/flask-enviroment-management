@@ -1,14 +1,14 @@
 <template>
   <div class="sidebar">
     <el-menu
-        class="sidebar-el-menu"
-        :default-active="onRoutes"
-        :collapse="collapse"
-        background-color="#324157"
-        text-color="#bfcbd9"
-        active-text-color="#20a0ff"
-        unique-opened
-        router
+      class="sidebar-el-menu"
+      :default-active="onRoutes"
+      :collapse="collapse"
+      background-color="#324157"
+      text-color="#bfcbd9"
+      active-text-color="#20a0ff"
+      unique-opened
+      router
     >
       <template v-for="item in items">
         <template v-if="item.subs">
@@ -19,23 +19,20 @@
             </template>
             <template v-for="subItem in item.subs">
               <el-submenu
-                  v-if="subItem.subs"
-                  :index="subItem.index"
-                  :key="subItem.index"
+                v-if="subItem.subs"
+                :index="subItem.index"
+                :key="subItem.index"
               >
                 <template slot="title">{{ subItem.title }}</template>
                 <el-menu-item
-                    v-for="(threeItem,i) in subItem.subs"
-                    :key="i"
-                    :index="threeItem.index"
-                >{{ threeItem.title }}
+                  v-for="(threeItem, i) in subItem.subs"
+                  :key="i"
+                  :index="threeItem.index"
+                  >{{ threeItem.title }}
                 </el-menu-item>
               </el-submenu>
-              <el-menu-item
-                  v-else
-                  :index="subItem.index"
-                  :key="subItem.index"
-              >{{ subItem.title }}
+              <el-menu-item v-else :index="subItem.index" :key="subItem.index"
+                >{{ subItem.title }}
               </el-menu-item>
             </template>
           </el-submenu>
@@ -52,7 +49,7 @@
 </template>
 
 <script>
-import bus from './bus';
+import bus from "./bus";
 
 export default {
   data() {
@@ -79,70 +76,93 @@ export default {
         //   index: 'task',
         //   title: 'Windows定时任务'
         // },
-      ]
+      ],
     };
   },
   computed: {
     onRoutes() {
-      return this.$route.path.replace('/', '');
-    }
+      return this.$route.path.replace("/", "");
+    },
   },
   created() {
     // 通过 Event Bus 进行组件间通信，来折叠侧边栏
-    bus.$on('collapse', msg => {
+    bus.$on("collapse", (msg) => {
       this.collapse = msg;
-      bus.$emit('collapse-content', msg);
+      bus.$emit("collapse-content", msg);
     });
-    if(this.$store.state.userInfo==='admin'||this.$store.state.userInfo==='曾成龙'||this.$store.state.userInfo==='zcl'){
-      this.$common.objectValueAtoB([
-        {
-          icon: 'el-icon-windows',
-          index: 'windows',
-          title: 'Windows环境',
-        },
-        {
-          icon: 'el-icon-ubuntu',
-          index: 'linux',
-          title: 'Linux环境'
-        },
-        {
-          icon: 'el-icon-centos',
-          index: 'cent185',
-          title: 'cent185环境'
-        },
-        {
-          icon: 'el-icon-centos',
-          index: 'cent187',
-          title: 'cent187环境'
-        },
-        {
-          icon: 'el-icon-script',
-          index: 'task',
-          title: 'Windows定时任务'
-        },
-        {
-          icon: 'el-icon-script',
-          index: 'iframe',
-          title: 'iframe'
-        },
-        {
-          icon: 'el-icon-tickets',
-          index: 'log',
-          title: '日志查询'
-        },
-      ],this.items);
+    if (
+      this.$store.state.userInfo === "admin" ||
+      this.$store.state.userInfo === "曾成龙" ||
+      this.$store.state.userInfo === "zcl"
+    ) {
+      this.$common.objectValueAtoB(
+        [
+          {
+            icon: "el-icon-windows",
+            index: "windows",
+            title: "Windows环境",
+          },
+          {
+            icon: "el-icon-ubuntu",
+            index: "linux",
+            title: "Linux环境",
+          },
+          {
+            icon: "el-icon-centos",
+            index: "cent185",
+            title: "cent185环境",
+          },
+          {
+            icon: "el-icon-centos",
+            index: "cent187",
+            title: "cent187环境",
+          },
+          {
+            icon: "el-icon-windows",
+            index: "win172",
+            title: "北京win172",
+          },
+          {
+            icon: "el-icon-apple",
+            index: "mac188",
+            title: "mac188环境",
+          },
+          {
+            icon: "el-icon-script",
+            index: "task",
+            title: "Windows定时任务",
+          },
+          {
+            icon: "el-icon-pie-chart",
+            index: "serverstatus",
+            title: "服务器状态",
+          },
+          {
+            icon: "el-icon-script",
+            index: "iframe",
+            title: "iframe",
+          },
+          {
+            icon: "el-icon-tickets",
+            index: "log",
+            title: "日志查询",
+          },
+        ],
+        this.items
+      );
+    } else {
+      this.$common.objectValueAtoB(
+        [
+          {
+            icon: "el-icon-centos",
+            index: "cent185",
+            title: "cent185环境",
+          },
+        ],
+        this.items
+      );
     }
-    else
-    {
-      this.$common.objectValueAtoB([
-        {
-          icon: 'el-icon-centos',
-          index: 'cent185',
-          title: 'cent185环境'
-        }
-      ],this.items);
-    }
-  }
+  },
 };
 </script>
 

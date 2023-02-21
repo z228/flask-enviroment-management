@@ -115,7 +115,7 @@ export default {
       ],
       value: "Python",
       textarea: "",
-      ip: "192.168.0.192",
+      ip: "192.168.0.187",
       ip_list: ["192.168.0.192", "192.168.0.187", "192.168.0.185"],
       status: {
         hasFountScript: false,

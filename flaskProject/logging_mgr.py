@@ -1,5 +1,6 @@
 from logging import getLogger, Formatter
 from logging.handlers import TimedRotatingFileHandler
+from concurrent_log_handler import ConcurrentRotatingFileHandler
 
 from flask import has_request_context, request
 from os import getcwd
@@ -29,12 +30,12 @@ product_logging.setLevel(10)
 info_log_path = f'{log_root_path}/logs/flask.log'
 debug_log_path = f'{log_root_path}/logs/debug.log'
 task_log_path = f'{log_root_path}/logs/task.log'
-info_handler = TimedRotatingFileHandler(info_log_path, when="MIDNIGHT", interval=1, backupCount=7,
-                                        encoding='utf-8')  # 设置日志字符集和存储路径名字
-debug_handler = TimedRotatingFileHandler(debug_log_path, when="MIDNIGHT", interval=1, backupCount=2,
-                                         encoding='utf-8')  # 设置日志字符集和存储路径名字
-task_handler = TimedRotatingFileHandler(task_log_path, when="MIDNIGHT", interval=1, backupCount=5,
-                                        encoding='utf-8')  # 设置日志字符集和存储路径名字
+info_handler = ConcurrentRotatingFileHandler(info_log_path, maxBytes=512 * 1024, backupCount=5,
+                                             encoding='utf-8')  # 设置日志字符集和存储路径名字
+debug_handler = ConcurrentRotatingFileHandler(debug_log_path, maxBytes=512 * 1024, backupCount=2,
+                                              encoding='utf-8')  # 设置日志字符集和存储路径名字
+task_handler = ConcurrentRotatingFileHandler(task_log_path, maxBytes=512 * 1024, backupCount=5,
+                                             encoding='utf-8')  # 设置日志字符集和存储路径名字
 remote_ip_format = RequestFormatter(
     '%(asctime)s - %(remote_addr)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s - '
     '%(message)s')

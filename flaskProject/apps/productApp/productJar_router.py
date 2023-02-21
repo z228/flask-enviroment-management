@@ -206,7 +206,7 @@ def update_linux_jar():
     dirs = listdir(src_path)
     for dir in dirs:
         src_file = join(src_path, dir)
-        if dir.split('\\')[-1] not in ['api.jar', 'product.jar', 'thirds.jar']:
+        if dir.split('\\')[-1] not in productAction.yonghong_product_jar:
             continue
         src_file = join(src_path, dir)
         ftpServer.upload_file(src_file, f'/{data["version"]}')

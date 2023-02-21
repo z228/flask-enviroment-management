@@ -12,12 +12,13 @@ from flask_sqlalchemy import SQLAlchemy
 from apps.productApp.productJar_router import *
 import logging_mgr
 
+
 # clean.static_clean() #清理资源文件夹
 app = Flask(__name__)
 app.config.from_object(configs)
 db = SQLAlchemy(app)
 
-app.debug = True
+app.debug = False
 bootstrap = Bootstrap(app)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = timedelta(seconds=1)
 app.config.from_object(APSchedulerJobConfig())
@@ -40,9 +41,9 @@ class User(db.Model):
         self.password = password
         self.alias = alias
         self.email = email
-        
+
     def getInfo(self):
-        return {"username":self.username,"password":self.password,"alias":self.alias,"email":self.email}
+        return {"username": self.username, "password": self.password, "alias": self.alias, "email": self.email}
 
     # def __repr__(self):
     #     return '<User %r>' % self.username
@@ -62,8 +63,6 @@ def hello_world():
 
 
 # 主页面
-
-
 def get_log_with_lines(log, lines):
     lines = lines if isinstance(lines, int) else eval(lines)
     with open(f'{app.root_path}/logs/{log}', 'r', encoding='utf-8') as logs:
