@@ -1,15 +1,19 @@
 import os
 from filecmp import cmp, cmpfiles
 from json import dump, dumps, load
+import pickle
 from platform import system
-from shutil import copy2
+from shutil import copy2, copytree, rmtree
 from socket import socket, AF_INET, SOCK_STREAM
 from time import sleep, localtime, strftime
 from xml.dom.minidom import parse
-from functools import wraps
+import re
 
 from logging import getLogger
-from app import db, User
+from app import if_connect_mysql
+
+if if_connect_mysql:
+    from app import db, User
 
 product_logger = getLogger("product")
 
@@ -22,7 +26,7 @@ else:
 
 
 class ProductAction:
-    current_path = os.getcwd()
+    current_path = r'D:\code\python\yhenv\flaskProject'
     host_ip = '127.0.0.1'
     ip = '\\\\192.168.0.141/productJar/'
     ip_134 = '\\\\192.168.1.134/git-package/'
@@ -50,15 +54,27 @@ class ProductAction:
     server_xml_path = ''
     config = {}
     jar_list = {}
+    release_jar_list = {}
     status = {}
-    users = {}
 
     # current_system="linux"
     def __init__(self) -> None:
         self.read_config()
-        self.users = User.query.filter().all()
+        if if_connect_mysql:
+            self.users = User.query.filter().all()
+            with open(f'{self.status_path}/allusers.user', 'wb') as users:
+                pickle.dump(self.users, users)
+        else:
+            with open(f'{self.status_path}/allusers.user', 'rb') as users:
+                self.users = pickle.load(users)
         if self.current_system == "Windows":
             self.jar_list = self.get_jar_list()
+            self.release_jar_list = self.get_release_jar_list()
+
+    # 删除字符串内特殊字符  
+    @staticmethod
+    def delete_boring_characters(sentence=""):
+        return re.sub('[0-9’!"#$%&\'()*+,-./:;<=>?@，。?★、…【】《》？“”‘’！[\\]^_`{|}~\s]+', "", sentence)
 
     # 向某个进程发送crtl+c指令
     @staticmethod
@@ -70,7 +86,6 @@ class ProductAction:
             api.Sleep(15)
             con.FreeConsole()
             api.SetConsoleCtrlHandler(None, 0)
-
 
     @staticmethod
     def clear_list_not_num(array=None):
@@ -101,7 +116,7 @@ class ProductAction:
         return list(set(array))
 
     # 通过host+port获取进程pid
-    def get_pid_from_port(self, port):
+    def get_pid_by_port(self, port):
         res = self.readlines_command(f'netstat -ano |findstr "{port}"')
         for i in res:
             if i.split()[-2] == 'LISTENING':
@@ -140,14 +155,14 @@ class ProductAction:
             product_logger.info(f'{task}不是python脚本，无法执行')
             return f"非Python脚本无法执行"
         os.chdir(self.script_path)
-        os.system(f'python {task}')
+        self.read_command(f'python {task}')
         product_logger.info(f'{task}执行成功')
         return f'{task}执行成功'
 
     # 删除脚本
     def delete_script(self, task):
         os.chdir(self.script_path)
-        os.system(f'del {task}')
+        self.read_command(f'del {task}')
         product_logger.warning(f'{task}删除成功')
         return f'{task}删除成功'
 
@@ -173,7 +188,7 @@ class ProductAction:
             self.config[key]["bihome"] = self.get_bi_home(key)
             if 'dis' in key:
                 self.config[key]['url'] = self.config[key]["port"] + \
-                    '/bi/?showOthers=true'
+                                          '/bi/?showOthers=true'
             else:
                 self.config[key]['url'] = self.config[key]["port"] + '/bi'
             self.config[key]["debug"] = self.get_debug_port(key)
@@ -333,8 +348,11 @@ class ProductAction:
         if self.is_port_used(self.host_ip, host_port):
             if self.current_system == "Windows":
                 product_logger.info(f'停止{v} tomcat进程')
-                os.system(
-                    f'python {self.script_path}/stopTrunk.py {host_port} > stopTomcat.txt')
+                if v == 'trunk':
+                    self.read_command(
+                        f'python {self.script_path}/stopTrunk.py {host_port} > stopTomcat.txt')
+                else:
+                    self.read_command(f"taskkill /f /pid {self.get_pid_by_port(host_port)}")
             else:
                 work_dir = self.config[v]["path"] + self.tomcat_path
                 os.chdir(work_dir)
@@ -365,6 +383,7 @@ class ProductAction:
         host_port = eval(self.config[v]["port"])
         work_dir = self.config[v]["path"] + self.tomcat_path
         os.chdir(work_dir)
+        # product_logger.info(self.read_command('pwd'))
         for scape in range(100):
             if self.is_port_used(self.host_ip, host_port):
                 if self.config[v]["status"] != '0':
@@ -377,9 +396,9 @@ class ProductAction:
                     product_logger.info('tomcat正在停止中')
             else:
                 if self.current_system == "Windows":
-                    os.system('startup > caches.txt')
+                    os.system('startup > NUL')
                 else:
-                    os.system('sh startup.sh > caches.txt')
+                    self.read_command('sh startup.sh > caches.txt')
                 break
         product_logger.info(f'启动{v} tomcat服务成功')
         self.change_status(v, 'start')
@@ -442,20 +461,25 @@ class ProductAction:
             return path_134
         return path_187 if os.path.exists(path_187) else path_134
 
-    def new_copy(self, v, date=''):
+    def new_copy(self, v, date='', copy_release=False, release=''):
         """
-        :param date:
-        :param v: 版本号 develop
+        复制jar包api
+        :param v: 版本
+        :param date: 日期
+        :param copy_release: 是否复制release
+        :param release: 发布版本
         :return:
         """
-        self.copy_jar(v, date)
+        self.copy_jar(v, date) if not copy_release else self.copy_release_jar(v, release)
         product_logger.info(f'{v}-{self.format_date_str(date)} jar包检查完毕')
-        # self.toked[v]['update']=False
         self.change_status(v, 'update')
         return f'{v}已更换{self.format_date_str(date)} jar包'
 
     def copy_jar(self, version, date):
         """
+        :param version: 版本号
+        :param date: jar包日期
+        :return:
         :param
         from_path_in:源路径
         to_path_in：目标路径
@@ -467,49 +491,87 @@ class ProductAction:
                 return check_res
             self.change_status(version, 'update', True)
             to_path_in = self.config[version]["path"] + self.YongHong_path
+            local_jar_path = os.path.join(to_path_in, "product")
             branch = self.config[version]["branch"]
-            backup_path = to_path_in + '/backup_product'
-            path = self.get_fast_path(version, date)
-            if path == "" or date == "":
+            date_jar_path = self.get_fast_path(version, date)
+            if date_jar_path == "" or date == "":
                 self.change_status(version, "update")
                 return f"{version}没有{'新' if date == '' else date}的jar包"
-            dirs = os.listdir(path)
-            common = ['api.jar', 'product.jar', 'thirds.jar']
-            for file_name in dirs:
-                if branch == 'develop' and file_name not in self.yonghong_product_jar:
-                    continue
-                from_file = os.path.join(path, file_name)
-                to_file = os.path.join(to_path_in, "product", file_name)
-                if not os.path.exists(to_file):
-                    self.rename_product_jar(
-                        file_name, os.path.join(to_path_in, "product"))
-                try:
-                    # from_134_file = from_file.replace(self.ip, self.ip_134)
-                    # if os.path.exists(from_134_file):
-                    #     if not cmp(from_file, from_134_file):
-                    #         from_file = from_134_file
-                    if not os.path.exists(to_file) or not cmp(from_file, to_file):
-                        copy2(from_file, to_file)
-                        product_logger.info(
-                            f"{file_name}更新完毕,时间：{self.current_time()}")
-                        continue
-                    # if not cmp(from_file, to_file):
-                    #     copy2(from_file, to_file)
-                    #     product_logger.info(f"{file_name}更新完毕,时间：{self.current_time()}")
-                except PermissionError:
-                    self.change_status(version, 'update')
-                    product_logger.info(
-                        f"{path}下{file_name}正在被占用，请稍等...time{self.current_time()}")
+            dirs = os.listdir(date_jar_path)
+            res = self.cycle_copy(date_jar_path, local_jar_path, version)
+            log_info = f'{version}-{self.format_date_str(date)} Jar包更新完成' if res == 1 else res
+            # for file_name in dirs:
+            #     if branch == 'develop' and file_name not in self.yonghong_product_jar:
+            #         continue
+            #     from_file = os.path.join(path, file_name)
+            #     to_file = os.path.join(to_path_in, "product", file_name)
+            #     if not os.path.exists(to_file):
+            #         self.rename_product_jar(
+            #             file_name, os.path.join(to_path_in, "product"))
+            #     try:
+            #         if not os.path.exists(to_file) or not cmp(from_file, to_file):
+            #             copy2(from_file, to_file)
+            #             product_logger.info(
+            #                 f"{file_name}更新完毕,时间：{self.current_time()}")
+            #             continue
+            #     except PermissionError:
+            #         self.change_status(version, 'update')
+            #         product_logger.info(
+            #             f"{path}下{file_name}正在被占用，请稍等...time{self.current_time()}")
         except FileNotFoundError as err:
             self.change_status(version, 'update')
-            product_logger.info(f'file error:{err}')
-        product_logger.info(f'{version}-{self.format_date_str(date)} Jar包更新完成')
+            log_info = f'file error:{err}'
+        product_logger.info(log_info)
         self.change_status(version, 'update')
-        return f'{version}-{self.format_date_str(date)} Jar包更新完成'
+        return log_info
 
-    def copy_and_reload(self, v, date, user=''):
+    def copy_release_jar(self, version, release_version):
         """
-        :param v: 版本号 develop
+        :param version: 环境的key
+        :param release_version: release的版本
+        :return:
+        """
+        release_jar_path = f'{self.ip_187}common/{release_version}'
+        local_jar_path = os.path.join(self.config[version]["path"] + self.YongHong_path, "product")
+        res = self.cycle_copy(release_jar_path, local_jar_path, version)
+        log_info = f'{version}-{release_version} Jar包更新完成' if res == 1 else res
+        product_logger.info(log_info)
+        self.change_status(version, 'update')
+        return log_info
+
+    def cycle_copy(self, src, dist, version):
+        """
+        循环复制整个目录jar包
+        :param src: 源文件夹
+        :param dist: 目标文件夹
+        :param version: 版本
+        :return:
+        """
+        max_count = 0
+        while True:
+            try:
+                if os.path.exists(dist):
+                    rmtree(dist)  # 先删除原本的
+                    copytree(src, dist)  # 整个复制过来
+                    return 1
+            except PermissionError:
+                if max_count > 10:
+                    self.change_status(version, 'update')
+                    log_info = f"{dist}下文件正在被占用，请稍等...time{self.current_time()}"
+                    product_logger.info(log_info)
+                    return log_info
+                max_count += 1
+                product_logger.info(
+                    f"{dist}下文件正在被占用，请稍等...time{self.current_time()}")
+                sleep(10)
+
+    def copy_and_reload(self, v, date, user='', copy_release=False, release=''):
+        """
+        :param v: 版本
+        :param date: jar包日期
+        :param user: 用户
+        :param copy_release: 是否复制release的jar包
+        :param release: release版本
         :return:
         """
         if self.config[v]['updateAndReload']:
@@ -522,7 +584,7 @@ class ProductAction:
             return res
         self.change_status(v, "updateAndReload", True)
         self.shut_tomcat(v)
-        res = self.copy_jar(v, date)
+        res = self.copy_jar(v, date) if not copy_release else self.copy_release_jar(v, release)
         self.change_status(v, "updateAndReload", True)
         # 先关闭tomcat，然后换JAR，再启动tomcat
         self.start_tomcat(v, user)
@@ -561,6 +623,30 @@ class ProductAction:
             jar_list[key] = self.clear_list_not_num(jar_list[key])
             jar_list[key].sort()
             jar_list[key].reverse()
+        return jar_list
+
+    def get_release_jar_list(self):
+        """
+        获取release的jar包列表
+        :return:
+        """
+        jar_list = {}
+        exclude = ['9.2']
+        release_jar_path = f'{self.ip_187}common'
+        for key in self.config.keys():
+            branch = self.config[key]["branch"]
+            jar_list[branch] = []
+            if 'custom' in branch or branch == 'develop':
+                continue
+            if branch.replace('v', '') in exclude:
+                continue
+            branch_fmt_list = branch.replace('v', '').split('.')
+            branch_fmt = f'{branch_fmt_list[0]}.{branch_fmt_list[1]}'
+            for release in os.listdir(release_jar_path):
+                if release in exclude or release == '9.4':
+                    continue
+                if branch_fmt in release:
+                    jar_list[branch].append(release)
         return jar_list
 
     def get_bi_properties(self, v):
@@ -622,7 +708,7 @@ class ProductAction:
         #     dump(case_list, cases, indent=4, ensure_ascii=False)
 
     def user_validation(self, userinfo):
-        username = userinfo['username'].strip().lower()
+        username = userinfo['username']
         passwd = userinfo['password']
         user = self.get_user_by_username(username)
         if user:
@@ -630,8 +716,10 @@ class ProductAction:
         return self.info("用户不存在")
 
     def get_user_by_username(self, username):
+        username = self.delete_boring_characters(username)
         for user in self.users:
-            if username.strip().lower() in user.username + user.alias:
+            all_usersnames = f'{user.username},{user.alias}'
+            if username.strip().lower() in all_usersnames:
                 return user
         return ""
 
@@ -639,20 +727,21 @@ class ProductAction:
         self.users = User.query.filter().all()
 
     def update_userinfo(self, userinfo):
-        username = userinfo["username"]
+        if not if_connect_mysql:
+            return self.info("数据库暂时无法连接")
+        username = userinfo["username"].strip().lower()
         password = userinfo["password"]
-        alias = userinfo["alias"]
+        alias = userinfo["alias"].strip().lower()
         email = userinfo["email"]
         user = User.query.filter(User.username == username).first()
         if user:
             change = (user.username != username) | (user.password != password) | (
-                user.alias != alias) | (user.email != email)
+                    user.alias != alias) | (user.email != email)
             if change:
                 user.username = username
                 user.password = password
                 user.alias = alias
                 user.email = email
-                # db.session.add(user)
                 db.session.commit()
                 self.update_userlist()
                 return self.succ("用户信息修改成功")
@@ -660,9 +749,11 @@ class ProductAction:
         return self.info("用户不存在")
 
     def create_new_user(self, userinfo):
-        username = userinfo["username"]
+        if not if_connect_mysql:
+            return self.info("数据库暂时无法连接")
+        username = userinfo["username"].strip().lower()
         password = userinfo["password"]
-        alias = userinfo["alias"]
+        alias = userinfo["alias"].strip().lower()
         email = userinfo["email"]
         if not User.query.filter(User.username == username).first():
             user = User(username, password, alias, email)
@@ -674,6 +765,8 @@ class ProductAction:
         return self.info("用户已存在")
 
     def delete_user(self, username):
+        if not if_connect_mysql:
+            return self.info("数据库暂时无法连接")
         user = User.query.filter(User.username == username).first()
         if user:
             db.session.delete(user)

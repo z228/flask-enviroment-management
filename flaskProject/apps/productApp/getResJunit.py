@@ -2,11 +2,11 @@ from os import listdir, makedirs, listdir, walk
 from os.path import join, exists
 from json import dump, load
 import xml.etree.cElementTree as ET
-from tqdm import tqdm
 from shutil import rmtree, copy2
 from logging import getLogger
 from time import time
 import threading
+import sys
 task_logger = getLogger("task")
 
 branchs = ['v9.0_test', 'v9.2.1_test',
@@ -14,7 +14,9 @@ branchs = ['v9.0_test', 'v9.2.1_test',
 ip_path = r'\\192.168.1.199'
 module = r"assetExecute\testcases"
 res_xml_path = r'assetExecute\reports'
-visualcd_suites = ['Chart', 'CustomerBug', 'DBDataprocess',
+visualcd_suites = ['Chart', 
+                #    'CustomerBug', 
+                   'DBDataprocess',
                    'DBPainter', 'DynamicCalc', 'Export']
 res_path = r'D:\code\python\yhenv\flaskProject\apps\productApp\res'
 
@@ -53,6 +55,7 @@ def get_fail_case(branch):
             fail_cases[suit_name][str(case.get("name"))] = []
     with open(f'{res_path}\{branch}_fail_cases.json', 'w', encoding='utf-8') as fail_cases_json:
         dump(fail_cases, fail_cases_json, indent=4, ensure_ascii=False)
+        return fail_cases
 
 
 def get_el_tree_data(branch):
@@ -77,6 +80,7 @@ def get_el_tree_data(branch):
         junit_fail_cases.append(suites)
     with open(f'{res_path}\el_tree_{branch}_res.json', 'w', encoding='utf-8') as res_json:
         dump(junit_fail_cases, res_json, indent=4, ensure_ascii=False)
+        return junit_fail_cases
 
 
 def copy_junit_res_to_local(version):
@@ -98,24 +102,16 @@ def copy_junit_res_to_local(version):
 
     def copySuiteFile(suite, remote_path, local_path):
         nonlocal fail_cases
-        # if suite == '.svn' or suite not in visualcd_suites or suite not in fail_cases.keys():
-        #     continue
-        # fail_list = fail_cases[suite]
-        # if not fail_list:
-        #     continue
         local_res_path = join(local_path, suite, 'res')
         remote_res_path = join(remote_path, suite, 'res')
         if exists(local_res_path):
             rmtree(local_res_path)
         if not exists(remote_res_path):
             return
-            # break
-        print(f'{suite} start')
+        task_logger.info(f'{suite} start')
         time_start = time()
         for root, dirs, files in walk(remote_res_path):
             for file in files:
-                # if file.split('.')[0] not in fail_cases[suite]['allFailCaseName']:
-                #     continue
                 remote_file_path = join(root, file)
                 local_file_path = root.replace(
                     remote_res_path, local_res_path)
@@ -128,15 +124,10 @@ def copy_junit_res_to_local(version):
                         thread = copyThread(remote_file_path, join(
                             local_file_path, file))
                         thread.start()
-                        # thread.join()
-                        # copy2(remote_file_path, join(
-                        #     local_file_path, file))
                         fail_cases[suite][case].append(file)
-                        # print(f'{file} done')
-                        # copytree(remote_res_path, local_res_path)
                         break
         time_end = time()
-        print(f'{suite} cost {time_end-time_start}s')
+        task_logger.info(f'{suite} cost {int(time_end-time_start)}s')
 
     class copySuiteThread (threading.Thread):
         def __init__(self, suite, remote_path, local_path):
@@ -147,7 +138,7 @@ def copy_junit_res_to_local(version):
 
         def run(self):
             copySuiteFile(self.suite, self.remote_path, self.local_path)
-            print(f"{self.suite} done")
+            task_logger.info(f"{self.suite} done")
     threads = []
     for suite in suites:
         thread = copySuiteThread(suite, remote_path, local_path)
@@ -159,17 +150,23 @@ def copy_junit_res_to_local(version):
         for j in list(fail_cases[i].keys()):
             if not fail_cases[i][j]:
                 del fail_cases[i][j]
-    with open(f'{res_path}\{version}_test_fail_cases_new.json', 'w', encoding='utf-8') as fail_cases_json:
+    with open(fr'{res_path}\{version}_test_fail_cases_new.json', 'w', encoding='utf-8') as fail_cases_json:
         dump(fail_cases, fail_cases_json, indent=4, ensure_ascii=False)
 
 
 def main():
-    for branch in branchs[1:]:
-        # if branch == 'v10.0_test':
-        # continue
-        print(branch)
+    for branch in branchs:
+        # if branch != 'v10.0_test':
+        #     continue
+        task_logger.info(branch)
         get_fail_case(branch)
         copy_junit_res_to_local(branch.split('_')[0])
         get_el_tree_data(branch)
-        copy2(f'{res_path}\el_tree_{branch}_res.json',
-              f'\\\\192.168.0.187\share\junit_res\el_tree_{branch}_res.json')
+        try:
+            copy2(fr'{res_path}\el_tree_{branch}_res.json', fr'\\192.168.0.187\share\junit_res\el_tree_{branch}_res.json')
+        except FileNotFoundError as err:
+            task_logger.info(err)
+            continue
+        except:
+            task_logger.info("Unexpected error:", sys.exc_info()[0])
+            continue

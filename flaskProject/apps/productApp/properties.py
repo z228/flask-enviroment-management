@@ -54,11 +54,17 @@ env_list = {
             "bihomes": "bihome",
             "branch": "v9.4"
         },
-        "v9.4.1": {
-            "path": "D:/old_version/9.4.1/",
+        "华为西安943": {
+            "path": "D:/old_version/xian943/",
             "port": "8941",
             "bihomes": "bihome UIauto Export",
-            "branch": "v9.4"
+            "branch": "custom_v9.4.3_huawei_xian_secure"
+        },
+        "v10.0": {
+            "path": "D:/old_version/1002/",
+            "port": "8102",
+            "bihomes": "bihome",
+            "branch": "v10.0"
         },
         "10.0_dis": {
             "path": "D:/old_version/10.0/",
@@ -66,10 +72,16 @@ env_list = {
             "bihomes": "bihome",
             "branch": "custom_v10.0_huaweiDIS"
         },
+        "10.1": {
+            "path": "D:/old_version/101/",
+            "port": "8101",
+            "bihomes": "bihome",
+            "branch": "develop"
+        },
         "trunk": {
             "path": "D:/old_version/trunk/",
             "port": "8080",
-            "bihomes": "bihome UIauto Export DBPainter",
+            "bihomes": "bihome UIauto Export DBPainter webapi",
             "branch": "develop"
         }
     },

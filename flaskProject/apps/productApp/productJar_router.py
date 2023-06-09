@@ -27,6 +27,7 @@ def authentication_user(func):
         if user:
             return func(*args, *kwargs)
         return productAction.user_not_found(name)
+
     return wrapper
 
 
@@ -112,6 +113,13 @@ def get_141_jar():
     return productAction.succ(productAction.get_jar_list())
 
 
+@productJar_operate.route('/releasejar', methods=['GET'])
+@authentication_user
+def get_release_jar():
+    v = productAction.jar_list
+    return productAction.succ(productAction.get_release_jar_list())
+
+
 # 更换环境bihome
 @productJar_operate.route('/changeBihome', methods=['POST'])
 @authentication_user
@@ -180,7 +188,10 @@ def get_view_port():
 @authentication_user
 def update_jar():
     data = loads(request.get_data())
-    return productAction.succ(productAction.new_copy(data['version'], data['date']))
+    copy_release = data['copy_release'] if 'copy_release' in data.keys() else False
+    release = data['release'] if 'release' in data.keys() else ''
+    return productAction.succ(
+        productAction.new_copy(data['version'], data['date'], copy_release, release))
 
 
 # 更换指定日期Jar包
@@ -227,7 +238,10 @@ def reload_product():
 @authentication_user
 def update_and_reload_product():
     data = loads(request.get_data())
-    return productAction.succ(productAction.copy_and_reload(data['version'], data['date']))
+    copy_release = data['copy_release'] if 'copy_release' in data.keys() else False
+    release = data['release'] if 'release' in data.keys() else ''
+    return productAction.succ(
+        productAction.copy_and_reload(data['version'], data['date'], copy_release, release))
 
 
 # 获取当前bihome
@@ -262,7 +276,7 @@ def get_userinfo():
     username = data["username"]
     user = productAction.get_user_by_username(username)
     if user:
-        return productAction.succ(user.getInfo())
+        return productAction.succ(user.get_info())
     return productAction.user_not_found(username)
 
 

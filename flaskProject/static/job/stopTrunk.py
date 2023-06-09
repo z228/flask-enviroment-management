@@ -14,7 +14,7 @@ def send_ctrl_c(pid):
         api.SetConsoleCtrlHandler(None, 0)
 
 # 通过host+port获取进程pid
-def get_pid_from_port(port):
+def get_pid_by_port(port):
     res = os.popen(f'netstat -ano |findstr "{port}"').readlines()
     for i in res:
         if i.split()[-2] == 'LISTENING':
@@ -23,4 +23,4 @@ def get_pid_from_port(port):
 
 port = sys.argv[1]
 
-send_ctrl_c(get_pid_from_port(port))
+send_ctrl_c(get_pid_by_port(port))
