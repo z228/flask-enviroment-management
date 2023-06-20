@@ -124,7 +124,8 @@ def copy_junit_res_to_local(version):
                         thread = copyThread(remote_file_path, join(
                             local_file_path, file))
                         thread.start()
-                        fail_cases[suite][case].append(file)
+                        if file not in fail_cases[suite][case]:
+                            fail_cases[suite][case].append(file)
                         break
         time_end = time()
         task_logger.info(f'{suite} cost {int(time_end-time_start)}s')

@@ -1,4 +1,5 @@
 import os
+import sys
 from datetime import timedelta
 
 from flask import Flask, send_from_directory, jsonify
@@ -10,12 +11,13 @@ from apps.lib.BaseError import *
 from schedule import APSchedulerJobConfig
 from flask_sqlalchemy import SQLAlchemy
 from apps.productApp.productJar_router import *
+from sqlalchemy.exc import OperationalError
 import logging_mgr
-
 
 # clean.static_clean() #清理资源文件夹
 app = Flask(__name__)
 app.config.from_object(configs)
+if_connect_mysql = True
 db = SQLAlchemy(app)
 
 app.debug = False
@@ -42,11 +44,21 @@ class User(db.Model):
         self.alias = alias
         self.email = email
 
-    def getInfo(self):
+    def get_info(self):
         return {"username": self.username, "password": self.password, "alias": self.alias, "email": self.email}
 
     # def __repr__(self):
     #     return '<User %r>' % self.username
+
+
+try:
+    all_user = User.query.filter().all()
+except OperationalError:
+    if_connect_mysql = False
+except:
+    if_connect_mysql = False
+    print("Unexpected error:", sys.exc_info()[0])
+    
 
 
 # 传递图标
@@ -109,6 +121,7 @@ if __name__ == '__main__':
     scheduler.init_app(app)  # 把任务列表载入实例flask
     scheduler.start()  # 启动任务计划
     # db.drop_all()
-    db.create_all()
+    if if_connect_mysql:
+        db.create_all()
     app.register_blueprint(productJar_operate, url_prefix='/productJar')
     app.run(host='0.0.0.0')

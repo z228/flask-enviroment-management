@@ -531,6 +531,7 @@ class ProductAction:
         :param release_version: release的版本
         :return:
         """
+        product_logger.info(f'release version:{release_version}')
         release_jar_path = f'{self.ip_187}common/{release_version}'
         local_jar_path = os.path.join(self.config[version]["path"] + self.YongHong_path, "product")
         res = self.cycle_copy(release_jar_path, local_jar_path, version)
@@ -539,7 +540,7 @@ class ProductAction:
         self.change_status(version, 'update')
         return log_info
 
-    def cycle_copy(self, src, dist, version):
+    def cycle_copy(self, src, dst, version):
         """
         循环复制整个目录jar包
         :param src: 源文件夹
@@ -550,19 +551,21 @@ class ProductAction:
         max_count = 0
         while True:
             try:
-                if os.path.exists(dist):
-                    rmtree(dist)  # 先删除原本的
-                    copytree(src, dist)  # 整个复制过来
+                if os.path.exists(dst):
+                    product_logger.info(f'delete folder:{dst}')
+                    rmtree(dst)  # 先删除原本的
+                    product_logger.info(f'copy:{src} to {dst}')
+                    copytree(src, dst)  # 整个复制过来
                     return 1
             except PermissionError:
                 if max_count > 10:
                     self.change_status(version, 'update')
-                    log_info = f"{dist}下文件正在被占用，请稍等...time{self.current_time()}"
+                    log_info = f"{dst}下文件正在被占用，请稍等...time{self.current_time()}"
                     product_logger.info(log_info)
                     return log_info
                 max_count += 1
                 product_logger.info(
-                    f"{dist}下文件正在被占用，请稍等...time{self.current_time()}")
+                    f"{dst}下文件正在被占用，请稍等...time{self.current_time()}")
                 sleep(10)
 
     def copy_and_reload(self, v, date, user='', copy_release=False, release=''):

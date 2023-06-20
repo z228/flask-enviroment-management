@@ -295,6 +295,7 @@ export default {
     this.$set(this.status, "hasFound", false);
     await this.getAllProduct();
     this.get141Jar();
+    this.getReleaseJar();
     this.getAllBihome();
     this.checkStatus();
     this.getDebugPort();
@@ -395,6 +396,36 @@ export default {
               for (let i = 0; i < _this.tableData.length; i++) {
                 if (_this.tableData[i].version === v)
                   _this.$set(_this.tableData[i], "jarDate", res.data.data[v]);
+              }
+            }
+            _this.$set(_this.date, v, res.data.data[v][0]);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          this.$message({
+            message: err,
+            duration: 6 * 1000,
+            showClose: true,
+            type: "error",
+          });
+        });
+    },
+    getReleaseJar() {
+      let _this = this;
+      this.$axios
+        .get("http://192.168.0.187:5000/productJar/releasejar", {
+          headers: {
+            Authorization: sessionStorage.getItem("userInfo"),
+          },
+        })
+        .then((res) => {
+          console.log(res)
+          for (let v in res.data.data) {
+            if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
+              for (let i = 0; i < _this.tableData.length; i++) {
+                if (_this.tableData[i].version === v)
+                  _this.$set(_this.tableData[i], "release", res.data.data[v]);
               }
             }
             _this.$set(_this.date, v, res.data.data[v][0]);

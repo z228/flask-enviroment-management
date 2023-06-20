@@ -188,7 +188,7 @@ def get_view_port():
 @authentication_user
 def update_jar():
     data = loads(request.get_data())
-    copy_release = data['copy_release'] if 'copy_release' in data.keys() else False
+    copy_release = True if 'copy_release' in data.keys() else False
     release = data['release'] if 'release' in data.keys() else ''
     return productAction.succ(
         productAction.new_copy(data['version'], data['date'], copy_release, release))
@@ -238,10 +238,10 @@ def reload_product():
 @authentication_user
 def update_and_reload_product():
     data = loads(request.get_data())
-    copy_release = data['copy_release'] if 'copy_release' in data.keys() else False
+    copy_release = True if 'copy_release' in data.keys() else False
     release = data['release'] if 'release' in data.keys() else ''
     return productAction.succ(
-        productAction.copy_and_reload(data['version'], data['date'], copy_release, release))
+        productAction.copy_and_reload(data['version'], data['date'], '', copy_release, release))
 
 
 # 获取当前bihome

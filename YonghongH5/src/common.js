@@ -77,6 +77,15 @@ globalObj.formatDateStr = (str => {
           str.substring(6, 8)
       );
     });
-
+globalObj.ConcatAandB = function (a, b) {
+    let newArr = [];
+    for (let i = 0,length = a.length; i < length; i++) {
+        newArr.push(a[i]);
+    }
+    for (let i = 0,length = b.length; i < length; i++) {
+        newArr.push(b[i]);
+    }
+    return newArr;
+}
 
 export default globalObj

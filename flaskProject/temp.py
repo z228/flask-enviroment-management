@@ -1,7 +1,5 @@
-from os import popen
+from json import load
 
-with popen(
-        'svn up D:\share\junit_test\\trunk_test\\assetExecute\\testcases\DBPainter\exp') as cmd:
-    res = cmd.read()
-print('111')
-print(res)
+with open(r'apps\productApp\user.json', 'r',encoding='utf-8') as users:
+    user = load(users)
+    print(list(user))
