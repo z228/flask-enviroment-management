@@ -265,14 +265,6 @@ export default {
   created() {
     this.$set(this.status, "hasFound", false);
     this.getAllProduct();
-    this.get141Jar();
-    // this.getAllBihome();
-    this.checkStatus();
-    this.getDebugPort();
-    // this.getViewPort();
-    // this.getCurrentBihome();
-    this.getURL();
-    this.getJarInfo();
   },
   methods: {
     refresh() {
@@ -330,6 +322,14 @@ export default {
               });
             }
           }
+          _this.get141Jar();
+          // _this.getAllBihome();
+          _this.checkStatus();
+          _this.getDebugPort();
+          // _this.getViewPort();
+          // _this.getCurrentBihome();
+          _this.getURL();
+          _this.getJarInfo();
           _this.$set(_this.status, "hasFound", true);
         })
         .catch((err) => {

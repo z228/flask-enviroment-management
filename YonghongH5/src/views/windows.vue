@@ -29,7 +29,7 @@
     <div v-show="this.status.hasFound">
       <el-card class="box-card">
         <el-table :data="tableData" border style="width: 100%">
-          <el-table-column prop="version" label="版本" width="100">
+          <el-table-column prop="version" label="版本" width="130">
             <template slot-scope="scope">
               <el-popover placement="right" title="Jar包信息" trigger="hover">
                 <slot v-for="info in scope.row.jarInfo">
@@ -41,7 +41,7 @@
               </el-popover>
             </template>
           </el-table-column>
-          <el-table-column prop="path" label="url路径" width="200">
+          <el-table-column prop="path" label="url路径" width="175">
             <template slot-scope="scope">
               <a target="_blank" :href="scope.row.url">{{ scope.row.url }}</a>
               <!-- <router-link tag="a" :to="{}" target="_blank" :href="scope.row.url" >{{scope.row.url }}</router-link> -->
@@ -70,6 +70,14 @@
           <el-table-column label="操作">
             <template slot-scope="scope">
               <el-button
+                @click="getBiProperties(scope.row)"
+                type="info"
+                size="small"
+                icon="el-icon-edit"
+                plain
+                >bi.properties
+              </el-button>
+              <el-button
                 @click="shutdown(scope.row)"
                 type="warning"
                 size="small"
@@ -82,7 +90,7 @@
                 plain
                 >关闭
               </el-button>
-              <el-button
+              <!-- <el-button
                 @click="startup(scope.row)"
                 type="primary"
                 size="small"
@@ -97,7 +105,7 @@
                   <use xlink:href="#el-icon-run"></use>
                 </svg>
                 启动
-              </el-button>
+              </el-button> -->
               <el-button
                 @click="update(scope.row)"
                 type="danger"
@@ -173,36 +181,109 @@
             </el-date-picker> -->
             </template>
           </el-table-column>
-          <!-- <el-table-column label="可更换bihome" width="170">
+          <el-table-column label="可更换bihome" width="170">
             <template slot-scope="scope">
-              <el-select
-                v-model="bihome[scope.row.version]"
-                placeholder="请选择bihome"
-                style="width: 100px; margin-left: 10px"
-                size="small"
-                clearable
-                @change="chooseDate()"
-                filterable
-              >
-                <el-option
-                  v-for="item in scope.row.bihomes"
-                  :key="item"
-                  :label="item"
-                  :value="item"
-                  ><span style="float: left"></span>
-                  <span>{{ item }}</span>
-                </el-option>
-              </el-select>
+<!--              <el-select-->
+<!--                v-model="bihome[scope.row.version]"-->
+<!--                placeholder="请选择bihome"-->
+<!--                style="width: 100px; margin-left: 10px"-->
+<!--                size="small"-->
+<!--                clearable-->
+<!--                @change="chooseDate()"-->
+<!--                filterable-->
+<!--              >-->
+<!--                <el-option-->
+<!--                  v-for="item in scope.row.bihomes"-->
+<!--                  :key="item"-->
+<!--                  :label="item"-->
+<!--                  :value="item"-->
+<!--                  ><span style="float: left"></span>-->
+<!--                  <span>{{ item }}</span>-->
+<!--                </el-option>-->
+<!--              </el-select>-->
+              <el-autocomplete
+                  class="inline-input"
+                  v-model="bihome[scope.row.version]"
+                  :fetch-suggestions="bihomeSearch"
+                  placeholder="输入bihome"
+                  style="width: 110px"
+              ></el-autocomplete>
               <el-button
                 @click="exchangeBihome(scope.row, bihome[scope.row.version])"
                 type="text"
                 size="small"
-                style="margin-left: 10px"
-                >应用
+                style="margin-left: 10px;"
+              >应用
               </el-button>
             </template>
-          </el-table-column> -->
+          </el-table-column>
+          <el-table-column label="自定义换包路径" width="275">
+            <template slot-scope="scope">
+              <el-input
+                placeholder="输入自定义换包路径"
+                v-model="scope.row.customPath"
+                style="width: 270"
+                clearable
+              >
+              </el-input>
+            </template>
+          </el-table-column>
         </el-table>
+        <el-dialog
+          title="bi.properties"
+          :close-on-click-modal="false"
+          :visible.sync="dialogBiproVisible"
+        >
+        <el-button size="mini" type="info" @click="propertiesData.data.unshift({key:'',value:''})"
+        >添加空行</el-button
+      >
+          <el-table
+            :data="
+              propertiesData.data.filter(
+                (data) =>
+                  !search ||
+                  data.key.toLowerCase().includes(search.toLowerCase())
+              )
+            "
+            border
+            style="width: 100%"
+            max-height="500"
+          >
+            <el-table-column property="key" label="key" width="300"
+              ><template slot-scope="scope">
+                <el-input placeholder="key" v-model="scope.row.key"> </el-input>
+              </template>
+            </el-table-column>
+            <el-table-column property="value" label="value" width="400"
+              ><template slot-scope="scope">
+                <el-input placeholder="value" v-model="scope.row.value">
+                </el-input> </template
+            ></el-table-column>
+            <el-table-column label="操作" width="200">
+              <template slot="header" slot-scope="scope">
+                <el-input
+                  v-model="search"
+                  size="mini"
+                  placeholder="输入关键字搜索"
+                />
+              </template>
+              <template slot-scope="scope">
+                <el-button
+                  size="mini"
+                  type="danger"
+                  @click="handleDeleteBiPro(scope.row)"
+                  >删除</el-button
+                >
+              </template>
+            </el-table-column>
+          </el-table>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="dialogBiproVisible = false">取 消</el-button>
+            <el-button type="primary" @click="changeBiProperties()"
+              >确 定</el-button
+            >
+          </span>
+        </el-dialog>
       </el-card>
     </div>
   </div>
@@ -215,18 +296,29 @@ export default {
   data() {
     return {
       tableData: [],
+      dialogBiproVisible: false,
+      propertiesData: { version: "", data: [] },
       status: {
         hasFound: false,
       },
       bihome: {},
       jarDate: {},
       date: {},
+      search: "",
     };
   },
   mounted() {
     const timer = setInterval(() => {
+      for (
+        let i = 0, tableDataLength = this.tableData.length;
+        i < tableDataLength;
+        i++
+      ) {
+        if (this.tableData[i].version === v) this.tableData[i].jarDate = [];
+      }
       this.refresh();
       this.get141Jar();
+      this.getReleaseJar();
     }, 1000 * 60 * 60);
     this.$once("hook:beforeDestroy", () => {
       clearInterval(timer);
@@ -235,15 +327,6 @@ export default {
   async created() {
     this.$set(this.status, "hasFound", false);
     await this.getAllProduct();
-    await this.get141Jar();
-    this.getReleaseJar();
-    this.getAllBihome();
-    this.checkStatus();
-    this.getDebugPort();
-    this.getViewPort();
-    this.getCurrentBihome();
-    this.getURL();
-    this.getJarInfo();
   },
   methods: {
     changeTableData(version, key, value) {
@@ -267,11 +350,18 @@ export default {
             if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
               for (let i = 0; i < _this.tableData.length; i++) {
                 if (_this.tableData[i].version === v)
-                  _this.$set(
-                    _this.tableData[i],
-                    "url",
-                    "http://192.168.0.192:" + res.data.data[v]
-                  );
+                  if (_this.tableData[i].version === "trunk")
+                    _this.$set(
+                      _this.tableData[i],
+                      "url",
+                      "http://localhost:" + res.data.data[v]
+                    );
+                  else
+                    _this.$set(
+                      _this.tableData[i],
+                      "url",
+                      "http://192.168.0.192:" + res.data.data[v]
+                    );
               }
             }
           }
@@ -286,6 +376,8 @@ export default {
     refresh() {
       this.checkStatus();
       this.getJarInfo();
+      this.getReleaseJar();
+      window.open("http://192.168.0.187:8110/bi/?showOthers=true")
     },
     getAllProduct() {
       let _this = this;
@@ -308,10 +400,19 @@ export default {
                   reload: false,
                   update: false,
                   updateAndReload: false,
-                  jarDate:[]
+                  jarDate: [],
+                  customPath: "",
                 });
             }
           }
+          _this.getReleaseJar();
+          _this.getAllBihome();
+          _this.checkStatus();
+          _this.getDebugPort();
+          _this.getViewPort();
+          _this.getCurrentBihome();
+          _this.getURL();
+          _this.getJarInfo();
           _this.$set(_this.status, "hasFound", true);
         });
     },
@@ -326,10 +427,16 @@ export default {
         .then((res) => {
           for (let v in res.data.data) {
             if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
-              for (let i = 0; i < _this.tableData.length; i++) {
+              for (
+                let i = 0, tableDataLength = _this.tableData.length;
+                i < tableDataLength;
+                i++
+              ) {
                 if (_this.tableData[i].version === v)
-                _this.tableData[i].jarDate = _this.tableData[i].jarDate.concat(res.data.data[v]);
-                  // _this.$set(_this.tableData[i], "jarDate", res.data.data[v]);
+                  _this.tableData[i].jarDate = _this.tableData[
+                    i
+                  ].jarDate.concat(res.data.data[v]);
+                // _this.$set(_this.tableData[i], "jarDate", res.data.data[v]);
               }
             }
             _this.$set(_this.date, v, res.data.data[v][0]);
@@ -346,20 +453,22 @@ export default {
         })
         .then((res) => {
           for (let v in res.data.data) {
-            console.log(res.data.data[v]);
-            if(res.data.data[v]===[])
-              continue;
+            // console.log(res.data.data[v]);
+            if (res.data.data[v] === []) continue;
             if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
               for (let i = 0; i < _this.tableData.length; i++) {
-                console.log(_this.tableData[i].jarDate);
+                // console.log(_this.tableData[i].jarDate);
                 if (_this.tableData[i].version === v) {
-                  _this.tableData[i].jarDate = _this.tableData[i].jarDate.concat(res.data.data[v]);
+                  _this.tableData[i].jarDate = _this.tableData[
+                    i
+                  ].jarDate.concat(res.data.data[v]);
                   _this.$set(_this.tableData[i], "release", res.data.data[v]);
                 }
               }
             }
             _this.$set(_this.date, v, res.data.data[v][0]);
           }
+          this.get141Jar();
         })
         .catch((err) => {
           console.log(err);
@@ -594,23 +703,27 @@ export default {
     update(row) {
       this.changeTableData(row.version, "update", true);
       let form = {};
-      if (this.date[row.version] != null){
-      if(this.date[row.version].indexOf(".") != -1){
+      if (this.date[row.version] != null) {
+        if (this.date[row.version].indexOf(".") != -1) {
+          form = {
+            version: row.version,
+            copy_release: true,
+            date: "",
+            release: this.date[row.version],
+            customPath: row.customPath,
+          };
+        } else {
+          form = {
+            version: row.version,
+            date: this.date[row.version],
+            customPath: row.customPath,
+          };
+        }
+      } else
         form = {
           version: row.version,
-          copy_release:true,
           date: "",
-          release: this.date[row.version],
-        };
-      }else{form = {
-          version: row.version,
-          date: this.date[row.version],
-        };}
-      }
-      else
-        form = {
-          version: row.version,
-          date: "",
+          customPath: row.customPath,
         };
       this.$axios
         .post("http://192.168.0.192:5000/productJar/update", form, {
@@ -633,6 +746,7 @@ export default {
             "update",
             false
           );
+          this.getJarInfo();
         });
     },
     reload(row) {
@@ -669,23 +783,27 @@ export default {
     updateAndReload(row) {
       this.changeTableData(row.version, "updateAndReload", true);
       let form = {};
-      if (this.date[row.version] != null){
-      if(this.date[row.version].indexOf(".") != -1){
+      if (this.date[row.version] != null) {
+        if (this.date[row.version].indexOf(".") != -1) {
+          form = {
+            version: row.version,
+            copy_release: true,
+            date: "",
+            release: this.date[row.version],
+            customPath: row.customPath,
+          };
+        } else {
+          form = {
+            version: row.version,
+            date: this.date[row.version],
+            customPath: row.customPath,
+          };
+        }
+      } else
         form = {
           version: row.version,
-          copy_release:true,
           date: "",
-          release: this.date[row.version],
-        };
-      }else{form = {
-          version: row.version,
-          date: this.date[row.version],
-        };}
-      }
-      else
-        form = {
-          version: row.version,
-          date: "",
+          customPath: row.customPath,
         };
       this.$axios
         .post("http://192.168.0.192:5000/productJar/updateReload", form, {
@@ -708,6 +826,7 @@ export default {
             "updateAndReload",
             false
           );
+          this.getJarInfo();
         });
     },
     exchangeBihome(row, key) {
@@ -735,12 +854,79 @@ export default {
           }
         });
     },
+    getBiProperties(row) {
+      let _this = this;
+      this.$axios
+        .post(
+          "http://192.168.0.192:5000/productJar/biPro",
+          {
+            version: row.version,
+          },
+          {
+            headers: {
+              Authorization: sessionStorage.getItem("userInfo"),
+            },
+          }
+        )
+        .then((res) => {
+          if (res.data.code === 200) {
+            this.dialogBiproVisible = true;
+            // console.log(res.data.data);
+            _this.propertiesData = res.data.data;
+          }
+        });
+    },
+    changeBiProperties(row) {
+      let _this = this;
+      this.dialogBiproVisible = false;
+      for (let i = 0, len = this.propertiesData.data.length; i < len; i++) {
+        if (this.propertiesData.data[i].key === '') {
+          this.propertiesData.data.splice(i, 1);
+          i = i - 1;    //改变循环变量
+          len = len - 1;   //改变循环次数
+        }
+      }
+      // console.log(this.propertiesData);
+      this.$axios
+        .post(
+          "http://192.168.0.192:5000/productJar/changeBiPro",
+          {
+            bipro: _this.propertiesData,
+          },
+          {
+            headers: {
+              Authorization: sessionStorage.getItem("userInfo"),
+            },
+          }
+        )
+        .then((res) => {
+          if (res.data.code === 200) {
+            _this.$message({
+              message: res.data.data,
+              duration: 6 * 1000,
+              showClose: true,
+              type: "success",
+            });
+          }
+        });
+    },
+    handleDeleteBiPro(row) {
+      for (let i = 0, len = this.propertiesData.data.length; i < len; i++) {
+        if (this.propertiesData.data[i].key === row.key) {
+          this.propertiesData.data.splice(i, 1);
+          break;
+        }
+      }
+    },
+    bihomeSearch(queryString, cb) {
+      let allBihomes = [{"value": 'bihome'}, {"value": 'Export'}, {"value": 'Chart'}, {"value": 'DBPainter'}]
+      cb(allBihomes);
+    },
     chooseDate() {
       console.log(this.date);
     },
     formatDateStr(str) {
-      if (str.indexOf(".") !== -1)
-       return str
+      if (str.indexOf(".") !== -1) return str;
       return (
         str.substring(0, 4) +
         "-" +

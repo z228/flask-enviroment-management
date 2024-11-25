@@ -31,7 +31,6 @@
         </div>
         <div class="script_input all codeEdit">
           <el-select
-            v-if="hasGetLogList === true"
             v-model="log"
             placeholder="请选择日志"
           >
@@ -116,7 +115,7 @@ export default {
       value: "Python",
       textarea: "",
       ip: "192.168.0.187",
-      ip_list: ["192.168.0.192", "192.168.0.187", "192.168.0.185"],
+      ip_list: ["192.168.0.192", "192.168.0.187", "192.168.0.185", "192.168.0.138"],
       status: {
         hasFountScript: false,
       },

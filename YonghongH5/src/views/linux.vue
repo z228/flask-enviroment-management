@@ -41,12 +41,11 @@
               </el-popover>
             </template>
           </el-table-column>
-          <el-table-column prop="path" label="路径" width="300"
-            ><template slot-scope="scope"
-              ><svg class="icon" aria-hidden="true">
-                <use xlink:href="#el-icon-url"></use>
-              </svg>
-              <span> {{ scope.row.path }}</span></template
+          <el-table-column prop="path" label="路径" width="200"
+            ><template slot-scope="scope">
+              <a target="_blank" :href="scope.row.url">{{
+                scope.row.url
+              }}</a></template
             >
           </el-table-column>
           <el-table-column prop="path" label="状态" width="100">
@@ -180,12 +179,6 @@ export default {
   async created() {
     this.$set(this.status, "hasFound", false);
     await this.getAllProduct();
-    // this.get141Jar();
-    this.getAllBihome();
-    this.checkStatus();
-    // this.getDebugPort();
-    this.getViewPort();
-    this.getJarInfo();
   },
   methods: {
     refresh() {
@@ -233,7 +226,7 @@ export default {
             if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
               _this.tableData.push({
                 version: v,
-                path: res.data.data[v],
+                url: "http://192.168.0.6:" + res.data.data[v],
                 start: false,
                 shutdown: false,
                 reload: false,
@@ -242,6 +235,13 @@ export default {
               });
             }
           }
+          // _this.get141Jar();
+          // _this.getAllBihome();
+          _this.checkStatus();
+          // _this.getDebugPort();
+          _this.getViewPort();
+          _this.getJarInfo();
+          console.log(_this.tableData);
           _this.$set(_this.status, "hasFound", true);
         })
         .catch((err) => {

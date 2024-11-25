@@ -1,17 +1,17 @@
-from json import loads, dumps
+from json import loads, dumps, load
 from os import listdir
 from os.path import join
 
 from apps.lib.FtpServer import MyFTP
 from flask import Blueprint, request, render_template
+
+productJar_operate = Blueprint('productJar', __name__)
 from functools import wraps
 
-from . import test
+# from . import test
 from .product import ProductAction
 
 ALLOWED_EXTENSIONS = {'jar'}
-
-productJar_operate = Blueprint('productJar', __name__)
 
 productAction = ProductAction()
 VERSION = list(productAction.config.keys())
@@ -37,11 +37,20 @@ def product():
     return render_template('product.html')
 
 
-# 获取脚本列表
-@productJar_operate.route('/allScript', methods=['GET'])
-@authentication_user
-def get_all_script():
-    return productAction.succ(productAction.get_all_script())
+# # 获取任务列表
+# @productJar_operate.route('/jobs', methods=['GET'])
+# @authentication_user
+# def get_jobs():
+#
+#     return productAction.succ(schedulerManager.get_jobs())
+#
+#
+# # 获取任务列表
+# @productJar_operate.route('/job', methods=['GET'])
+# @authentication_user
+# def get_jobs():
+#     data = loads(request.get_data())
+#     return productAction.succ(schedulerManager.get_job(data['id']))
 
 
 # 执行脚本
@@ -70,6 +79,7 @@ def save_script():
 @authentication_user
 def get_all_version():
     v = {}
+    # productAction.update_config()
     for key in VERSION:
         v[key] = {}
         v[key]['path'] = productAction.config[key]["path"]
@@ -79,7 +89,7 @@ def get_all_version():
 
 # 获取所有bihome
 @productJar_operate.route('/allBihome', methods=['GET'])
-@authentication_user
+# @authentication_user
 def get_all_bihome():
     v = {key: productAction.config[key]["bihomes"].split(' ') for key in VERSION}
     # for key in VERSION:
@@ -89,7 +99,7 @@ def get_all_bihome():
 
 # 获取当前bihome
 @productJar_operate.route('/currentBihome', methods=['GET'])
-@authentication_user
+# @authentication_user
 def get_current_bihome():
     v = {key: productAction.config[key]["bihome"] for key in VERSION}
     # for key in VERSION:
@@ -103,6 +113,22 @@ def get_current_bihome():
 def get_product_jar_info():
     v = {key: productAction.get_jar_info(key) for key in VERSION}
     return productAction.succ(v)
+
+
+# bi.properties
+@productJar_operate.route('/biPro', methods=['POST'])
+@authentication_user
+def get_product_bi_properties():
+    data = loads(request.get_data())
+    return productAction.succ(productAction.get_bi_properties(data['version']))
+
+
+# bi.properties
+@productJar_operate.route('/changeBiPro', methods=['POST'])
+@authentication_user
+def modify_product_bi_properties():
+    data = loads(request.get_data())
+    return productAction.succ(productAction.modify_bi_properties(data['bipro']['version'], data['bipro']['data']))
 
 
 # 获取141备份的jar包列表
@@ -190,8 +216,9 @@ def update_jar():
     data = loads(request.get_data())
     copy_release = True if 'copy_release' in data.keys() else False
     release = data['release'] if 'release' in data.keys() else ''
+    custom_path = data['customPath'] if 'customPath' in data.keys() else ''
     return productAction.succ(
-        productAction.new_copy(data['version'], data['date'], copy_release, release))
+        productAction.new_copy(data['version'], data['date'], copy_release, release, custom_path))
 
 
 # 更换指定日期Jar包
@@ -240,8 +267,9 @@ def update_and_reload_product():
     data = loads(request.get_data())
     copy_release = True if 'copy_release' in data.keys() else False
     release = data['release'] if 'release' in data.keys() else ''
+    custom_path = data['customPath'] if 'customPath' in data.keys() else ''
     return productAction.succ(
-        productAction.copy_and_reload(data['version'], data['date'], '', copy_release, release))
+        productAction.copy_and_reload(data['version'], data['date'], '', copy_release, release, custom_path))
 
 
 # 获取当前bihome
@@ -265,7 +293,6 @@ def login():
 @productJar_operate.route('/updateuserinfo', methods=['POST'])
 def update_userinfo():
     data = loads(request.get_data())
-    print(data)
     return productAction.update_userinfo(data)
 
 
@@ -296,12 +323,12 @@ def delete_user():
 
 
 # junit需要更换exp的case
-@productJar_operate.route('/junitexp', methods=['POST'])
-@authentication_user
-def get_junit_fail_list():
-    data = loads(request.get_data())
-    productAction.change_junit_exp(data)
-    return productAction.succ("成功")
+# @productJar_operate.route('/junitexp', methods=['POST'])
+# @authentication_user
+# def get_junit_fail_list():
+#     data = loads(request.get_data())
+#     productAction.change_junit_exp(data)
+#     return productAction.succ("成功")
 
 
 # 更换jar功能页面
@@ -343,17 +370,51 @@ def reload():
 
 
 # 备份功能
-@productJar_operate.route('/backup', methods=['POST', 'GET'])
-def backup():
-    if request.method == 'POST':
-        aim = request.form['backup']
-        # print(request.form['backup'])
-        if aim == '还原':
-            flag = test.revert_bi_home()
-        elif aim == 'trunkJunit更换':
-            flag = test.exchange_junit_res()
-        else:
-            flag = test.copy_db_to_bi_home(test.path[aim])
-        if flag:
-            return '备份或还原成功'
-    return render_template('backup.html')
+# @productJar_operate.route('/backup', methods=['POST', 'GET'])
+# def backup():
+#     if request.method == 'POST':
+#         aim = request.form['backup']
+#         # print(request.form['backup'])
+#         if aim == '还原':
+#             flag = test.revert_bi_home()
+#         elif aim == 'trunkJunit更换':
+#             flag = test.exchange_junit_res()
+#         else:
+#             flag = test.copy_db_to_bi_home(test.path[aim])
+#         if flag:
+#             return '备份或还原成功'
+#     return render_template('backup.html')
+
+@productJar_operate.route('/junitdiff', methods=['POST'])
+@authentication_user
+def get_junit_fail_list():
+    data = loads(request.get_data())
+    version = data["version"]
+    with open(f'{productAction.status_path}/res/el_tree_{version}_test_res.json', 'r', encoding='utf-8') as f:
+        fail_cases = load(f)
+    return productAction.succ(fail_cases)
+
+
+@productJar_operate.route('/junitexp', methods=['POST'])
+@authentication_user
+def exchange_junit_exp():
+    data = loads(request.get_data())
+    return productAction.exchange_junit_exp(data)
+
+
+@productJar_operate.route('/junitmonth', methods=['POST'])
+@authentication_user
+def exchange_junit_month_exp():
+    data = loads(request.get_data())
+    data2 = {"version": data["version"], "cases": productAction.month_cases, "user": data["user"]}
+    return productAction.exchange_junit_exp(data2)
+
+
+@productJar_operate.route('/junitdisexp', methods=['POST'])
+@authentication_user
+def exchange_junit_dis_exp():
+    data = loads(request.get_data())
+    return productAction.exchange_junit_exp(data, 'exp_dis')
+
+
+

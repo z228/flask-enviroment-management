@@ -6,6 +6,27 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "35608643",
+      "name": "junit",
+      "font_class": "junit",
+      "unicode": "e653",
+      "unicode_decimal": 58963
+    },
+    {
+      "icon_id": "6195943",
+      "name": "iframe",
+      "font_class": "iframe",
+      "unicode": "ec7d",
+      "unicode_decimal": 60541
+    },
+    {
+      "icon_id": "15378275",
+      "name": "debian",
+      "font_class": "debian",
+      "unicode": "eb74",
+      "unicode_decimal": 60276
+    },
+    {
       "icon_id": "1115014",
       "name": "debug",
       "font_class": "debug",

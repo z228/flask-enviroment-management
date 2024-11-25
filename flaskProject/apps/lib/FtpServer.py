@@ -148,10 +148,3 @@ class MyFTP:
  
 if __name__ == '__main__':
     pass
-    # ftp = MyFTP()
-    # ftp.connect()
-    # ftp.login()
-    # ftp.upload_folder()
-    # ftp.upload_folder(r'\\192.168.0.141\productJar\v9.2.1\20211221')
-    # # ftp.download_file('E:\\', '/home/testacc/testfile')
-    # ftp.quit()

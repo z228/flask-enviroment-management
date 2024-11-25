@@ -3,10 +3,12 @@ import VueRouter from "vue-router"
 import windows from "../views/windows.vue"
 import cent185 from "../views/cent185.vue"
 import cent187 from "../views/cent187.vue"
+import debian138 from "../views/debian138.vue"
 import mac188 from "../views/mac188.vue"
 import win172 from "../views/win172.vue"
 import task from "../views/task.vue"
 import iframeTest from "../views/iframeTest.vue"
+import junitTest from "../views/junitCase.vue"
 import serverstatus from "../views/serverstatus.vue"
 import Home from "../components/Home"
 import linux from "../views/linux"
@@ -45,14 +47,14 @@ const routes = [
         },
         component: windows,
       },
-      {
-        path: "/linux",
-        name: "linux",
-        meta: {
-          title: "Linux环境",
-        },
-        component: linux,
-      },
+      // {
+      //   path: "/linux",
+      //   name: "linux",
+      //   meta: {
+      //     title: "Linux环境",
+      //   },
+      //   component: linux,
+      // },
       {
         path: "/cent185",
         name: "cent185",
@@ -68,6 +70,14 @@ const routes = [
           title: "cent187环境",
         },
         component: cent187,
+      },
+      {
+        path: "/debian138",
+        name: "debian138",
+        meta: {
+          title: "debian138环境",
+        },
+        component: debian138,
       },
       {
         path: "/win172",
@@ -100,6 +110,14 @@ const routes = [
           title: "iframe",
         },
         component: iframeTest,
+      },
+      {
+        path: "/junitTest",
+        name: "junitTest",
+        meta: {
+          title: "junitTest",
+        },
+        component: junitTest,
       },
       {
         path: "/serverstatus",

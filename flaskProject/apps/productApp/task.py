@@ -3,8 +3,10 @@ import os
 from shutil import rmtree, copy
 from time import strftime, localtime, strptime, sleep
 from . import product
-from .send_mail import send
+from .jobs.send_mail import send
 from filecmp import cmp
+import subprocess
+import psutil
 
 to_path = ['D:/old_version/8.6/', 'D:/old_version/8.8/', 'D:/old_version/9.0/', 'D:/old_version/9.1/',
            'D:/old_version/9.2/', 'D:/old_version/9.2.1/', 'D:/old_version/9.3/', 'D:/old_version/trunk/']
@@ -168,6 +170,9 @@ def upload_jacoco_file():
         if jacoco == "jacoco_${DATE}_all.exec":
             task_logger.info(f"跳过文件：{jacoco}")
             continue
+        if os.path.getsize(f"{jacoco_root_path}/trunk/{jacoco}") == 0:
+            os.remove(f"{jacoco_root_path}/trunk/{jacoco}")
+            continue
         if jacoco not in jacoco_199_files:
             task_logger.info(f"开始复制{jacoco}")
             copy(f"{jacoco_root_path}/trunk/{jacoco}", f"{jacoco_199_path}")
@@ -175,11 +180,13 @@ def upload_jacoco_file():
             dos = f'dir "{jacoco_199_path}"|findstr "{jacoco}"'
             task_logger.info(dos + '\n' + read_command(dos))
             success_jacoco.extend(compare_jacoco(fr'{jacoco_root_path}/trunk', jacoco_199_path, jacoco))
+            os.remove(f"{jacoco_root_path}/trunk/{jacoco}")
         else:
             delete_temp_file(f'{jacoco_root_path}/trunk', jacoco, jacoco.split('_')[1])
-    upload_jacoco_list = ',\n'.join(success_jacoco)
-    content = f"{upload_jacoco_list}成功上传到{jacoco_199_path}"
-    send("zengchenglong@yonghongtech.com", subject, content)
+    if success_jacoco:
+        upload_jacoco_list = ',\n'.join(success_jacoco)
+        content = f"{upload_jacoco_list}成功上传到{jacoco_199_path}"
+        send("zengchenglong@yonghongtech.com", subject, content)
     return True
 
 
@@ -190,52 +197,105 @@ def shutdown_trunk_tomcat():
 
 def commit_junit_exp():
     branchs = ['v9.0_test', 'v9.2.1_test',
-               'v9.4_test', 'v10.0_test', 'trunk_test']
+               'v9.4_test', 'v10.0_test', 'v10.1_test', 'v10.2_test', 'trunk_test']
     visualcd_suites = ['Chart', 'CustomerBug', 'DBDataprocess',
                        'DBPainter', 'DynamicCalc', 'Export']
     msg = 'change exp of junit'
     exp_folders = ['exp', 'exp_dis']
+    current_hour = int(localtime()[3])
+    if current_hour >= 22 or current_hour <= 9:
+        task_logger.info(f'当前时间在22-9点之间，跳过更新')
+        return
     for branch in branchs:
         # task_logger.info(branch)
         for suite in visualcd_suites:
             for folder in exp_folders:
-                svn_exp_path = f'D:\\share\\junit_test\\{branch}\\assetExecute\\testcases\\{suite}\\{folder}'
-                if not os.path.exists(svn_exp_path):
-                    continue
-                # os.chdir(svn_exp_path)
-                with os.popen(f'svn cleanup {svn_exp_path}') as p1:
-                    r1 = p1.read()
-                # task_logger.info(r1)
-                with os.popen(f'svn up {svn_exp_path}') as p2:
-                    r2 = p2.read()
-                # task_logger.info(r2)
-                # task_logger.info(f'svn st {svn_exp_path}')
-                status = readlines_command(f'svn st {svn_exp_path}')
-                if not status:
-                    # task_logger.info(f"{branch}的{suite}没有修改")
-                    continue
-                task_logger.info(status)
-                commit_flag = False
-                for statu in status:
-                    st = statu.split()[0]
-                    file = statu.split()[1].replace('\n', '')
-                    if st == '?':
-                        with os.popen(f'svn add {file}') as add:
-                            log = add.read()
-                        task_logger.info(log)
-                    if st == 'M':
-                        commit_flag = True
-                if not commit_flag:
-                    continue
-                with os.popen(f'svn ci {svn_exp_path} -m "{msg}"') as ci:
-                    log = ci.read()
-                task_logger.info(log)
+                try:
+                    svn_exp_path = f'D:\\share\\junit_test\\{branch}\\assetExecute\\testcases\\{suite}\\{folder}'
+                    if not os.path.exists(svn_exp_path):
+                        continue
+                    with os.popen(f'svn cleanup {svn_exp_path}') as p1:
+                        r1 = p1.read()
+                    # task_logger.info(r1)
+                    cases = os.listdir(svn_exp_path)
+                    for case in cases:
+                        up_path = os.path.join(svn_exp_path, case)
+                        if case == 'ParamElem':
+                            big_case = os.path.join(up_path, 'ListBox', 'listbox_defaultValue7_编辑可选值v10.pdf')
+                            if os.path.exists(big_case):
+                                os.remove(big_case)
+                                task_logger.info(f'删除超大case：{big_case} 并且跳过更新')
+                            continue
+                        with os.popen(f'svn up {up_path}') as p2:
+                            r2 = p2.read()
+                            if len(r2.split('\n')) != 3:
+                                task_logger.info(r2)
+                        status = readlines_command(f'svn st {up_path}')
+                        if not status:
+                            continue
+                        task_logger.info(status)
+                        commit_flag = False
+                        for statu in status:
+                            st = statu.split()[0]
+                            file = statu.split()[1].replace('\n', '')
+                            if st == '?':
+                                with os.popen(f'svn add {file}') as add:
+                                    log = add.read()
+                                task_logger.info(f'svn add {file}:' + log)
+                                commit_flag = True
+                            if st == 'M' or st == 'A':
+                                task_logger.info(f'{file} changed:{statu}')
+                                commit_flag = True
+                        if not commit_flag:
+                            continue
+                        with os.popen(f'svn ci {up_path} -m "{msg}"') as ci:
+                            log = ci.read()
+                            task_logger.info(f'svn ci {up_path} -m :result---"{msg}"' + log)
+                except Exception as e:
+                    task_logger(f'SVN服务器暂时无法连接：{e}')
+                    return
 
 
 def juejin_checkin():
     juejin_src = r'D:\code\python\yhenv\flaskProject\static\job\juejin-helper\workflows'
     os.chdir(juejin_src)
-    res = read_command_utf8('yarn checkin')
+    res = read_command_utf8('npm run checkin')
     task_logger.info(res)
 
 
+def check_system_memory():
+    memory = psutil.virtual_memory()
+    info1 = f"可用内存：{round(memory.available / 1000000000, 2)} G"
+    info2 = f"已使用内存：{round(memory.used / 1000000000, 2)} G"
+    info3 = f"内存使用率：{memory.percent}%"
+    return f'{info1}--{info2}--{info3}'
+
+
+def clean_memory_cache():
+    task_logger.info(f'before clean memory:' + check_system_memory())
+    subprocess.Popen(r"D:\RAMMap\RAMMap64 -Ew", shell=True).wait()
+    subprocess.Popen(r"D:\RAMMap\RAMMap64 -Es", shell=True).wait()
+    subprocess.Popen(r"D:\RAMMap\RAMMap64 -Em", shell=True).wait()
+    subprocess.Popen(r"D:\RAMMap\RAMMap64 -Et", shell=True).wait()
+    subprocess.Popen(r"D:\RAMMap\RAMMap64 -E0", shell=True).wait()
+    task_logger.info(f'after clean memory' + check_system_memory())
+
+
+def test_job(index):
+    task_logger.info(f'test_job{index}')
+
+
+def update_v2ray_geo():
+    v2rayn_root_path = r'D:\v2rayN-Core'
+    geo_git_path = os.path.joint(v2rayn_root_path, 'v2ray-rules-dat')
+    os.chdir(geo_git_path)
+    res = read_command_utf8('git pull')
+    task_logger.info(res)
+    for root, dirs, files in os.walk(v2rayn_root_path, topdown=False):
+        if 'v2ray-rules-dat' in root:
+            continue
+        for file in files:
+            if file == 'geoip.dat' or file == 'geosite.dat':
+                bash = fr'xcopy {os.path.join(geo_git_path, file)} {root} /Y'
+                task_logger.info(read_command_utf8(bash))
+                task_logger.info(f'update---{root}---{file} ')

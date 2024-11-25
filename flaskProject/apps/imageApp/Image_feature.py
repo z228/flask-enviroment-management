@@ -11,7 +11,7 @@ _result_path = 'static/results/'
 
 
 def mark(image):
-    print(image)
+    # print(image)
     _u = _uploads_path + image
     _r = _result_path + image
     img = np.ndarray

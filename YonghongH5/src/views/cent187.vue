@@ -11,6 +11,7 @@
             size="mini"
             @click="refresh()"
           ></el-button>
+          刷新环境状态
         </el-breadcrumb-item>
       </el-breadcrumb>
     </div>
@@ -34,7 +35,7 @@
               </el-popover>
             </template>
           </el-table-column>
-          <el-table-column prop="path" label="url路径" width="300">
+          <el-table-column prop="path" label="url路径" width="200">
             <template slot-scope="scope">
               <a target="_blank" :href="scope.row.url">{{ scope.row.url }} </a>
             </template>
@@ -45,6 +46,7 @@
                 :type="scope.row.msg === '空闲中' ? 'info' : ''"
                 effect="plain"
                 class="status-tag"
+                style="display: flex justify-content: center"
                 >{{ scope.row.msg }}
               </el-tag>
             </template>
@@ -62,11 +64,19 @@
           <el-table-column label="操作">
             <template slot-scope="scope">
               <el-button
+                @click="getBiProperties(scope.row)"
+                type="info"
+                size="small"
+                icon="el-icon-edit"
+                plain
+                >bi.properties
+              </el-button>
+              <el-button
                 @click="shutdown(scope.row)"
                 type="warning"
                 size="small"
                 icon="el-icon-close"
-                @disabled="scope.row.shutdown"
+                :disabled="scope.row.shutdown"
                 v-loading="scope.row.shutdown"
                 element-loading-text="关闭中"
                 element-loading-spinner="el-icon-loading"
@@ -78,7 +88,7 @@
                 @click="startup(scope.row)"
                 type="primary"
                 size="small"
-                @disabled="scope.row.start"
+                :disabled="scope.row.start"
                 v-loading="scope.row.start"
                 element-loading-text="启动中"
                 element-loading-spinner="el-icon-loading"
@@ -102,7 +112,7 @@
                 @click="reload(scope.row)"
                 type="primary"
                 size="small"
-                @disabled="scope.row.reload"
+                :disabled="scope.row.reload"
                 v-loading="scope.row.reload"
                 element-loading-text="重启中"
                 element-loading-spinner="el-icon-loading"
@@ -119,7 +129,7 @@
                 type="success"
                 size="small"
                 icon="el-icon-loading"
-                @disabled="scope.row.updateAndReload"
+                :disabled="scope.row.updateAndReload"
                 v-loading="scope.row.updateAndReload"
                 element-loading-text="jar包正在更换中"
                 element-loading-spinner="el-icon-loading"
@@ -131,7 +141,7 @@
               <el-select
                 v-model="date[scope.row.version]"
                 placeholder="请选择jar包日期"
-                style="width: 150px; margin-left: 10px"
+                style="width: 120px; margin-left: 10px"
                 size="small"
                 clearable
                 @change="chooseDate()"
@@ -157,6 +167,10 @@
                   (response, file, filelist) =>
                     handleAvatarSuccess(scope.row, response, file, filelist)
                 "
+                :on-progress="
+                  (event, file, fileList) =>
+                    uploadJar(scope.row, event, file, fileList)
+                "
                 :data="{ version: scope.row.version }"
                 style="width: 150px; margin-left: 10px"
               >
@@ -164,7 +178,7 @@
                   size="small"
                   type="info"
                   icon="el-icon-upload2"
-                  @disabled="scope.row.updateAndReload"
+                  :disabled="scope.row.updateAndReload"
                   v-loading="scope.row.updateAndReload"
                   element-loading-text="jar包正在更换中"
                   element-loading-spinner="el-icon-loading"
@@ -182,33 +196,19 @@
               value-format="yyyyMMdd"
             >
             </el-date-picker> -->
-              <!--              <el-button-->
-              <!--                  style="margin-left: 10px"-->
-              <!--                  type="text"-->
-              <!--                  @click="editBiPro(scope.row)"-->
-              <!--                  fullscreen=true-->
-              <!--              >编辑bi.pro-->
-              <!--              </el-button-->
-              <!--              >-->
-              <!--              <el-dialog-->
-              <!--                  title="bi.properties"-->
-              <!--                  :visible.sync="dialogVisible"-->
-              <!--                  width="30%"-->
-              <!--                  :before-close="handleClose"-->
-              <!--              >-->
-              <!--                <code-mirror-editor-->
-              <!--                    ref="cmEditor"-->
-              <!--                    cmTheme="idea"-->
-              <!--                    cmMode="text/x-properties"-->
-              <!--                    :autoFormatJson="autoFormatJson" style="border:1px solid #efefef"-->
-              <!--                ></code-mirror-editor>-->
-              <!--                <span slot="footer" class="dialog-footer">-->
-              <!--                  <el-button @click="cancleEdit()">取 消</el-button>-->
-              <!--                  <el-button type="primary" @click="commitChange()"-->
-              <!--                  >确 定</el-button-->
-              <!--                  >-->
-              <!--                </span>-->
-              <!--              </el-dialog>-->
+              <!-- <el-button style="margin-left: 10px" type="text" @click="dialogVisible = true">编辑bi.pro</el-button> -->
+
+              <!-- <el-dialog
+  title="提示"
+  :visible.sync="dialogVisible"
+  width="30%"
+  :before-close="handleClose">
+  <span>这是一段信息</span>
+  <span slot="footer" class="dialog-footer">
+    <el-button @click="dialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+  </span>
+</el-dialog> -->
             </template>
           </el-table-column>
           <!-- <el-table-column label="可更换bihome" width="170">
@@ -240,9 +240,79 @@
               </el-button>
             </template>
           </el-table-column> -->
+          <el-table-column
+            label="自定义换包路径(e.g. v9.4\20230905)"
+            width="250"
+          >
+            <template slot-scope="scope">
+              <el-input
+                placeholder="输入自定义换包路径"
+                v-model="scope.row.customPath"
+                style="width: 225px"
+                clearable
+              >
+              </el-input>
+            </template>
+          </el-table-column>
         </el-table>
       </el-card>
     </div>
+    <el-dialog
+      title="bi.properties"
+      :close-on-click-modal="false"
+      :visible.sync="dialogBiproVisible"
+    >
+      <el-button size="mini" type="info" @click="propertiesData.data.unshift({key:'',value:''})"
+        >添加空行</el-button
+      >
+      <el-table
+        :data="
+          propertiesData.data.filter(
+            (data) =>
+              !search || data.key.toLowerCase().includes(search.toLowerCase())
+          )
+        "
+        border
+        style="width: 100%"
+        max-height="500"
+      >
+        <el-table-column property="key" label="key" width="300"
+          ><template slot-scope="scope">
+            <el-input placeholder="key" v-model="scope.row.key"> </el-input>
+          </template>
+        </el-table-column>
+        <el-table-column property="value" label="value" width="450"
+          ><template slot-scope="scope">
+            <el-input placeholder="value" v-model="scope.row.value">
+            </el-input> </template
+        ></el-table-column>
+        <el-table-column label="操作" width="150">
+          <template slot="header" slot-scope="scope">
+            <el-input
+              v-model="search"
+              size="mini"
+              placeholder="输入关键字搜索"
+            />
+          </template>
+          <template slot-scope="scope">
+            <el-button
+              size="mini"
+              type="danger"
+              @click="handleDeleteBiPro(scope.row)"
+              >删除</el-button
+            >
+          </template>
+        </el-table-column>
+      </el-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="(dialogBiproVisible = false), (search = '')"
+          >取 消</el-button
+        >
+        <el-button type="primary" @click="changeBiProperties()"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
     <div class="crumbs">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item>
@@ -267,18 +337,14 @@
 <script>
 import Vue from "vue";
 import bus from "../components/bus";
-import CodeMirrorEditor from "../components/CodeMirrorEditor";
 
 export default {
   name: "cent187",
-  components: {
-    CodeMirrorEditor,
-  },
+
   data() {
     return {
-      editorValue: "",
-      autoFormatJson: false, // json编辑模式下，输入框失去焦点时是否自动格式化，true 开启， false 关闭
-      dialogVisible: false,
+      dialogBiproVisible: false,
+      propertiesData: { version: "", data: [] },
       tableData: [],
       status: {
         hasFound: false,
@@ -289,30 +355,32 @@ export default {
       isUsed: {},
       date: {},
       checkRes: {},
+      search: "",
     };
-  },
-  async created() {
-    this.$set(this.status, "hasFound", false);
-    await this.getAllProduct();
-    this.get141Jar();
-    this.getReleaseJar();
-    this.getAllBihome();
-    this.checkStatus();
-    this.getDebugPort();
-    // this.getViewPort();
-    this.getCurrentBihome();
-    this.getURL();
-    this.getJarInfo();
-    // this.getbiPro();
   },
   mounted() {
     const timer = setInterval(() => {
       this.refresh();
-      this.get141Jar();
+      this.getReleaseJar();
     }, 1000 * 60 * 60);
     this.$once("hook:beforeDestroy", () => {
       clearInterval(timer);
     });
+  },
+  async created() {
+    let username = sessionStorage.getItem("username");
+    if (username === "" || username === null) {
+      this.$router.push("/login");
+      this.$message({
+        message: "未登录",
+        duration: 10 * 1000,
+        showClose: true,
+        type: "error",
+      });
+    } else {
+      this.$set(this.status, "hasFound", false);
+      await this.getAllProduct();
+    }
   },
   methods: {
     refresh() {
@@ -332,7 +400,7 @@ export default {
       this.$axios
         .get("http://192.168.0.187:5000/productJar/jarInfo", {
           headers: {
-            Authorization: sessionStorage.getItem("userInfo"),
+            Authorization: sessionStorage.getItem("username"),
           },
         })
         .then((res) => {
@@ -349,7 +417,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 6 * 1000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -360,7 +428,7 @@ export default {
       this.$axios
         .get("http://192.168.0.187:5000/productJar/all", {
           headers: {
-            Authorization: sessionStorage.getItem("userInfo"),
+            Authorization: sessionStorage.getItem("username"),
           },
         })
         .then((res) => {
@@ -368,14 +436,24 @@ export default {
             _this.tableData.push({
               version: v,
               //path: res.data.data[v].path,
+              jarDate: [],
+              customPath: "",
             });
           }
+          _this.getReleaseJar();
+          //this.getAllBihome();
+          this.checkStatus();
+          this.getDebugPort();
+          // this.getViewPort();
+          //this.getCurrentBihome();
+          this.getURL();
+          this.getJarInfo();
           _this.$set(_this.status, "hasFound", true);
         })
         .catch((err) => {
           this.$message({
             message: err,
-            duration: 6 * 1000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -387,7 +465,7 @@ export default {
       this.$axios
         .get("http://192.168.0.187:5000/productJar/141jar", {
           headers: {
-            Authorization: sessionStorage.getItem("userInfo"),
+            Authorization: sessionStorage.getItem("username"),
           },
         })
         .then((res) => {
@@ -395,7 +473,9 @@ export default {
             if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
               for (let i = 0; i < _this.tableData.length; i++) {
                 if (_this.tableData[i].version === v)
-                  _this.$set(_this.tableData[i], "jarDate", res.data.data[v]);
+                  _this.tableData[i].jarDate = _this.tableData[
+                    i
+                  ].jarDate.concat(res.data.data[v]);
               }
             }
             _this.$set(_this.date, v, res.data.data[v][0]);
@@ -405,37 +485,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 6 * 1000,
-            showClose: true,
-            type: "error",
-          });
-        });
-    },
-    getReleaseJar() {
-      let _this = this;
-      this.$axios
-        .get("http://192.168.0.187:5000/productJar/releasejar", {
-          headers: {
-            Authorization: sessionStorage.getItem("userInfo"),
-          },
-        })
-        .then((res) => {
-          console.log(res)
-          for (let v in res.data.data) {
-            if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
-              for (let i = 0; i < _this.tableData.length; i++) {
-                if (_this.tableData[i].version === v)
-                  _this.$set(_this.tableData[i], "release", res.data.data[v]);
-              }
-            }
-            _this.$set(_this.date, v, res.data.data[v][0]);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-          this.$message({
-            message: err,
-            duration: 6 * 1000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -446,7 +496,7 @@ export default {
       this.$axios
         .get("http://192.168.0.187:5000/productJar/allBihome", {
           headers: {
-            Authorization: sessionStorage.getItem("userInfo"),
+            Authorization: sessionStorage.getItem("username"),
           },
         })
         .then((res) => {
@@ -463,7 +513,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 6 * 1000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -474,7 +524,7 @@ export default {
       this.$axios
         .get("http://192.168.0.187:5000/productJar/currentBihome", {
           headers: {
-            Authorization: sessionStorage.getItem("userInfo"),
+            Authorization: sessionStorage.getItem("username"),
           },
         })
         .then((res) => {
@@ -486,7 +536,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 6 * 1000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -497,7 +547,7 @@ export default {
       this.$axios
         .get("http://192.168.0.187:5000/productJar/url", {
           headers: {
-            Authorization: sessionStorage.getItem("userInfo"),
+            Authorization: sessionStorage.getItem("username"),
           },
         })
         .then((res) => {
@@ -518,7 +568,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 6 * 1000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -529,7 +579,7 @@ export default {
       this.$axios
         .get("http://192.168.0.187:5000/productJar/check", {
           headers: {
-            Authorization: sessionStorage.getItem("userInfo"),
+            Authorization: sessionStorage.getItem("username"),
           },
         })
         .then((res) => {
@@ -537,14 +587,14 @@ export default {
             if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
               for (let i = 0; i < _this.tableData.length; i++) {
                 if (_this.tableData[i].version === v) {
+                  // _this.$set(
+                  //   _this.tableData[i],
+                  //   "checkRes",
+                  //   res.data.data[v].startUser
+                  // );
                   _this.$set(
                     _this.tableData[i],
-                    "checkRes",
-                    res.data.data[v].startUser
-                  );
-                  _this.$set(
-                    _this.tableData[i],
-                    "startup",
+                    "start",
                     res.data.data[v].startup
                   );
                   _this.$set(
@@ -567,7 +617,7 @@ export default {
                     "updateAndReload",
                     res.data.data[v].updateAndReload
                   );
-                  if (_this.tableData[i].checkRes === "0")
+                  if (res.data.data[v].startUser === "0")
                     _this.$set(_this.tableData[i], "msg", "空闲中");
                   else {
                     _this.$set(
@@ -586,7 +636,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 6 * 1000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -597,7 +647,7 @@ export default {
       this.$axios
         .get("http://192.168.0.187:5000/productJar/port", {
           headers: {
-            Authorization: sessionStorage.getItem("userInfo"),
+            Authorization: sessionStorage.getItem("username"),
           },
         })
         .then((res) => {
@@ -614,7 +664,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 6 * 1000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -625,7 +675,7 @@ export default {
       this.$axios
         .get("http://192.168.0.187:5000/productJar/bi", {
           headers: {
-            Authorization: sessionStorage.getItem("userInfo"),
+            Authorization: sessionStorage.getItem("username"),
           },
         })
         .then((res) => {
@@ -642,7 +692,7 @@ export default {
           console.log(err);
           this.$message({
             message: err,
-            duration: 6 * 1000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -660,7 +710,7 @@ export default {
           },
           {
             headers: {
-              Authorization: sessionStorage.getItem("userInfo"),
+              Authorization: sessionStorage.getItem("username"),
             },
           }
         )
@@ -672,16 +722,16 @@ export default {
           if (res.data.code === 200) {
             this.$message({
               message: res.data.data,
-              duration: 6 * 1000,
+              duration: 10 * 1000,
               showClose: true,
               type: "success",
             });
           }
           if (res.data.code === 205) {
-            console.log(res.data);
+            // console.log(res.data);
             this.$message({
               message: res.data.data,
-              duration: 6 * 1000,
+              duration: 10 * 1000,
               showClose: true,
               type: "warning",
             });
@@ -691,7 +741,7 @@ export default {
         .catch((err) => {
           this.$message({
             message: err,
-            duration: 6 * 1000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -711,7 +761,7 @@ export default {
           },
           {
             headers: {
-              Authorization: sessionStorage.getItem("userInfo"),
+              Authorization: sessionStorage.getItem("username"),
             },
           }
         )
@@ -727,16 +777,16 @@ export default {
             }
             this.$message({
               message: res.data.data,
-              duration: 6 * 1000,
+              duration: 10 * 1000,
               showClose: true,
               type: "success",
             });
           }
           if (res.data.code === 205) {
-            console.log(res.data);
+            // console.log(res.data);
             this.$message({
               message: res.data.data,
-              duration: 6 * 1000,
+              duration: 10 * 1000,
               showClose: true,
               type: "warning",
             });
@@ -746,7 +796,7 @@ export default {
         .catch((err) => {
           this.$message({
             message: err,
-            duration: 6 * 1000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -757,38 +807,52 @@ export default {
     update(row) {
       let form = {};
       this.changeTableData(row.version, "update", true);
-      if (this.date[row.version] != null)
-        form = {
-          version: row.version,
-          date: this.date[row.version],
-          user: this.$store.state.userInfo,
-        };
-      else
+      if (this.date[row.version] != null) {
+        if (this.date[row.version].indexOf(".") != -1) {
+          form = {
+            version: row.version,
+            copy_release: true,
+            date: this.date[row.version],
+            user: this.$store.state.userInfo,
+            release: this.date[row.version],
+            customPath: row.customPath,
+          };
+        } else {
+          form = {
+            version: row.version,
+            date: this.date[row.version],
+            user: this.$store.state.userInfo,
+            customPath: row.customPath,
+          };
+        }
+      } else {
         form = {
           version: row.version,
           date: "",
           user: this.$store.state.userInfo,
+          customPath: row.customPath,
         };
+      }
       this.$axios
         .post("http://192.168.0.187:5000/productJar/update", form, {
           headers: {
-            Authorization: sessionStorage.getItem("userInfo"),
+            Authorization: sessionStorage.getItem("username"),
           },
         })
         .then((res) => {
           if (res.data.code === 200) {
             this.$message({
               message: res.data.data,
-              duration: 6 * 1000,
+              duration: 10 * 1000,
               showClose: true,
               type: "success",
             });
           }
           if (res.data.code === 205) {
-            console.log(res.data);
+            // console.log(res.data);
             this.$message({
               message: res.data.data,
-              duration: 6 * 1000,
+              duration: 10 * 1000,
               showClose: true,
               type: "warning",
             });
@@ -799,7 +863,7 @@ export default {
         .catch((err) => {
           this.$message({
             message: err,
-            duration: 6 * 1000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -819,7 +883,7 @@ export default {
           },
           {
             headers: {
-              Authorization: sessionStorage.getItem("userInfo"),
+              Authorization: sessionStorage.getItem("username"),
             },
           }
         )
@@ -835,16 +899,16 @@ export default {
             }
             this.$message({
               message: res.data.data,
-              duration: 6 * 1000,
+              duration: 10 * 1000,
               showClose: true,
               type: "success",
             });
           }
           if (res.data.code === 205) {
-            console.log(res.data);
+            // console.log(res.data);
             this.$message({
               message: res.data.data,
-              duration: 6 * 1000,
+              duration: 10 * 1000,
               showClose: true,
               type: "warning",
             });
@@ -854,7 +918,7 @@ export default {
         .catch((err) => {
           this.$message({
             message: err,
-            duration: 6 * 1000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
@@ -865,23 +929,37 @@ export default {
     updateAndReload(row) {
       let _this = this;
       let form = {};
-      if (this.date[row.version] != null)
-        form = {
-          version: row.version,
-          date: this.date[row.version],
-          user: this.$store.state.userInfo,
-        };
-      else
+      if (this.date[row.version] != null) {
+        if (this.date[row.version].indexOf(".") != -1) {
+          form = {
+            version: row.version,
+            copy_release: true,
+            date: this.date[row.version],
+            release: this.date[row.version],
+            user: this.$store.state.userInfo,
+            customPath: row.customPath,
+          };
+        } else {
+          form = {
+            version: row.version,
+            date: this.date[row.version],
+            customPath: row.customPath,
+            user: this.$store.state.userInfo,
+          };
+        }
+      } else {
         form = {
           version: row.version,
           date: "",
           user: this.$store.state.userInfo,
+          customPath: row.customPath,
         };
+      }
       this.changeTableData(row.version, "updateAndReload", true);
       this.$axios
         .post("http://192.168.0.187:5000/productJar/updateReload", form, {
           headers: {
-            Authorization: sessionStorage.getItem("userInfo"),
+            Authorization: sessionStorage.getItem("username"),
           },
         })
         .then((res) => {
@@ -896,16 +974,16 @@ export default {
             }
             this.$message({
               message: res.data.data,
-              duration: 6 * 1000,
+              duration: 10 * 1000,
               showClose: true,
               type: "success",
             });
           }
           if (res.data.code === 205) {
-            console.log(res.data);
+            // console.log(res.data);
             this.$message({
               message: res.data.data,
-              duration: 6 * 1000,
+              duration: 10 * 1000,
               showClose: true,
               type: "warning",
             });
@@ -916,13 +994,58 @@ export default {
         .catch((err) => {
           this.$message({
             message: err,
-            duration: 6 * 1000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
           _this.changeTableData(row.version, "updateAndReload", false);
           console.log(err);
         });
+    },
+    getReleaseJar() {
+      let _this = this;
+      this.$axios
+        .get("http://192.168.0.187:5000/productJar/releasejar", {
+          headers: {
+            Authorization: sessionStorage.getItem("userInfo"),
+          },
+        })
+        .then((res) => {
+          for (let v in res.data.data) {
+            // console.log(res.data.data[v]);
+            if (res.data.data[v] === []) continue;
+            if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
+              for (let i = 0; i < _this.tableData.length; i++) {
+                // console.log(_this.tableData[i].jarDate);
+                if (_this.tableData[i].version === v) {
+                  _this.tableData[i].jarDate = _this.tableData[
+                    i
+                  ].jarDate.concat(res.data.data[v]);
+                  _this.$set(_this.tableData[i], "release", res.data.data[v]);
+                }
+              }
+            }
+            _this.$set(_this.date, v, res.data.data[v][0]);
+          }
+          _this.get141Jar();
+        })
+        .catch((err) => {
+          console.log(err);
+          this.$message({
+            message: err,
+            duration: 6 * 1000,
+            showClose: true,
+            type: "error",
+          });
+        });
+    },
+    handleDeleteBiPro(row) {
+      for (let i = 0, len = this.propertiesData.data.length; i < len; i++) {
+        if (this.propertiesData.data[i].key === row.key) {
+          this.propertiesData.data.splice(i, 1);
+          break;
+        }
+      }
     },
     exchangeBihome(row, key) {
       this.$axios
@@ -935,7 +1058,7 @@ export default {
           },
           {
             headers: {
-              Authorization: sessionStorage.getItem("userInfo"),
+              Authorization: sessionStorage.getItem("username"),
             },
           }
         )
@@ -943,7 +1066,7 @@ export default {
           if (res.data.code === 200) {
             this.$message({
               message: res.data.data,
-              duration: 6 * 1000,
+              duration: 10 * 1000,
               showClose: true,
               type: "success",
             });
@@ -952,11 +1075,67 @@ export default {
         .catch((err) => {
           this.$message({
             message: err,
-            duration: 6 * 1000,
+            duration: 10 * 1000,
             showClose: true,
             type: "error",
           });
           console.log(err);
+        });
+    },
+    getBiProperties(row) {
+      let _this = this;
+      this.$axios
+        .post(
+          "http://192.168.0.187:5000/productJar/biPro",
+          {
+            version: row.version,
+          },
+          {
+            headers: {
+              Authorization: sessionStorage.getItem("userInfo"),
+            },
+          }
+        )
+        .then((res) => {
+          if (res.data.code === 200) {
+            this.dialogBiproVisible = true;
+            _this.propertiesData = res.data.data;
+          }
+        });
+    },
+    changeBiProperties(row) {
+      let _this = this;
+      this.dialogBiproVisible = false;
+      // console.log(this.propertiesData.data)
+      for (let i = 0, len = this.propertiesData.data.length; i < len; i++) {
+        if (this.propertiesData.data[i].key === '') {
+          this.propertiesData.data.splice(i, 1);
+          i = i - 1;    //改变循环变量
+          len = len - 1;   //改变循环次数
+        }
+      }
+      this.$axios
+        .post(
+          "http://192.168.0.187:5000/productJar/changeBiPro",
+          {
+            bipro: _this.propertiesData,
+          },
+          {
+            headers: {
+              Authorization: sessionStorage.getItem("userInfo"),
+            },
+          }
+        )
+        .then((res) => {
+          this.dialogBiproVisible = false;
+          if (res.data.code === 200) {
+            _this.$message({
+              message: res.data.data,
+              duration: 6 * 1000,
+              showClose: true,
+              type: "success",
+            });
+          }
         });
     },
     chooseDate() {
@@ -965,6 +1144,7 @@ export default {
     },
 
     formatDateStr(str) {
+      if (str.indexOf(".") !== -1) return str;
       return (
         str.substring(0, 4) +
         "-" +
@@ -978,7 +1158,7 @@ export default {
       if (res.code === 200) {
         this.$message({
           message: res.data,
-          duration: 6 * 1000,
+          duration: 10 * 1000,
           showClose: true,
           type: "success",
         });
@@ -986,72 +1166,14 @@ export default {
       } else {
         this.$message({
           message: res.data,
-          duration: 6 * 1000,
+          duration: 10 * 1000,
           showClose: true,
           type: "error",
         });
       }
     },
-    handleClose(done) {
-      this.$confirm("确认关闭？")
-        .then((_) => {
-          done();
-        })
-        .catch((_) => {});
-    },
-    cancleEdit() {
-      this.$confirm("确认关闭？")
-        .then((_) => {
-          this.dialogVisible = false;
-          done();
-        })
-        .catch((_) => {});
-    },
-    commitChange() {},
-    getValue() {
-      let content = this.$refs.cmEditor.getValue();
-      console.log(content);
-    },
-    //修改内容
-    setValue(data) {
-      this.editorValue = data;
-    },
-    editBiPro(row) {
-      let _this = this;
-      this.dialogVisible = true;
-      for (let i = 0; i < _this.tableData.length; i++) {
-        if (_this.tableData[i].version === row.version)
-          _this.$refs.cmEditor.setValue(this.tableData[i].biPro);
-        break;
-      }
-    },
-    getbiPro() {
-      let _this = this;
-      this.$axios
-        .get("http://192.168.0.187:5000/productJar/biPro", {
-          headers: {
-            Authorization: sessionStorage.getItem("userInfo"),
-          },
-        })
-        .then((res) => {
-          for (let v in res.data.data) {
-            if (Object.prototype.hasOwnProperty.call(res.data.data, v)) {
-              for (let i = 0; i < _this.tableData.length; i++) {
-                if (_this.tableData[i].version === v)
-                  _this.$set(_this.tableData[i], "biPro", res.data.data[v]);
-              }
-            }
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-          this.$message({
-            message: err,
-            duration: 6 * 1000,
-            showClose: true,
-            type: "error",
-          });
-        });
+    uploadJar(row, event, file, fileList) {
+      this.changeTableData(row.version, "updateAndReload", true);
     },
   },
 };
@@ -1067,6 +1189,7 @@ export default {
 .upload-demo {
   display: inline;
 }
+
 .status-tag {
   display: flex;
   justify-content: center;

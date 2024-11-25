@@ -7,6 +7,8 @@ from shutil import copy2, copytree, rmtree
 from socket import socket, AF_INET, SOCK_STREAM
 from time import sleep, localtime, strftime
 from xml.dom.minidom import parse
+from flask import Response
+import sys
 import re
 
 from logging import getLogger
@@ -27,8 +29,10 @@ else:
 
 class ProductAction:
     current_path = r'D:\code\python\yhenv\flaskProject'
+    unstable_version = ['v8.6', 'v8.7', 'v8.8', 'v9.1', 'v9.3', '9.2.1', 'v9.0']
     host_ip = '127.0.0.1'
     ip = '\\\\192.168.0.141/productJar/'
+    ip_141 = '\\\\192.168.0.141/productJar/'
     ip_134 = '\\\\192.168.1.134/git-package/'
     ip_187 = '\\\\192.168.0.187/share/'
     ip_199 = '\\\\192.168.1.199'
@@ -47,8 +51,28 @@ class ProductAction:
     current_system = system()
     codeType = {"default": ".py", "application/json": ".json", "sql": ".sql", "javascript": ".js", "css": ".css",
                 "xml": ".xml", "html": ".html", "yaml": ".yml", "markdown": ".md", "python": ".py"}
+    month_cases = ['DBPainter/res/Tab/properties/labelName__mobileDT.png',
+                   'DBPainter/res/Tab/properties/labelName__mobileRT.png',
+                   'DBPainter/res/Tab/properties/padding__mobileDT.png',
+                   'DBPainter/res/Tab/properties/padding__mobileRT.png',
+                   'DBPainter/res/Tab/properties/padding__日期过滤1__RT.png',
+                   'DBPainter/res/Tab/properties/padding__选项卡6__RT.png',
+                   'DBPainter/res/Tab/properties/positionType__mobileDT.png',
+                   'DBPainter/res/Tab/properties/positionType__mobileRT.png',
+                   'DBPainter/res/Tab/properties/positionType__日期过滤1__RT.png',
+                   'DBPainter/res/Tab/properties/positionType__日期过滤2__RT.png',
+                   'DBPainter/res/Tab/properties/positionType__日期过滤3__RT.png',
+                   'DBPainter/res/Tab/properties/positionType__日期过滤4__RT.png',
+                   'DBPainter/res/Tab/properties/positionType__日期过滤5__RT.png',
+                   'DBPainter/res/Tab/properties/positionType__日期过滤6__RT.png',
+                   'DBPainter/res/Tab/properties/positionType__日期过滤7__RT.png',
+                   'DBPainter/res/Tab/properties/positionType__日期过滤8__RT.png',
+                   'DBPainter/res/Carousel/elemsFilt.pdf', 'DBPainter/res/Carousel/elemsFilt__mobileDT.png',
+                   'Export/res/Export/cbug/YH-CIssue-09385__Properties2.png',
+                   'DBPainter/res/Carousel/elemsFilt__mobileRT.png']
     root_path = ''
     YongHong_path = ''
+    vividime_path = ''
     tomcat_path = ''
     bi_xml_path = ''
     server_xml_path = ''
@@ -56,9 +80,11 @@ class ProductAction:
     jar_list = {}
     release_jar_list = {}
     status = {}
+    jobs = []
 
     # current_system="linux"
     def __init__(self) -> None:
+
         self.read_config()
         if if_connect_mysql:
             self.users = User.query.filter().all()
@@ -74,6 +100,7 @@ class ProductAction:
     # 删除字符串内特殊字符  
     @staticmethod
     def delete_boring_characters(sentence=""):
+
         return re.sub('[0-9’!"#$%&\'()*+,-./:;<=>?@，。?★、…【】《》？“”‘’！[\\]^_`{|}~\s]+', "", sentence)
 
     # 向某个进程发送crtl+c指令
@@ -125,19 +152,23 @@ class ProductAction:
 
     @staticmethod
     def succ(data=""):
-        return dumps({"code": 200, "data": data}, ensure_ascii=False, separators=(',', ':'))
+        return Response(dumps({"code": 200, "data": data}, ensure_ascii=False, separators=(',', ':')),
+                        mimetype='application/json')
 
     @staticmethod
     def error(data=""):
-        return dumps({"code": 500, "data": data}, ensure_ascii=False, separators=(',', ':'))
+        return Response(dumps({"code": 500, "data": data}, ensure_ascii=False, separators=(',', ':')),
+                        mimetype='application/json')
 
     @staticmethod
     def user_not_found(user):
-        return dumps({"code": 405, "data": f"{user}用户不存在"}, ensure_ascii=False, separators=(',', ':'))
+        return Response(dumps({"code": 405, "data": f"{user}用户不存在"}, ensure_ascii=False, separators=(',', ':')),
+                        mimetype='application/json')
 
     @staticmethod
     def info(data=""):
-        return dumps({"code": 205, "data": data}, ensure_ascii=False, separators=(',', ':'))
+        return Response(dumps({"code": 205, "data": data}, ensure_ascii=False, separators=(',', ':')),
+                        mimetype='application/json')
 
     # 获取脚本列表
     def get_all_script(self):
@@ -175,34 +206,64 @@ class ProductAction:
         product_logger.info(f'{script}保存成功')
         return f'{script}保存成功'
 
+    def init_config(self, key):
+        self.config[key]["port"], self.config[key]["closePort"] = self.get_bi_port(key)
+        self.config[key]["bihome"] = self.get_bi_home(key)
+        if 'dis' in key:
+            self.config[key]['url'] = self.config[key]["port"] + \
+                                      '/bi/?showOthers=true'
+        else:
+            self.config[key]['url'] = self.config[key]["port"] + '/bi'
+        self.config[key]["debug"] = self.get_debug_port(key)
+        self.config[key]["startup"] = False
+        self.config[key]["shutdown"] = False
+        self.config[key]["update"] = False
+        self.config[key]["reload"] = False
+        self.config[key]["updateAndReload"] = False
+        self.config[key]["changeBihome"] = False
+        self.config[key]["status"] = '1' if self.is_port_used_fast(
+            self.config[key]["port"]) else '0'
+        if "yh" in self.config[key].keys():
+            current_jar_path_info = os.path.join(self.config[key]["path"] + self.vividime_path, "product",
+                                                 "currentPath.txt")
+            bi_pro_path = os.path.join(self.config[key]["path"] + self.vividime_path, self.config[key]["bihome"],
+                                       'bi.properties')
+        else:
+            current_jar_path_info = os.path.join(self.config[key]["path"] + self.YongHong_path, "product",
+                                                 "currentPath.txt")
+            bi_pro_path = os.path.join(self.config[key]["path"] + self.YongHong_path, self.config[key]["bihome"],
+                                       'bi.properties')
+        if os.path.exists(current_jar_path_info):
+            with open(current_jar_path_info, 'r', encoding='utf-8') as path_info:
+                self.config[key]["currentJarPath"] = path_info.read()
+        else:
+            self.config[key]["currentJarPath"] = ''
+        if os.path.exists(bi_pro_path):
+            self.config[key]["biProPath"] = bi_pro_path
+        else:
+            self.config[key]["biProPath"] = ''
+
     # 读取配置文件
     def read_config(self):
         self.config = properties.env_list['version']
         self.root_path = properties.env_list["mid_path"]
         self.YongHong_path = f'{self.root_path}/Yonghong'
+        self.vividime_path = f'{self.root_path}/vividime'
         self.tomcat_path = f'{self.root_path}/tomcat/bin/'
         self.bi_xml_path = f'{self.root_path}/tomcat/webapps/bi/WEB-INF/web.xml'
         self.server_xml_path = f'{self.root_path}/tomcat/conf/server.xml'
         for key in self.config.keys():
-            self.config[key]["port"] = self.get_bi_port(key)
-            self.config[key]["bihome"] = self.get_bi_home(key)
-            if 'dis' in key:
-                self.config[key]['url'] = self.config[key]["port"] + \
-                                          '/bi/?showOthers=true'
-            else:
-                self.config[key]['url'] = self.config[key]["port"] + '/bi'
-            self.config[key]["debug"] = self.get_debug_port(key)
-            self.config[key]["startup"] = False
-            self.config[key]["shutdown"] = False
-            self.config[key]["update"] = False
-            self.config[key]["reload"] = False
-            self.config[key]["updateAndReload"] = False
-            self.config[key]["changeBihome"] = False
-            self.config[key]["status"] = '1' if self.is_port_used_fast(
-                self.config[key]["port"]) else '0'
+            self.init_config(key)
         self.update_product_status()
         # with open(f'{self.current_path}/apps/productApp/user.json', 'r', encoding='utf-8') as user:
         #     self.users = load(user)
+
+    def update_config(self):
+        for key in properties.env_list['version'].keys():
+            if key not in self.config.keys():
+                continue
+            self.init_config(key)
+        self.update_product_status()
 
     def get_debug_port(self, version):
         if self.current_system == "Windows":
@@ -217,6 +278,23 @@ class ProductAction:
                     return i.split('=')[1].split(':')[1][0:-1]
         return "未配置"
 
+    @staticmethod
+    def update_file(file, old_str, new_str):
+        """
+        替换文件中的字符串
+        :param file:文件名
+        :param old_str:旧字符串
+        :param new_str:新字符串
+        :return:
+        """
+        file_data = ""
+        with open(file, "r") as f:
+            for line in f:
+                line = line.replace(old_str, new_str)
+                file_data += line
+        with open(file, "w") as f:
+            f.write(file_data)
+
     def change_bi_home(self, version, bihome):
         split_str = '\\' if self.current_system == "Windows" else '/'
         reload = False
@@ -225,23 +303,17 @@ class ProductAction:
         if reload:
             self.shut_tomcat(version)
         web_xml_file_path = f'{self.config[version]["path"]}{self.bi_xml_path}'
-        dom = parse(web_xml_file_path)
-        root = dom.documentElement
-        param = root.getElementsByTagName('param-value')
-        entry = root.getElementsByTagName('env-entry-value')
-        param_value = param[0].firstChild.data.split(split_str)
-        entry_value = entry[0].firstChild.data.split(split_str)
-        param_value[-1] = bihome
-        entry_value[-1] = bihome
-        self.config[version]["bihome"] = bihome
-        product_logger.info(f'bihome修改为{bihome}')
-        param[0].firstChild.data = split_str.join(param_value)
-        entry[0].firstChild.data = split_str.join(entry_value)
-        with open(web_xml_file_path, 'w') as f:
-            dom.writexml(f, encoding='utf-8')
+        self.update_file(web_xml_file_path, self.config[version]['bihome'], bihome)
         if reload:
             self.start_tomcat(version)
-        return "bihome修改成功"
+        c_bihome = self.get_bi_home(version)
+        if c_bihome != bihome:
+            product_logger.info(f"bihome 修改为{bihome}失败")
+            return "bihome修改失败"
+        else:
+            self.config[version]['bihome'] = bihome
+            product_logger.info(f"bihome 修改为{bihome}成功")
+            return "bihome修改成功"
 
     def get_bi_home(self, version):
         try:
@@ -259,17 +331,21 @@ class ProductAction:
             if param_value[-1] == entry_value[-1]:
                 return param_value[-1]
         except IndexError:
-            pass
-        finally:
             return "error bihome"
+            pass
+        except:
+            return "error bihome"
+            product_logger.error(f"Unexpected error:{sys.exc_info()[0]}")
 
     def get_bi_port(self, version):
         file_path = f'{self.config[version]["path"]}{self.server_xml_path}'
         dom = parse(file_path)
         root = dom.documentElement
         connect = root.getElementsByTagName('Connector')
-        port = connect[0].getAttribute('port')
-        return port
+        server = root.getElementsByTagName('Server')
+        start_port = connect[0].getAttribute('port')
+        shutdown_port = root.getAttribute('port')
+        return start_port, shutdown_port
 
     @staticmethod
     def is_port_used(c_ip, c_port):
@@ -308,6 +384,13 @@ class ProductAction:
             return True
         return False
 
+    def get_bind_port(self, ports):
+        bind_ports = []
+        for port in ports:
+            if self.is_port_used_fast(port):
+                bind_ports.append(port)
+        return bind_ports
+
     @staticmethod
     def current_time():
         return strftime("%H:%M:%S", localtime())
@@ -345,14 +428,18 @@ class ProductAction:
             return check_res
         self.change_status(v, 'shutdown', True)
         host_port = eval(self.config[v]["port"])
-        if self.is_port_used(self.host_ip, host_port):
+        ports = [self.config[v]["port"], self.config[v]["closePort"]]
+        bind_ports = self.get_bind_port(ports)
+        product_logger.info(f'停止{v} 已绑定的端口-{bind_ports}')
+        if bind_ports:
             if self.current_system == "Windows":
                 product_logger.info(f'停止{v} tomcat进程')
-                if v == 'trunk':
-                    self.read_command(
-                        f'python {self.script_path}/stopTrunk.py {host_port} > stopTomcat.txt')
-                else:
-                    self.read_command(f"taskkill /f /pid {self.get_pid_by_port(host_port)}")
+                for port in bind_ports:
+                    if v == 'trunk':
+                        self.read_command(
+                            f'python {self.script_path}/stopTrunk.py {host_port} > stopTomcat.txt')
+                    else:
+                        self.read_command(f"taskkill /f /pid {self.get_pid_by_port(eval(port))}")
             else:
                 work_dir = self.config[v]["path"] + self.tomcat_path
                 os.chdir(work_dir)
@@ -360,19 +447,19 @@ class ProductAction:
                 product_logger.info(f'执行命令：sh {work_dir}shutdown.sh')
                 self.read_command(f'sh {work_dir}shutdown.sh')
             while 1:
-                if self.is_port_used(self.host_ip, host_port):
+                if self.get_bind_port(ports):
                     product_logger.info(f'{v} tomcat服务停止中')
                 else:
                     product_logger.info(f'{v} tomcat服务停止成功')
                     break
                 sleep(2)
-            self.change_status(v, 'shutdown')
             self.config[v]["status"] = '0'
+            self.change_status(v, 'shutdown')
             return f'{v} tomcat服务停止成功'
         else:
+            self.config[v]["status"] = '0'
             self.change_status(v, 'shutdown')
             product_logger.info(f'{v} tomcat服务未启动')
-            self.config[v]["status"] = '0'
             return f'{v} tomcat服务未启动'
 
     def start_tomcat(self, v, user=''):
@@ -388,21 +475,24 @@ class ProductAction:
             if self.is_port_used(self.host_ip, host_port):
                 if self.config[v]["status"] != '0':
                     product_logger.info(f'已启动{v} tomcat服务')
-                    self.change_status(v, 'start')
                     self.config[v]["status"] = '1'
+                    self.change_status(v, 'start')
                     return f'已启动{v} tomcat服务'
                 else:
                     sleep(10)
                     product_logger.info('tomcat正在停止中')
             else:
                 if self.current_system == "Windows":
-                    os.system('startup > NUL')
+                    if self.config[v]["debug"].isdigit():
+                        os.system('catalina.bat jpda start > NUL')
+                    else:
+                        os.system('startup > NUL')
                 else:
                     self.read_command('sh startup.sh > caches.txt')
                 break
         product_logger.info(f'启动{v} tomcat服务成功')
-        self.change_status(v, 'start')
         self.config[v]["status"] = '1'
+        self.change_status(v, 'start')
         return f'启动{v} tomcat服务成功'
 
     @staticmethod
@@ -458,19 +548,40 @@ class ProductAction:
             mismatch = cmpfiles(path_134, path_187, common)[1]
             if not mismatch:
                 return path_187
-            return path_134
+            return path_187
+            # return path_134
         return path_187 if os.path.exists(path_187) else path_134
 
-    def new_copy(self, v, date='', copy_release=False, release=''):
+    def if_copy_custom(self, v, custom_path):
+        if_update = False
+        if custom_path:
+            custom_path_187 = self.ip_187 + custom_path
+            custom_path_141 = self.ip_141 + custom_path
+            custom_path_134 = self.ip_134 + custom_path
+            custom_full_path = [custom_path_187, custom_path_141, custom_path_134]
+            for path in custom_full_path:
+                if os.path.exists(path):
+                    self.copy_custom_jar(v, path)
+                    if_update = True
+                    break
+                product_logger.info(f'{v}-{custom_path} jar包不存在')
+        return if_update
+
+    def new_copy(self, v, date='', copy_release=False, release='', custom_path=''):
         """
         复制jar包api
+        :param custom_path: 自定义换包路径
         :param v: 版本
         :param date: 日期
         :param copy_release: 是否复制release
         :param release: 发布版本
         :return:
         """
-        self.copy_jar(v, date) if not copy_release else self.copy_release_jar(v, release)
+        if_update = False
+        if custom_path:
+            if_update = self.if_copy_custom(v, custom_path)
+        if not if_update:
+            self.copy_jar(v, date) if not copy_release else self.copy_release_jar(v, release)
         product_logger.info(f'{v}-{self.format_date_str(date)} jar包检查完毕')
         self.change_status(v, 'update')
         return f'{v}已更换{self.format_date_str(date)} jar包'
@@ -490,7 +601,10 @@ class ProductAction:
             if check_res != '0':
                 return check_res
             self.change_status(version, 'update', True)
-            to_path_in = self.config[version]["path"] + self.YongHong_path
+            if "yh" in self.config[version].keys():
+                to_path_in = self.config[version]["path"] + self.vividime_path
+            else:
+                to_path_in = self.config[version]["path"] + self.YongHong_path
             local_jar_path = os.path.join(to_path_in, "product")
             branch = self.config[version]["branch"]
             date_jar_path = self.get_fast_path(version, date)
@@ -500,24 +614,6 @@ class ProductAction:
             dirs = os.listdir(date_jar_path)
             res = self.cycle_copy(date_jar_path, local_jar_path, version)
             log_info = f'{version}-{self.format_date_str(date)} Jar包更新完成' if res == 1 else res
-            # for file_name in dirs:
-            #     if branch == 'develop' and file_name not in self.yonghong_product_jar:
-            #         continue
-            #     from_file = os.path.join(path, file_name)
-            #     to_file = os.path.join(to_path_in, "product", file_name)
-            #     if not os.path.exists(to_file):
-            #         self.rename_product_jar(
-            #             file_name, os.path.join(to_path_in, "product"))
-            #     try:
-            #         if not os.path.exists(to_file) or not cmp(from_file, to_file):
-            #             copy2(from_file, to_file)
-            #             product_logger.info(
-            #                 f"{file_name}更新完毕,时间：{self.current_time()}")
-            #             continue
-            #     except PermissionError:
-            #         self.change_status(version, 'update')
-            #         product_logger.info(
-            #             f"{path}下{file_name}正在被占用，请稍等...time{self.current_time()}")
         except FileNotFoundError as err:
             self.change_status(version, 'update')
             log_info = f'file error:{err}'
@@ -533,12 +629,37 @@ class ProductAction:
         """
         product_logger.info(f'release version:{release_version}')
         release_jar_path = f'{self.ip_187}common/{release_version}'
-        local_jar_path = os.path.join(self.config[version]["path"] + self.YongHong_path, "product")
+        if "yh" in self.config[version].keys():
+            local_jar_path = os.path.join(self.config[version]["path"] + self.vividime_path, "product")
+        else:
+            local_jar_path = os.path.join(self.config[version]["path"] + self.YongHong_path, "product")
         res = self.cycle_copy(release_jar_path, local_jar_path, version)
         log_info = f'{version}-{release_version} Jar包更新完成' if res == 1 else res
         product_logger.info(log_info)
         self.change_status(version, 'update')
         return log_info
+
+    def copy_custom_jar(self, version, custom_path):
+        product_logger.info(f'custom path:{custom_path}')
+        if "yh" in self.config[version].keys():
+            local_jar_path = os.path.join(self.config[version]["path"] + self.vividime_path, "product")
+        else:
+            local_jar_path = os.path.join(self.config[version]["path"] + self.YongHong_path, "product")
+        res = self.cycle_copy(custom_path, local_jar_path, version)
+        log_info = f'{version}-{custom_path} Jar包更新完成' if res == 1 else res
+        product_logger.info(log_info)
+        self.change_status(version, 'update')
+        return log_info
+
+    @staticmethod
+    def verbose_copy(src, dst):
+        if src.endswith(".jar"):
+            return copy2(src, dst)
+
+    @staticmethod
+    def ignore_func(dir, files):
+        # 忽略所有以“vooltdb”开头的目录和文件
+        return [f for f in files if f.startswith('vooltdb')]
 
     def cycle_copy(self, src, dst, version):
         """
@@ -555,7 +676,9 @@ class ProductAction:
                     product_logger.info(f'delete folder:{dst}')
                     rmtree(dst)  # 先删除原本的
                     product_logger.info(f'copy:{src} to {dst}')
-                    copytree(src, dst)  # 整个复制过来
+                    copytree(src, dst, ignore=self.ignore_func, copy_function=self.verbose_copy)  # 整个复制过来
+                    os.system(f'echo {src} > {dst}/currentPath.txt')
+                    self.config[version]["currentJarPath"] = src
                     return 1
             except PermissionError:
                 if max_count > 10:
@@ -568,8 +691,9 @@ class ProductAction:
                     f"{dst}下文件正在被占用，请稍等...time{self.current_time()}")
                 sleep(10)
 
-    def copy_and_reload(self, v, date, user='', copy_release=False, release=''):
+    def copy_and_reload(self, v, date, user='', copy_release=False, release='', custom_path=''):
         """
+        :param custom_path:
         :param v: 版本
         :param date: jar包日期
         :param user: 用户
@@ -587,21 +711,29 @@ class ProductAction:
             return res
         self.change_status(v, "updateAndReload", True)
         self.shut_tomcat(v)
-        res = self.copy_jar(v, date) if not copy_release else self.copy_release_jar(v, release)
+        if_update = False
+        if custom_path:
+            if_update = self.if_copy_custom(v, custom_path)
+        if not if_update:
+            res = self.copy_jar(v, date) if not copy_release else self.copy_release_jar(v, release)
         self.change_status(v, "updateAndReload", True)
         # 先关闭tomcat，然后换JAR，再启动tomcat
         self.start_tomcat(v, user)
-        self.change_status(v, "updateAndReload")
         self.config[v]["startUser"] = user
+        self.change_status(v, "updateAndReload")
         if "没有" not in res:
             return f'{v}已更换{self.format_date_str(date)} jar包并重启Tomcat成功'
         return res
 
     def get_jar_info(self, v):
-        product_path = os.path.join(
-            self.config[v]["path"] + self.YongHong_path, 'product')
-        info_list = []
+        if "yh" in self.config[v].keys():
+            product_path = os.path.join(self.config[v]["path"] + self.vividime_path, 'product')
+        else:
+            product_path = os.path.join(self.config[v]["path"] + self.YongHong_path, 'product')
+        info_list = [f'当前的jar包路径：{self.config[v]["currentJarPath"]}'] if self.config[v]["currentJarPath"] else []
         for i in os.listdir(product_path):
+            if 'currentPath' in i:
+                continue
             change_time = strftime("日期:%Y%m%d 时间:%H:%M:%S",
                                    localtime(os.stat(os.path.join(product_path, i)).st_mtime))
             info_list.append(f"{i}:{change_time}")
@@ -613,15 +745,13 @@ class ProductAction:
             branch = self.config[key]["branch"]
             dir_187 = os.listdir(f'{self.ip_187}{branch}') if os.path.exists(
                 f'{self.ip_187}{branch}') else []
-            try:
-                dir_134 = os.listdir(f'{self.ip_134}{branch}')
-            except FileNotFoundError:
-                product_logger.info("134服务器暂时无法连接")
-                dir_134 = []
-            finally:
-                pass
-            dir_134.extend(dir_187)
-            dir_list = self.clear_list_dumplicate(dir_134)
+            if os.path.exists(f'{self.ip_134}{branch}'):
+                try:
+                    dir_134 = os.listdir(f'{self.ip_134}{branch}')
+                    dir_187.extend(dir_134)
+                except FileNotFoundError:
+                    product_logger.info(f"{key}--134服务器暂时无法连接")
+            dir_list = self.clear_list_dumplicate(dir_187)
             jar_list[key] = dir_list
             jar_list[key] = self.clear_list_not_num(jar_list[key])
             jar_list[key].sort()
@@ -638,27 +768,56 @@ class ProductAction:
         release_jar_path = f'{self.ip_187}common'
         for key in self.config.keys():
             branch = self.config[key]["branch"]
-            jar_list[branch] = []
+            jar_list[key] = []
             if 'custom' in branch or branch == 'develop':
                 continue
             if branch.replace('v', '') in exclude:
                 continue
             branch_fmt_list = branch.replace('v', '').split('.')
             branch_fmt = f'{branch_fmt_list[0]}.{branch_fmt_list[1]}'
-            for release in os.listdir(release_jar_path):
-                if release in exclude or release == '9.4':
-                    continue
-                if branch_fmt in release:
-                    jar_list[branch].append(release)
+            try:
+                for release in os.listdir(release_jar_path):
+                    if release in exclude or release == '9.4':
+                        continue
+                    if branch_fmt in release:
+                        jar_list[key].append(release)
+            except FileNotFoundError as file_not_found:
+                jar_list[key].append(f'file not found:{file_not_found}')
         return jar_list
 
     def get_bi_properties(self, v):
-        bi_pro_path = os.path.join(self.config[v]["path"] + self.YongHong_path, self.config[v]["bihome"],
-                                   'bi.properties')
-        bi_pro = ''
-        with open(bi_pro_path, 'r', encoding='utf-8') as biPro:
-            bi_pro += biPro.read()
+        bi_pro = {'version': v, 'data': []}
+        with open(self.config[v]['biProPath'], 'r', encoding='utf-8') as biPro:
+            for param in biPro.read().splitlines():
+                if not param.startswith('#'):
+                    bi_pro['data'].append({'key': param.split('=')[0], 'value': param.split('=')[1]})
         return bi_pro
+
+    def input_to_bi_properties(self, v, bipro):
+        with open(self.config[v]['biProPath'], 'w', encoding='utf-8') as bi_properties:
+            bi_properties.write('\n'.join(bipro))
+
+    def modify_bi_properties(self, v, bipro):
+        bi_pro = []
+        o_properties = []
+        with open(self.config[v]['biProPath'], 'r', encoding='utf-8') as biPro:
+            for param in biPro.read().splitlines():
+                if not param.startswith('#'):
+                    o_properties.append(param)
+        for param in bipro:
+            product_logger.info(param)
+            bi_pro.append(f'{param["key"]}={param["value"]}')
+        with open(self.config[v]['biProPath'], 'r', encoding='utf-8') as old_properties:
+            if len(o_properties) != len(bi_pro):
+                product_logger.info(f'version:{v},old_properties:{o_properties},new:{bi_pro}')
+                self.input_to_bi_properties(v, bi_pro)
+                return 'bi.properties修改成功'
+            for pro in bi_pro:
+                if pro not in o_properties:
+                    product_logger.info(f'version:{v},old_properties:{o_properties},new:{pro}')
+                    self.input_to_bi_properties(v, bi_pro)
+                    return 'bi.properties修改成功'
+        return 'bi.properties没有变化'
 
     def check_status(self, v, user=''):
         status = self.config[v]
@@ -777,3 +936,46 @@ class ProductAction:
             self.update_userlist()
             return self.succ("用户删除成功")
         return self.info("用户不存在")
+
+    def exchange_junit_exp(self, data, exp_folder='exp'):
+        # data = loads(request.get_data())
+        exp_path = f'D:\\share\\junit_test\\{data["version"]}_test\\assetExecute\\testcases'
+        update_suite = []
+        for case in data["cases"]:
+            case_name = case.split('/')[-1]
+            suite = case.split('/')[0]
+            src = f'{exp_path}\\' + case.replace("/", "\\")
+            if suite not in update_suite:
+                res = self.read_command(f'svn up {os.path.join(exp_path, suite, "exp")}')
+                if len(res.split('\n')) != 3:
+                    product_logger.info(res)
+                update_suite.append(suite)
+            # src = os.path.join(exp_path, case)
+            if not os.path.exists(src):
+                product_logger.info(f'{src}文件不存在，跳过')
+                continue
+            dst = src.replace('res', exp_folder)
+            if os.path.isdir(src):
+                if os.path.exists(dst):
+                    rmtree(dst)
+                    product_logger.info(f'{dst}文件夹删除后再更新')
+                copytree(src, dst)
+            else:
+                if not os.path.exists(dst):
+                    product_logger.info(f'{dst}文件不存在，直接copy')
+                    dst = dst.replace(f'\\{case_name}', '')
+                    if not os.path.exists(dst):
+                        product_logger.info(f'{dst}文件夹不存在，需要先创建文件夹')
+                        os.system(f'mkdir -p {dst}')
+                copy2(src, dst)
+        product_logger.info(f'[{data["user"]}]-{data["cases"]} exchanged')
+        return self.succ("更换成功")
+
+    def get_all_schedule(self):
+        with open('personal-schedule.json', 'r', encoding='utf-8') as jobs:
+            personal_jobs = load(jobs)
+            self.jobs.extend(personal_jobs)
+
+    @staticmethod
+    def transToWinPath(path):
+        pass

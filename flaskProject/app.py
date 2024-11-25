@@ -13,6 +13,12 @@ from flask_sqlalchemy import SQLAlchemy
 from apps.productApp.productJar_router import *
 from sqlalchemy.exc import OperationalError
 import logging_mgr
+from gevent import pywsgi, monkey
+from multiprocessing import cpu_count, Process
+
+# monkey.patch_all()
+
+debug_logger = logging_mgr.getLogger("debug")
 
 # clean.static_clean() #清理资源文件夹
 app = Flask(__name__)
@@ -20,9 +26,11 @@ app.config.from_object(configs)
 if_connect_mysql = True
 db = SQLAlchemy(app)
 
+pwd = os.getcwd()
 app.debug = False
 bootstrap = Bootstrap(app)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = timedelta(seconds=1)
+app.config['JSON_AS_ASCII'] = False
 app.config.from_object(APSchedulerJobConfig())
 CORS(app, supports_credentials=True)
 
@@ -57,8 +65,7 @@ except OperationalError:
     if_connect_mysql = False
 except:
     if_connect_mysql = False
-    print("Unexpected error:", sys.exc_info()[0])
-    
+    debug_logger.error(f"Unexpected error:{sys.exc_info()[0]}")
 
 
 # 传递图标
@@ -115,13 +122,32 @@ def custom_error_handler(e):
     return response
 
 
+def run(MULTI_PROCESS):
+    if not MULTI_PROCESS:
+        pywsgi.WSGIServer(('0.0.0.0', 8080), app).serve_forever()
+    else:
+        mult_server = pywsgi.WSGIServer(('0.0.0.0', 8080), app)
+        mult_server.start()
+
+        def server_forever():
+            mult_server.start_accepting()
+            mult_server._stop_event.wait()
+
+        for i in range(cpu_count()):
+            p = Process(target=server_forever)
+            p.start()
+
+
 if __name__ == '__main__':
     # os.symlink(log_path, log_path_today)
+    # db.drop_all()
     scheduler = APScheduler()  # 实例化APScheduler
     scheduler.init_app(app)  # 把任务列表载入实例flask
     scheduler.start()  # 启动任务计划
-    # db.drop_all()
     if if_connect_mysql:
         db.create_all()
     app.register_blueprint(productJar_operate, url_prefix='/productJar')
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', port=5000, debug=False)
+    # run(True)
+    # server = pywsgi.WSGIServer(('0.0.0.0', 5000), app)
+    # server.serve_forever()

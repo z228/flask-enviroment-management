@@ -93,6 +93,7 @@ export default {
                     type: "success",
                   });
                   this.$store.commit("SET_USERINFO", this.ruleForm.username);
+                  this.$store.commit("SET_USERNAME", this.ruleForm.username);
                   _this.$router.push("/windows");
                 } else if (res.data.code === 205) {
                   this.$message({

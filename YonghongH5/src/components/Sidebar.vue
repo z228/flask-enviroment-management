@@ -102,11 +102,11 @@ export default {
             index: "windows",
             title: "Windows环境",
           },
-          {
-            icon: "el-icon-ubuntu",
-            index: "linux",
-            title: "Linux环境",
-          },
+          // {
+          //   icon: "el-icon-ubuntu",
+          //   index: "linux",
+          //   title: "Linux环境",
+          // },
           {
             icon: "el-icon-centos",
             index: "cent185",
@@ -116,6 +116,11 @@ export default {
             icon: "el-icon-centos",
             index: "cent187",
             title: "cent187环境",
+          },
+          {
+            icon: "el-icon-debian",
+            index: "debian138",
+            title: "debian138环境",
           },
           {
             icon: "el-icon-windows",
@@ -138,9 +143,14 @@ export default {
             title: "服务器状态",
           },
           {
-            icon: "el-icon-script",
+            icon: "el-icon-iframe",
             index: "iframe",
             title: "iframe",
+          },
+          {
+            icon: "el-icon-junit",
+            index: "junitTest",
+            title: "junitTest",
           },
           {
             icon: "el-icon-tickets",

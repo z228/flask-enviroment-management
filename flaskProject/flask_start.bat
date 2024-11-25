@@ -1,6 +1,6 @@
 @echo OFF
 color 0a
-Title FlaskÆô¶¯Æ÷
+Title Flaskï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 :flask
 call activate flaskproject
 call python app.py

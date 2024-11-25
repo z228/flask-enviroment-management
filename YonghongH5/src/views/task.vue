@@ -220,9 +220,10 @@ export default {
       this.$set(this.status, "hasFountScript", false);
       let _this = this;
       this.$axios
-        .get("http://localhost:5000/productJar/allScript")
+        .get("http://localhost:5000/productJar/jobs")
         .then((res) => {
           let data = res.data.data;
+          console.log(data)
           for (let script in data) {
             if (Object.prototype.hasOwnProperty.call(data, script)) {
               _this.tableData.push({
