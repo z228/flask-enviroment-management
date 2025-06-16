@@ -23,13 +23,18 @@ res_path = r'D:\\code\\python\\yhenv\\flaskProject\\apps\\productApp\\res'
 
 
 class copyThread(threading.Thread):
-    def __init__(self, remote_file_path, local_file_path):
+    def __init__(self, remote_file_path, local_file_path, copyDir=False):
         threading.Thread.__init__(self)
         self.remote_file_path = remote_file_path
         self.local_file_path = local_file_path
+        self.copyDir = copyDir
 
     def run(self):
-        copy2(self.remote_file_path, self.local_file_path)
+        if not self.copyDir:
+            copy2(self.remote_file_path, self.local_file_path)
+        else:
+            copytree(self.remote_file_path, self.local_file_path)
+        # copy2(self.remote_file_path, self.local_file_path)
 
 
 def get_fail_case(branch):

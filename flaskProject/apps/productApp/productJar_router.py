@@ -1,9 +1,9 @@
 from json import loads, dumps, load
 from os import listdir
-from os.path import join
+from os.path import join, exists
 
 from apps.lib.FtpServer import MyFTP
-from flask import Blueprint, request, render_template
+from flask import Blueprint, request, render_template, send_from_directory
 
 productJar_operate = Blueprint('productJar', __name__)
 from functools import wraps
@@ -415,6 +415,14 @@ def exchange_junit_month_exp():
 def exchange_junit_dis_exp():
     data = loads(request.get_data())
     return productAction.exchange_junit_exp(data, 'exp_dis')
+
+# 视频组件，返回视频流测试
+@productJar_operate.route('/jpg', methods=['GET'])
+def videoComponentTest(name=None):
+    filePath = r'D:\old_version\trunk\Yonghong_Z-Suite\tomcat\webapps\ROOT\image\yin4.jfif'
+    if exists(filePath):
+        return send_from_directory(directory=r'D:\old_version\trunk\Yonghong_Z-Suite\tomcat\webapps\ROOT\image', filename="yin4.jfif", as_attachment=False)
+    return productAction.error("视频不存在")
 
 
 

@@ -132,7 +132,7 @@ def generate_diff_img(index):
     """
        firstly, generate excel to img(gen_xls_diff_png)
     """
-    gen_xls_diff_png(root_path, current_version)
+    gen_xls_diff_png(root_path, current_version, branchs[index])
 
 
 def generate_report(index):

@@ -91,11 +91,18 @@ env_list = {
             "branch": "v10.2",
             "yh":"vividme"
         },
-        "11.0": {
+        "11.0.1_dis": {
             "path": "D:/old_version/110/",
             "port": "8120",
             "bihomes": "bihome",
-            "branch": "develop",
+            "branch": "custom_v11.0.1_huaweiDIS",
+            "yh":"vividme"
+        },
+        "11.0.1": {
+            "path": "D:/old_version/1101/",
+            "port": "8120",
+            "bihomes": "bihome",
+            "branch": "v11.0.1.1",
             "yh":"vividme"
         },
         "trunk": {

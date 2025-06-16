@@ -38,8 +38,10 @@ class APSchedulerJobConfig(object):
             # 执行任务的function名称，app.test 就是 app下面的`test.py` 文件，`shishi` 是方法名称。文件模块和方法之间用冒号":"，而不是用英文的"."
             'args': None,  # 如果function需要参数，就在这里添加
             'replace_existing': True,
-            'trigger': 'interval',
-            'seconds': 60 * 60 * 2
+            'trigger': 'date',
+            'run_date': '2099-8-30 01:00:00'
+            # 'trigger': 'interval',
+            # 'seconds': 60 * 60 * 1
         },
         {
             'id': 'getResJunit',  # 任务唯一ID
@@ -47,10 +49,8 @@ class APSchedulerJobConfig(object):
             # 执行任务的function名称，app.test 就是 app下面的`test.py` 文件，`shishi` 是方法名称。文件模块和方法之间用冒号":"，而不是用英文的"."
             'args': None,  # 如果function需要参数，就在这里添加
             'replace_existing': True,
-            'trigger': 'cron',
-            'hour': 7,
-            'minute': 0,
-            'second': 0
+            'trigger': 'date',
+            'run_date': '2099-8-30 01:00:00'
         },
         {
             'id': 'xls_diff_res',  # 任务唯一ID
@@ -58,10 +58,8 @@ class APSchedulerJobConfig(object):
             # 执行任务的function名称，app.test 就是 app下面的`test.py` 文件，`shishi` 是方法名称。文件模块和方法之间用冒号":"，而不是用英文的"."
             'args': None,  # 如果function需要参数，就在这里添加
             'replace_existing': True,
-            'trigger': 'cron',
-            'hour': 8,
-            'minute': 0,
-            'second': 0
+            'trigger': 'date',
+            'run_date': '2099-8-30 01:00:00'
         },
         {
             'id': 'cleanResPng',  # 任务唯一ID
@@ -107,8 +105,10 @@ class APSchedulerJobConfig(object):
             # 执行任务的function名称，app.test 就是 app下面的`test.py` 文件，`shishi` 是方法名称。文件模块和方法之间用冒号":"，而不是用英文的"."
             'args': None,  # 如果function需要参数，就在这里添加
             'replace_existing': True,
+            # 'trigger': 'date',
+            # 'run_date': '2099-8-30 01:00:00'
             'trigger': 'interval',
-            'seconds': 60 * 30
+            'seconds': 60 * 20
         },
         {
             'id': 'test_job',  # 任务唯一ID
@@ -125,9 +125,34 @@ class APSchedulerJobConfig(object):
             # 执行任务的function名称，app.test 就是 app下面的`test.py` 文件，`shishi` 是方法名称。文件模块和方法之间用冒号":"，而不是用英文的"."
             'args': None,  # 如果function需要参数，就在这里添加
             'replace_existing': True,
+            'trigger': 'date',
+            'run_date': '2099-8-30 01:00:00'
+            # 'trigger': 'cron',
+            # 'hour': 4,
+            # 'minute': 30,
+            # 'second': 0
+        },
+        {
+            'id': 'every_day_list',  # 任务唯一ID
+            'func': 'apps.productApp.task:every_day_list',
+            # 执行任务的function名称，app.test 就是 app下面的`test.py` 文件，`shishi` 是方法名称。文件模块和方法之间用冒号":"，而不是用英文的"."
+            'args': None,  # 如果function需要参数，就在这里添加
+            'replace_existing': True,
             'trigger': 'cron',
-            'hour': 4,
+            'hour': 2,
             'minute': 30,
+            'second': 0
+        }
+        ,
+        {
+            'id': 'kill_all_pptr',  # 杀死所有node_pptr进程
+            'func': 'apps.productApp.task:kill_all_pptr',
+            # 执行任务的function名称，app.test 就是 app下面的`test.py` 文件，`shishi` 是方法名称。文件模块和方法之间用冒号":"，而不是用英文的"."
+            'args': None,  # 如果function需要参数，就在这里添加
+            'replace_existing': True,
+            'trigger': 'cron',
+            'hour': 2,
+            'minute': 15,
             'second': 0
         }
     ]

@@ -35,9 +35,11 @@
               </el-popover>
             </template>
           </el-table-column>
-          <el-table-column prop="path" label="url路径" width="200">
+          <el-table-column prop="path" label="url路径" width="180">
             <template slot-scope="scope">
+              <!-- <a target="_blank" :href="scope.row.url" style="border-bottom: 1px solid black;">点击访问</a> -->
               <a target="_blank" :href="scope.row.url">{{ scope.row.url }} </a>
+              <!-- <router-link tag="a" :to="{}" target="_blank" :href="scope.row.url" >{{scope.row.url }}</router-link> -->
             </template>
           </el-table-column>
           <el-table-column prop="path" label="状态" width="150">
@@ -69,7 +71,7 @@
                 size="small"
                 icon="el-icon-edit"
                 plain
-                >bi.properties
+                >bi.pro
               </el-button>
               <el-button
                 @click="shutdown(scope.row)"
@@ -1119,6 +1121,7 @@ export default {
           "http://192.168.0.187:5000/productJar/changeBiPro",
           {
             bipro: _this.propertiesData,
+            user: this.$store.state.userInfo,
           },
           {
             headers: {

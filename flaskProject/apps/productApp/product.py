@@ -10,6 +10,7 @@ from xml.dom.minidom import parse
 from flask import Response
 import sys
 import re
+from functools import wraps
 
 from logging import getLogger
 from app import if_connect_mysql
@@ -628,7 +629,10 @@ class ProductAction:
         :return:
         """
         product_logger.info(f'release version:{release_version}')
-        release_jar_path = f'{self.ip_187}common/{release_version}'
+        if os.path.exists(f'{self.ip_187}common/{release_version}'):
+            release_jar_path = f'{self.ip_187}common/{release_version}'
+        else:
+            release_jar_path = f'{self.ip_134}common/{release_version}'
         if "yh" in self.config[version].keys():
             local_jar_path = os.path.join(self.config[version]["path"] + self.vividime_path, "product")
         else:
@@ -701,6 +705,7 @@ class ProductAction:
         :param release: release版本
         :return:
         """
+        res = ""
         if self.config[v]['updateAndReload']:
             res = f'正在重启{v}环境并更换jar包，请稍等'
             product_logger.info(res)
@@ -747,7 +752,7 @@ class ProductAction:
                 f'{self.ip_187}{branch}') else []
             if os.path.exists(f'{self.ip_134}{branch}'):
                 try:
-                    dir_134 = os.listdir(f'{self.ip_134}{branch}')
+                    dir_134 = os.listdir(f'{self.ip_134}{branch}') if os.path.exists(f'{self.ip_134}{branch}') else []
                     dir_187.extend(dir_134)
                 except FileNotFoundError:
                     product_logger.info(f"{key}--134服务器暂时无法连接")
@@ -765,7 +770,7 @@ class ProductAction:
         """
         jar_list = {}
         exclude = ['9.2']
-        release_jar_path = f'{self.ip_187}common'
+        release_jar_path = f'{self.ip_187}common' if os.path.exists(f'{self.ip_187}common') else f'{self.ip_134}common'
         for key in self.config.keys():
             branch = self.config[key]["branch"]
             jar_list[key] = []
@@ -797,26 +802,36 @@ class ProductAction:
         with open(self.config[v]['biProPath'], 'w', encoding='utf-8') as bi_properties:
             bi_properties.write('\n'.join(bipro))
 
-    def modify_bi_properties(self, v, bipro):
+    def modify_bi_properties(self, v, bipro, user=''):
         bi_pro = []
+        bi_pro_dict = {}
         o_properties = []
+        o_properties_dict = {}
         with open(self.config[v]['biProPath'], 'r', encoding='utf-8') as biPro:
             for param in biPro.read().splitlines():
                 if not param.startswith('#'):
-                    o_properties.append(param)
+                    # o_properties.append(param)
+                    o_properties_dict[param.split("=")[0]] = param.split("=")[1]
         for param in bipro:
-            product_logger.info(param)
+            bi_pro_dict[param["key"]] = param["value"]
+            # bi_pro_dict.append({param["key"]: param["value"]})
             bi_pro.append(f'{param["key"]}={param["value"]}')
-        with open(self.config[v]['biProPath'], 'r', encoding='utf-8') as old_properties:
-            if len(o_properties) != len(bi_pro):
-                product_logger.info(f'version:{v},old_properties:{o_properties},new:{bi_pro}')
-                self.input_to_bi_properties(v, bi_pro)
-                return 'bi.properties修改成功'
-            for pro in bi_pro:
-                if pro not in o_properties:
-                    product_logger.info(f'version:{v},old_properties:{o_properties},new:{pro}')
-                    self.input_to_bi_properties(v, bi_pro)
-                    return 'bi.properties修改成功'
+        added = {k: bi_pro_dict[k] for k in bi_pro_dict if k not in o_properties_dict}
+        removed = {k: o_properties_dict[k] for k in o_properties_dict if k not in bi_pro_dict}
+        modified = {k: f'{o_properties_dict[k]}---->{bi_pro_dict[k]}' for k in bi_pro_dict if k in o_properties_dict and o_properties_dict[k] != bi_pro_dict[k]}
+        if added or removed or modified:
+            product_logger.info(f'version:{v},user-[{user}],新增属性:{added},删除属性:{removed},修改属性:{modified}')
+            self.input_to_bi_properties(v, bi_pro)
+            return 'bi.properties修改成功'
+        # if len(o_properties) != len(bi_pro):
+        #     product_logger.info(f'version:{v},old_properties:{o_properties},new:{bi_pro}')
+        #     self.input_to_bi_properties(v, bi_pro)
+        #     return 'bi.properties修改成功'
+        # for pro in bi_pro:
+        #     if pro not in o_properties:
+        #         product_logger.info(f'version:{v},old_properties:{o_properties_dict[pro.split("=")[0]]},new:{pro}')
+        #         self.input_to_bi_properties(v, bi_pro)
+        #         return 'bi.properties修改成功'
         return 'bi.properties没有变化'
 
     def check_status(self, v, user=''):

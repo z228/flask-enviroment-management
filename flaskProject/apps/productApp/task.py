@@ -19,24 +19,44 @@ task_logger = getLogger("task")
 
 
 def read_command(cmd):
-    with os.popen(cmd) as p:
-        res = p.read()
-    return res
-
+    try:
+        with os.popen(cmd) as p:
+            res = p.read()
+            if res:
+                task_logger.info(f'执行命令：{cmd}')
+                task_logger.info(f'命令执行结果：{res}')
+            else:
+                task_logger.info('命令执行结果：无输出')
+            return res
+    except Exception as e:
+        task_logger.error(e)
 
 def read_command_utf8(cmd):
     with os.popen(cmd) as p:
         try:
             res = p.buffer.read().decode(encoding='utf8')
+            if res:
+                task_logger.info(f'执行命令：{cmd}')
+                task_logger.info(f'命令执行结果：{res}')
+            else:
+                task_logger.info('命令执行结果：无输出')
         except UnicodeDecodeError as e:
             task_logger.error(e)
     return res
 
 
 def readlines_command(cmd):
-    with os.popen(cmd) as p:
-        res = p.readlines()
-    return res
+    try:
+        with os.popen(cmd) as p:
+            res = p.readlines()
+            if res:
+                task_logger.info(f'执行命令：{cmd}')
+                task_logger.info(f'命令执行结果：{res}')
+            else:
+                task_logger.info('命令执行结果：无输出')
+            return res
+    except Exception as e:
+        task_logger.error(e)
 
 
 def clean_jar():
@@ -197,9 +217,8 @@ def shutdown_trunk_tomcat():
 
 def commit_junit_exp():
     branchs = ['v9.0_test', 'v9.2.1_test',
-               'v9.4_test', 'v10.0_test', 'v10.1_test', 'v10.2_test', 'trunk_test']
-    visualcd_suites = ['Chart', 'CustomerBug', 'DBDataprocess',
-                       'DBPainter', 'DynamicCalc', 'Export']
+               'v9.4_test', 'v10.0_test', 'v10.1_test', 'v10.2_test', 'v11.0.1_test','trunk_test']
+    visualcd_suites = ['Chart', 'CustomerBug', 'DBPainter', 'Export']
     msg = 'change exp of junit'
     exp_folders = ['exp', 'exp_dis']
     current_hour = int(localtime()[3])
@@ -214,33 +233,31 @@ def commit_junit_exp():
                     svn_exp_path = f'D:\\share\\junit_test\\{branch}\\assetExecute\\testcases\\{suite}\\{folder}'
                     if not os.path.exists(svn_exp_path):
                         continue
-                    with os.popen(f'svn cleanup {svn_exp_path}') as p1:
-                        r1 = p1.read()
-                    # task_logger.info(r1)
+                    read_command(f'svn cleanup {svn_exp_path}')
                     cases = os.listdir(svn_exp_path)
                     for case in cases:
                         up_path = os.path.join(svn_exp_path, case)
-                        if case == 'ParamElem':
-                            big_case = os.path.join(up_path, 'ListBox', 'listbox_defaultValue7_编辑可选值v10.pdf')
-                            if os.path.exists(big_case):
-                                os.remove(big_case)
-                                task_logger.info(f'删除超大case：{big_case} 并且跳过更新')
-                            continue
-                        with os.popen(f'svn up {up_path}') as p2:
-                            r2 = p2.read()
-                            if len(r2.split('\n')) != 3:
-                                task_logger.info(r2)
+                        # if case == 'ParamElem':
+                        #     big_case = os.path.join(up_path, 'ListBox', 'listbox_defaultValue7_编辑可选值v10.pdf')
+                        #     if os.path.exists(big_case):
+                        #         os.remove(big_case)
+                        #         task_logger.info(f'删除超大case：{big_case} 并且跳过更新')
+                        #     continue
+                        read_command(f'svn up {up_path}')
+                        sleep(1)
+                        task_logger.info("等待5秒，等待svn up完成")
                         status = readlines_command(f'svn st {up_path}')
                         if not status:
                             continue
-                        task_logger.info(status)
+                        # task_logger.info(status)
                         commit_flag = False
                         for statu in status:
                             st = statu.split()[0]
                             file = statu.split()[1].replace('\n', '')
                             if st == '?':
-                                with os.popen(f'svn add {file}') as add:
-                                    log = add.read()
+                                log = read_command(f'svn add {file}')
+                                # with os.popen(f'svn add {file}') as add:
+                                #     log = add.read()
                                 task_logger.info(f'svn add {file}:' + log)
                                 commit_flag = True
                             if st == 'M' or st == 'A':
@@ -248,9 +265,12 @@ def commit_junit_exp():
                                 commit_flag = True
                         if not commit_flag:
                             continue
-                        with os.popen(f'svn ci {up_path} -m "{msg}"') as ci:
-                            log = ci.read()
-                            task_logger.info(f'svn ci {up_path} -m :result---"{msg}"' + log)
+                        sleep(1)
+                        log = read_command(f'svn ci {up_path} -m "{msg}"')
+                        task_logger.info(f'svn ci {up_path} -m :result---"{msg}"' + log)
+                        # with os.popen(f'svn ci {up_path} -m "{msg}"') as ci:
+                        #     log = ci.read()
+                        #     task_logger.info(f'svn ci {up_path} -m :result---"{msg}"' + log)
                 except Exception as e:
                     task_logger(f'SVN服务器暂时无法连接：{e}')
                     return
@@ -273,11 +293,14 @@ def check_system_memory():
 
 def clean_memory_cache():
     task_logger.info(f'before clean memory:' + check_system_memory())
-    subprocess.Popen(r"D:\RAMMap\RAMMap64 -Ew", shell=True).wait()
-    subprocess.Popen(r"D:\RAMMap\RAMMap64 -Es", shell=True).wait()
-    subprocess.Popen(r"D:\RAMMap\RAMMap64 -Em", shell=True).wait()
-    subprocess.Popen(r"D:\RAMMap\RAMMap64 -Et", shell=True).wait()
-    subprocess.Popen(r"D:\RAMMap\RAMMap64 -E0", shell=True).wait()
+    try:
+        subprocess.Popen(r"D:\RAMMap\RAMMap.exe -Ew", shell=True).wait()
+        subprocess.Popen(r"D:\RAMMap\RAMMap.exe -Es", shell=True).wait()
+        subprocess.Popen(r"D:\RAMMap\RAMMap.exe -Em", shell=True).wait()
+        subprocess.Popen(r"D:\RAMMap\RAMMap.exe -Et", shell=True).wait()
+        subprocess.Popen(r"D:\RAMMap\RAMMap.exe -E0", shell=True).wait()
+    except Exception as e:
+        task_logger.error(f'清理内存失败：{e}')
     task_logger.info(f'after clean memory' + check_system_memory())
 
 
@@ -287,7 +310,7 @@ def test_job(index):
 
 def update_v2ray_geo():
     v2rayn_root_path = r'D:\v2rayN-Core'
-    geo_git_path = os.path.joint(v2rayn_root_path, 'v2ray-rules-dat')
+    geo_git_path = os.path.join(v2rayn_root_path, 'v2ray-rules-dat')
     os.chdir(geo_git_path)
     res = read_command_utf8('git pull')
     task_logger.info(res)
@@ -299,3 +322,22 @@ def update_v2ray_geo():
                 bash = fr'xcopy {os.path.join(geo_git_path, file)} {root} /Y'
                 task_logger.info(read_command_utf8(bash))
                 task_logger.info(f'update---{root}---{file} ')
+                
+def every_day_list():
+    with open(r'C:\Users\228\OneDrive\obsidian\pc-moss\日报.md','a',encoding='utf-8') as f:
+        date_time = strftime('[[%Y-%m-%d]]', localtime())
+        f.write(f'\n## {date_time}\n### OA\n')
+        
+        
+def kill_all_pptr():
+    """
+    杀掉所有的pptr进程
+    """
+    task_logger.info("开始杀掉所有的pptr进程")
+    for res in readlines_command('tasklist | findstr node'):
+        if 'node' in res:
+            pid = res.split()[1]
+            node_executable_path = read_command(f'wmic process where "ProcessId={pid}" get ExecutablePath')
+            if 'thirdsbin' in node_executable_path:
+                read_command(f'taskkill /F /PID {pid}')
+    task_logger.info("所有pptr进程已被杀掉")

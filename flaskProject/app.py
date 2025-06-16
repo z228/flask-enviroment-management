@@ -13,7 +13,7 @@ from flask_sqlalchemy import SQLAlchemy
 from apps.productApp.productJar_router import *
 from sqlalchemy.exc import OperationalError
 import logging_mgr
-from gevent import pywsgi, monkey
+# from gevent import pywsgi, monkey
 from multiprocessing import cpu_count, Process
 
 # monkey.patch_all()
@@ -122,20 +122,20 @@ def custom_error_handler(e):
     return response
 
 
-def run(MULTI_PROCESS):
-    if not MULTI_PROCESS:
-        pywsgi.WSGIServer(('0.0.0.0', 8080), app).serve_forever()
-    else:
-        mult_server = pywsgi.WSGIServer(('0.0.0.0', 8080), app)
-        mult_server.start()
+# def run(MULTI_PROCESS):
+#     if not MULTI_PROCESS:
+#         pywsgi.WSGIServer(('0.0.0.0', 8080), app).serve_forever()
+#     else:
+#         mult_server = pywsgi.WSGIServer(('0.0.0.0', 8080), app)
+#         mult_server.start()
 
-        def server_forever():
-            mult_server.start_accepting()
-            mult_server._stop_event.wait()
+#         def server_forever():
+#             mult_server.start_accepting()
+#             mult_server._stop_event.wait()
 
-        for i in range(cpu_count()):
-            p = Process(target=server_forever)
-            p.start()
+#         for i in range(cpu_count()):
+#             p = Process(target=server_forever)
+#             p.start()
 
 
 if __name__ == '__main__':

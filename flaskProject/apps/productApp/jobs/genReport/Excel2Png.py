@@ -14,6 +14,7 @@ from logging import getLogger
 
 task_logger = getLogger("task")
 work_path = r'D:\code\python\yhenv\flaskProject\apps\productApp\jobs\genReport'
+res_path = r'D:\\code\\python\\yhenv\\flaskProject\\apps\\productApp\\res'
 
 
 def key_in_dict(key, key_dict):
@@ -59,8 +60,8 @@ def create_muli_excel_save_img(files):
             wb = app.books.open(file)
         except Exception as e:
             task_logger.error(e)
-            traceback.print_stack()
-            traceback.print_exc()
+            # traceback.print_stack()
+            # traceback.print_exc()
             continue
         sheet_length = len(wb.sheets)
         for i in range(sheet_length):
@@ -93,13 +94,19 @@ def create_muli_excel_save_img(files):
                     pic.api.Copy()
                     # sleep(1)  # 延迟一下操作，不然获取不到图片
                     # 获取剪贴板的图片数据
-                    img = ImageGrab.grabclipboard()
-                    # 保存图片
-                    img.save(img_name)
-                    imgs.append(img_name)
+                    # img = ImageGrab.grabclipboard()
+                    # # 保存图片
+                    # img.save(img_name)
+                    # imgs.append(img_name)
+                    if img := ImageGrab.grabclipboard():
+                        img.save(img_name)
+                        imgs.append(img_name)
+                        task_logger.info(f"保存成功: {img_name}")
+                    else:
+                        task_logger.info(f"剪贴板无内容: {img_name}")
                     break
                 except Exception as e:
-                    if count == 10:
+                    if count == 5:
                         count += 1
                         break
                     task_logger.error(e)
@@ -107,7 +114,7 @@ def create_muli_excel_save_img(files):
                     task_logger.info(f'{img_name}保存失败,等待3s后尝试')
                 # finally:
                 #     pic.delete()  # 删除sheet上的图片
-            if count <= 10:
+            if count <= 5:
                 pic.delete()
         # 不保存，直接关闭
         wb.close()
@@ -195,18 +202,21 @@ def gen_diff_png(exp, res):
     return f'{res} failed,diff:{diff_path}'
 
 
-def gen_xls_diff_png(file_root, current_version):
+def gen_xls_diff_png(file_root, current_version, branch):
     """
     :param current_version: 版本
     :param file_root: res根目录
     :return: none
     """
     # res_pngs = []
+    with open(f'{res_path}/{branch}_fail_cases.json', 'r', encoding='utf-8') as fail_cases:
+        fails = load(fail_cases)
+        all_fails = [fail.split('/')[-1] for fail in list(fails['Export'].keys())]
     exp_xls_list = []
     res_xls_list = []
     for root, dirs, files in os.walk(file_root):
         for name in files:
-            if '.xls' in name and '~$' not in name:
+            if '.xls' in name and '~$' not in name  and name.split('.xls')[0] in all_fails:
                 res_xls_full_path = os.path.join(root, name)
                 res_xls_list.append(res_xls_full_path)
                 exp_xls_list.append(res_xls_full_path.replace('res', 'exp'))

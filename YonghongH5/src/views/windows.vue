@@ -41,10 +41,10 @@
               </el-popover>
             </template>
           </el-table-column>
-          <el-table-column prop="path" label="url路径" width="175">
+          <el-table-column prop="path" label="url路径" width="180">
             <template slot-scope="scope">
-              <a target="_blank" :href="scope.row.url">{{ scope.row.url }}</a>
-              <!-- <router-link tag="a" :to="{}" target="_blank" :href="scope.row.url" >{{scope.row.url }}</router-link> -->
+              <!-- <a target="_blank" :href="scope.row.url" style="border-bottom: 1px solid black;">点击访问</a>-->
+              <a target="_blank" :href="scope.row.url">{{ scope.row.url }} </a>
             </template>
           </el-table-column>
           <el-table-column prop="path" label="状态" width="100">
@@ -75,7 +75,7 @@
                 size="small"
                 icon="el-icon-edit"
                 plain
-                >bi.properties
+                >bi.pro
               </el-button>
               <el-button
                 @click="shutdown(scope.row)"
@@ -183,37 +183,37 @@
           </el-table-column>
           <el-table-column label="可更换bihome" width="170">
             <template slot-scope="scope">
-<!--              <el-select-->
-<!--                v-model="bihome[scope.row.version]"-->
-<!--                placeholder="请选择bihome"-->
-<!--                style="width: 100px; margin-left: 10px"-->
-<!--                size="small"-->
-<!--                clearable-->
-<!--                @change="chooseDate()"-->
-<!--                filterable-->
-<!--              >-->
-<!--                <el-option-->
-<!--                  v-for="item in scope.row.bihomes"-->
-<!--                  :key="item"-->
-<!--                  :label="item"-->
-<!--                  :value="item"-->
-<!--                  ><span style="float: left"></span>-->
-<!--                  <span>{{ item }}</span>-->
-<!--                </el-option>-->
-<!--              </el-select>-->
+              <!--              <el-select-->
+              <!--                v-model="bihome[scope.row.version]"-->
+              <!--                placeholder="请选择bihome"-->
+              <!--                style="width: 100px; margin-left: 10px"-->
+              <!--                size="small"-->
+              <!--                clearable-->
+              <!--                @change="chooseDate()"-->
+              <!--                filterable-->
+              <!--              >-->
+              <!--                <el-option-->
+              <!--                  v-for="item in scope.row.bihomes"-->
+              <!--                  :key="item"-->
+              <!--                  :label="item"-->
+              <!--                  :value="item"-->
+              <!--                  ><span style="float: left"></span>-->
+              <!--                  <span>{{ item }}</span>-->
+              <!--                </el-option>-->
+              <!--              </el-select>-->
               <el-autocomplete
-                  class="inline-input"
-                  v-model="bihome[scope.row.version]"
-                  :fetch-suggestions="bihomeSearch"
-                  placeholder="输入bihome"
-                  style="width: 110px"
+                class="inline-input"
+                v-model="bihome[scope.row.version]"
+                :fetch-suggestions="bihomeSearch"
+                placeholder="输入bihome"
+                style="width: 110px"
               ></el-autocomplete>
               <el-button
                 @click="exchangeBihome(scope.row, bihome[scope.row.version])"
                 type="text"
                 size="small"
-                style="margin-left: 10px;"
-              >应用
+                style="margin-left: 10px"
+                >应用
               </el-button>
             </template>
           </el-table-column>
@@ -234,9 +234,12 @@
           :close-on-click-modal="false"
           :visible.sync="dialogBiproVisible"
         >
-        <el-button size="mini" type="info" @click="propertiesData.data.unshift({key:'',value:''})"
-        >添加空行</el-button
-      >
+          <el-button
+            size="mini"
+            type="info"
+            @click="propertiesData.data.unshift({ key: '', value: '' })"
+            >添加空行</el-button
+          >
           <el-table
             :data="
               propertiesData.data.filter(
@@ -251,12 +254,23 @@
           >
             <el-table-column property="key" label="key" width="300"
               ><template slot-scope="scope">
-                <el-input placeholder="key" v-model="scope.row.key"> </el-input>
+                <el-input
+                  placeholder="key"
+                  v-model="scope.row.key"
+                  @focus="handleFocus"
+                  @blur="handleBlur"
+                >
+                </el-input>
               </template>
             </el-table-column>
             <el-table-column property="value" label="value" width="400"
               ><template slot-scope="scope">
-                <el-input placeholder="value" v-model="scope.row.value">
+                <el-input
+                  placeholder="value"
+                  v-model="scope.row.value"
+                  @focus="handleFocus"
+                  @blur="handleBlur"
+                >
                 </el-input> </template
             ></el-table-column>
             <el-table-column label="操作" width="200">
@@ -305,6 +319,7 @@ export default {
       jarDate: {},
       date: {},
       search: "",
+      isEditing: false,
     };
   },
   mounted() {
@@ -377,7 +392,7 @@ export default {
       this.checkStatus();
       this.getJarInfo();
       this.getReleaseJar();
-      window.open("http://192.168.0.187:8110/bi/?showOthers=true")
+      window.open("http://192.168.0.187:8110/bi/?showOthers=true");
     },
     getAllProduct() {
       let _this = this;
@@ -880,10 +895,10 @@ export default {
       let _this = this;
       this.dialogBiproVisible = false;
       for (let i = 0, len = this.propertiesData.data.length; i < len; i++) {
-        if (this.propertiesData.data[i].key === '') {
+        if (this.propertiesData.data[i].key === "") {
           this.propertiesData.data.splice(i, 1);
-          i = i - 1;    //改变循环变量
-          len = len - 1;   //改变循环次数
+          i = i - 1; //改变循环变量
+          len = len - 1; //改变循环次数
         }
       }
       // console.log(this.propertiesData);
@@ -918,8 +933,19 @@ export default {
         }
       }
     },
+    handleFocus() {
+      this.isEditing = true;
+    },
+    handleBlur() {
+      this.isEditing = false;
+    },
     bihomeSearch(queryString, cb) {
-      let allBihomes = [{"value": 'bihome'}, {"value": 'Export'}, {"value": 'Chart'}, {"value": 'DBPainter'}]
+      let allBihomes = [
+        { value: "bihome" },
+        { value: "Export" },
+        { value: "Chart" },
+        { value: "DBPainter" },
+      ];
       cb(allBihomes);
     },
     chooseDate() {

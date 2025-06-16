@@ -1,11 +1,6 @@
 <template>
   <div
     class="log-contain"
-    v-if="
-      this.$store.state.userInfo === 'admin' ||
-      this.$store.state.userInfo === '曾成龙' ||
-      this.$store.state.userInfo === 'zcl'
-    "
   >
     <div class="crumbs">
       <el-breadcrumb separator="/">
@@ -31,6 +26,7 @@
         </div>
         <div class="script_input all codeEdit">
           <el-select
+            v-if="hasGetLogList === true"
             v-model="log"
             placeholder="请选择日志"
           >
@@ -53,6 +49,7 @@
         </div>
         <div class="all codeEdit">
           <el-button type="primary" @click="getLog()">查询</el-button>
+          <div class="all codeEdit"> <el-checkbox v-model="autoRefreshLog">自动刷新</el-checkbox> </div>
         </div>
         <div
           class="code-mirror-div all"
@@ -84,7 +81,8 @@ export default {
   data() {
     return {
       hasGetLogList: false,
-      lines: "50",
+      autoRefreshLog: false,
+      lines: "100",
       log: "flask.log", // codeMirror主题
       // codeMirror主题选项
       logs: {},
@@ -115,13 +113,21 @@ export default {
       value: "Python",
       textarea: "",
       ip: "192.168.0.187",
-      ip_list: ["192.168.0.192", "192.168.0.187", "192.168.0.185", "192.168.0.138"],
+      ip_list: [ "192.168.0.187", "192.168.0.192", "192.168.0.185", "192.168.0.138"],
       status: {
         hasFountScript: false,
       },
     };
   },
   created() {
+    const timer = setInterval(() => {
+      if (this.autoRefreshLog) {
+        this.getLog();
+      }
+    }, 1000 * 5); // 5秒刷新一次
+    this.$once("hook:beforeDestroy", () => {
+      clearInterval(timer);
+    });
     this.getLogList();
   },
   methods: {
@@ -140,6 +146,7 @@ export default {
           console.log(err);
         });
     },
+    
     getLogList() {
       let _this = this;
       this.ip_list.forEach((ip) => {
